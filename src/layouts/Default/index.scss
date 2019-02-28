@@ -1,0 +1,70 @@
+@import '@saigar/frontend-ds/design/design.scss';
+
+.incoming_feed_side {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+
+.rightSideBar {
+    background: #F5F8FA;
+    box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar {
+    background: $color-medium1;
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid $color-white;
+
+    ul {
+        list-style: outside none none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 8px;
+            border-bottom: 1px solid $color-medium2;
+            border-top: 1px solid $color-medium2;
+            a {
+                color: $color-light2;
+            }
+        }
+
+        li:hover {
+            background: lighten($color-medium2, 5%);
+            border-left: 6px solid $color-primary2;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        li.active {
+            border-left: 6px solid $color-primary2;
+            margin-left: 8px;
+            background: $color-white;
+            color: $color-dark2;
+            a {
+                margin-left: -4px;
+                color: $color-medium1;
+            }
+        }
+
+
+    }
+}
+
+.footer {
+    padding: 20px;
+    background: #F5F8FA;
+    text-align: center;
+    color: #bfbfbf;
+}

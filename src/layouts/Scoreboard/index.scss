@@ -1,0 +1,17 @@
+@import '@saigar/frontend-ds/design/design.scss';
+
+.header {
+    background: $color-medium1;
+    padding: 20px;
+    color: $color-light2;
+    border-bottom: 1px solid lighten($color-medium1, 3%);
+}
+
+.content {
+    background: #F5F8FA;
+}
+
+.footer {
+    background: #F5F8FA;
+    text-align: center;
+}

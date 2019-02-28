@@ -1,0 +1,28 @@
+{
+  "name": "@saigar/frontend-ctf",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start:dev": "webpack-dev-server --config config/webpack.common.js",
+    "build": "webpack --progress --verbose --colors --display-error-details --config config/webpack.common.js",
+    "clean": "rm -rf dist",
+    "start": "serve -s dist"
+  },
+  "dependencies": {
+    "apexcharts": "^3.3.1",
+    "jwt-decode": "^2.2.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "react": "^16.8.2",
+    "react-apexcharts": "^1.2.1",
+    "react-countdown-now": "^2.1.0",
+    "react-flip-move": "^3.0.3",
+    "webpack": "^4.29.1",
+    "webpack-cli": "^3.2.3"
+  },
+  "devDependencies": {
+    "serve": "^10.1.2",
+    "terser-webpack-plugin": "^1.2.2"
+  }
+}
