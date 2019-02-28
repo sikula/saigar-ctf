@@ -1,0 +1,45 @@
+@import '@saigar/frontend-ds/design/design.scss';
+@import "~@blueprintjs/core/lib/scss/variables";
+
+
+//Note Stephanie: This is different than the SlidingPane case-data-content CSS 
+.case-data__content {
+    min-height: 0;
+    flex: 1;
+    overflow-y: scroll;
+    a {
+      color: $color-primary3;
+    }
+}
+
+.case-data__item__wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &:nth-child(even) {
+        background: darken($color-light2, 3.5%)
+    //   background: $color-light2;
+    }
+}
+
+.case-data__item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 1;
+    min-height: 100px;
+    height: auto;
+    padding: 20px;
+
+    &__icons {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 20px;
+        color: $pt-icon-color;
+        svg {
+            margin: 10px;
+        }
+    }
+}

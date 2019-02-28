@@ -1,0 +1,18 @@
+.eventsTabs {
+    width: 100%;
+}
+
+.eventTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 15px
+}
+
+tr:nth-child(odd) {
+    background: #eee;
+}
