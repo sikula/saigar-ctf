@@ -4,7 +4,7 @@ import { connectRouter } from 'connected-react-router'
 import history from './history'
 
 // this really could use a better name
-import teamReducer from '../../pages/admin/Home/redux' 
+import teamReducer from '../../pages/private/Home/redux' 
 
 /*
     @Note[Peter]:
