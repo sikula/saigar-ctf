@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom'
 import { Layout, Flex, Fixed } from 'react-layout-pane'
 import { Icon, UL } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
-import '@saigar/frontend-ds/design/design.scss'
+import '../../_Design/index.scss'
 import { AuthConsumer } from '../../_Common/components/AuthContext/context'
 import Can from '../../_Common/components/AuthContext/Can'
 
