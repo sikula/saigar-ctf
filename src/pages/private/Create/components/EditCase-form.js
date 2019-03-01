@@ -17,6 +17,7 @@ const MissingSinceInput = props => {
     <DateInput
       id="text-input"
       name="missing_since"
+      value={props.value}
       onChange={handleChange}
       formatDate={date => date.toLocaleString()}
       parseDate={str => new Date(str)}
@@ -44,9 +45,11 @@ const DobInput = props => {
     <DateInput
       id="text-input"
       name="dob"
+      value={props.value}
       onChange={handleChange}
       formatDate={date => date.toLocaleString()}
       parseDate={str => new Date(str)}
+      minDate={new Date('1919', '01', '01')}
       placeholder="M/D/YYY"
       showActionsBar
       popoverProps={{
@@ -106,12 +109,7 @@ const EventSelect = ({ values, handleChange }) => (
   </Query>
 )
 
-const EditCaseForm = ({
-  handleSubmit,
-  handleChange,
-  setFieldValue,
-  values,
-}) => (
+const EditCaseForm = ({ handleSubmit, handleChange, setFieldValue, values }) => (
   <form id="editCaseForm" onSubmit={handleSubmit}>
     <FormGroup label="Event" labelInfo="(required)" labelFor="text-input">
       <EventSelect values={values} handleChange={handleChange} />
@@ -128,10 +126,14 @@ const EditCaseForm = ({
       />
     </FormGroup>
     <FormGroup label="Date of Birth" labelFor="text-input" labelInfo="(required)">
-      <DobInput onChange={setFieldValue} valueFor="dob" />
+      <DobInput onChange={setFieldValue} value={new Date(values.dob)} valueFor="dob" />
     </FormGroup>
     <FormGroup label="Missing Since" labelInfo="(required)" labelFor="text-input">
-      <MissingSinceInput onChange={setFieldValue} valueFor="missing_since" />
+      <MissingSinceInput
+        onChange={setFieldValue}
+        value={new Date(values.missing_since)}
+        valueFor="missing_since"
+      />
     </FormGroup>
     <FormGroup label="Missing From" labelInfo="(required)" labelFor="text-input">
       <InputGroup

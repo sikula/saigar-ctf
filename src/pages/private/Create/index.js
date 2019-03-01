@@ -43,7 +43,7 @@ const EventCard = ({ eventID, name, startTime, endTime }) => (
   </div>
 )
 
-const CaseCard = ({ name, missingSince }) => (
+const CaseCard = ({ id, name, missingSince }) => (
   <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
     <Card id="case-card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -64,7 +64,7 @@ const CaseCard = ({ name, missingSince }) => (
           <Button
             minimal
             icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
-            onClick={() => openSlider(EditCase, { caseID: 1 })}
+            onClick={() => openSlider(EditCase, { caseID: id })}
           />
         )}
       </SlidingPanelConsumer>
@@ -146,7 +146,12 @@ const CasesPanel = () => (
           if (error) return <div>`${error.message}`</div>
 
           return data.case.map(_case => (
-            <CaseCard key={_case.uuid} name={_case.name} missingSince={_case.missing_since} />
+            <CaseCard
+              key={_case.uuid}
+              id={_case.uuid}
+              name={_case.name}
+              missingSince={_case.missing_since}
+            />
           ))
         }}
       </Query>
