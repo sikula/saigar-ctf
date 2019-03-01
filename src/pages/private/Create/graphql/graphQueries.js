@@ -40,15 +40,49 @@ const CREATE_EVENT_MUTATION = gql`
 const CASES_QUERY = gql`
   query getCases {
     case {
+      uuid
       name
       missing_since
     }
   }
 `
 
-// const EDIT_CASE_MUTATION = gql`
-//   mutation {}
-// `
+const CASE_QUERY = gql`
+  query caseInfo($caseID: uuid) {
+    event_case(where: { case_id: { _eq: $caseID } }) {
+      event_id
+      case {
+        uuid
+        name
+        missing_since
+        missing_from
+        dob
+        age
+        height
+        weight
+        characteristics
+        disappearance_details
+        other_notes
+      }
+    }
+  }
+`
+
+const EDIT_EVENT_CASE_MUTATION = gql`
+  mutation editEventCase($eventID: uuid, $caseID: uuid) {
+    update_event_case(_set: { event_id: $eventID }, where: { case_id: { _eq: $caseID } }) {
+      affected_rows
+    }
+  }
+`
+
+const EDIT_CASE_MUTATION = gql`
+  mutation editCase($caseID: uuid, $input: case_set_input!) {
+    update_case(_set: $input, where: { uuid: { _eq: $caseID } }) {
+      affected_rows
+    }
+  }
+`
 
 const CREATE_CASE_MUTATION = gql`
   mutation createCase($eventID: uuid!, $caseData: case_insert_input!) {
@@ -63,5 +97,8 @@ export {
   EDIT_EVENT_MUTATION,
   CREATE_EVENT_MUTATION,
   CASES_QUERY,
+  CASE_QUERY,
+  EDIT_EVENT_CASE_MUTATION,
+  EDIT_CASE_MUTATION,
   CREATE_CASE_MUTATION,
 }
