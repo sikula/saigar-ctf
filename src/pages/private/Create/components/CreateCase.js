@@ -8,7 +8,7 @@ import { IconNames } from '@blueprintjs/icons'
 
 // Custom custom component
 import { SlidingPane } from '../../../../_Common/components/SlidingPane'
-import { CREATE_CASE_MUTATION } from '../graphql/graphQueries'
+import { CASES_QUERY, CREATE_CASE_MUTATION } from '../graphql/graphQueries'
 import CreateCaseForm from './CreateCase-form'
 
 
@@ -27,7 +27,7 @@ const CreateCase = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Mutation mutation={CREATE_CASE_MUTATION}>
+      <Mutation mutation={CREATE_CASE_MUTATION} refetchQueries={[{ query: CASES_QUERY }]}>
         {insert_event_case => (
           <Formik
             initialValues={{
@@ -43,7 +43,6 @@ const CreateCase = ({ isOpen, onRequestClose, ...otherProps }) => (
               disappearance_details: '',
               other_notes: '',
             }}
-            // validationSchema={CreateCaseSchema}
             onSubmit={values => {
               const { eventID, ...rest } = values
               insert_event_case({
