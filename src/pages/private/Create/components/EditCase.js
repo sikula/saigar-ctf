@@ -49,6 +49,12 @@ const ComposedMutations = adopt({
   updateCase,
 })
 
+/*
+  @NOTE(Peter):
+    I wonder if there might be a way to reduce the payload when, lets say,
+    only one field is updated.  I don't really think it matters too much,
+    but would be interesting as an exercise
+*/
 const EditCase = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
     isOpen={isOpen}
