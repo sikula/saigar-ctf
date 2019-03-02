@@ -20,6 +20,9 @@ const AsyncCreatePage = React.lazy(() =>
 const AsyncSubmissionPage = React.lazy(() =>
   import(/* webpackChunkName: "SubmissionPage" */ './private/Submission'),
 )
+const AsyncChallengesPage = React.lazy(() =>
+  import(/* webpackChunkName: "ChallengesPage" */ './private/Challenges'),
+)
 const AsyncScoreboardPage = React.lazy(() =>
   import(/* webpackChunkName: "ScoreBoardPage" */ './public/ScoreBoard'),
 )
@@ -61,7 +64,7 @@ const CtfRoutes = ({ match }) => (
       exact
       path={`${match.url}challenges`}
       layout={DefaultLayout}
-      component={<div>HELLO WORLD</div>}
+      component={AsyncChallengesPage}
     />
 
     {/* PUBLIC ROUTES */}
