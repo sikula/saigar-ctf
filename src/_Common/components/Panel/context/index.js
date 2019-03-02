@@ -35,7 +35,6 @@ export class PanelProvider extends React.Component {
 
   render() {
     const { children } = this.props
-    console.log(this.state)
     return <PanelContext.Provider value={this.state}>{children}</PanelContext.Provider>
   }
 }

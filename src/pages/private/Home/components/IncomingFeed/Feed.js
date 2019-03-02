@@ -71,7 +71,7 @@ const SubmissionItem = ({ data }) => (
                 onClick={() =>
                   update_submission({
                     variables: {
-                      submissionID: data.id,
+                      submissionID: data.uuid,
                       value: 'ACCEPTED', // processed = ACCEPTED
                     },
                   })
@@ -84,7 +84,7 @@ const SubmissionItem = ({ data }) => (
                 onClick={() =>
                   update_submission({
                     variables: {
-                      submissionID: data.id,
+                      submissionID: data.uuid,
                       value: 'REJECTED', // processed = REJECTED
                     },
                   })
