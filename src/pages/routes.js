@@ -27,6 +27,7 @@ const AsyncScoreboardPage = React.lazy(() =>
 const CtfRoutes = ({ match }) => (
   <Switch>
     <Redirect exact from="/" to="/home" />
+    {/* ADMIN ROUTES */}
     <PrivateRoute
       exact
       path={`${match.url}home`}
@@ -45,6 +46,25 @@ const CtfRoutes = ({ match }) => (
       layout={props => <div {...props} />}
       component={AsyncSubmissionPage}
     />
+
+    {/* JUDGE ROUTES */}
+    {/* Judge & Admin homepage is the same */}
+    <PrivateRoute
+      exact
+      path={`${match.url}home`}
+      layout={props => <DefaultLayout showFeed {...props} feed={<IncomingFeed />} />}
+      component={AsyncHomePage}
+    />
+
+    {/* CONTESTANT ROUTES !! TEMPORARY !! */}
+    <PrivateRoute
+      exact
+      path={`${match.url}challenges`}
+      layout={DefaultLayout}
+      component={<div>HELLO WORLD</div>}
+    />
+
+    {/* PUBLIC ROUTES */}
     <PublicRoute
       exact
       path={`${match.url}scoreboard`}
