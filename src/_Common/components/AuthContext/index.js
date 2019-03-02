@@ -19,15 +19,15 @@ class Auth extends React.Component {
   }
 
   logout = () => {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('id_token')
+    localStorage.removeItem('expires_at')
+
     this.setState({
       authenticated: false,
       user: {},
       accessToken: '',
     })
-
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('id_token')
-    localStorage.removeItem('expires_at')
 
     auth.logout({
       returnTo: 'http://localhost:8084/logout',
