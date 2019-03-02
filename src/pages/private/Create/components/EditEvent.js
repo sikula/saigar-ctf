@@ -1,18 +1,15 @@
 import React from 'react'
-import { Query, Mutation } from 'react-apollo'
+import { Mutation } from 'react-apollo'
 import { Formik } from 'formik'
-import * as Yup from 'yup'
 
 // Styles
-import { Icon, FormGroup, InputGroup } from '@blueprintjs/core'
+import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
-import { DateInput } from '@blueprintjs/datetime'
 
 // Custom Components
 import { SlidingPane } from '../../../../_Common/components/SlidingPane'
 import { EDIT_EVENT_MUTATION, EVENTS_QUERY } from '../graphql/graphQueries'
 import EditEventForm from './EditEvent-form'
-
 
 const EditEvent = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
