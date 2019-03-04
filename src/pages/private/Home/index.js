@@ -1,10 +1,10 @@
 import React from 'react'
-import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
 import { Query } from 'react-apollo'
+import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
 
 import ScoreGraph from '../../../features/ScoreGraph'
-
 import { HOME_QUERY } from './graphql/adminQueries'
+import Can from '../../../_Common/components/AuthContext/Can'
 
 import './index.scss'
 
@@ -128,7 +128,7 @@ class Countdown extends React.Component {
   }
 }
 
-const HomePage = () => (
+const HomePageData = () => (
   <Query query={HOME_QUERY}>
     {({ data, loading, error }) => {
       if (loading) return <div>Loading...</div>
@@ -192,5 +192,7 @@ const HomePage = () => (
     }}
   </Query>
 )
+
+const HomePage = () => <Can role={'ctf_admin' || 'judge'} yes={() => <HomePageData />} />
 
 export default HomePage
