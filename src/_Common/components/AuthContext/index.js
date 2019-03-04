@@ -23,16 +23,16 @@ class Auth extends React.Component {
     localStorage.removeItem('id_token')
     localStorage.removeItem('expires_at')
 
-    this.setState({
-      authenticated: false,
-      user: {},
-      accessToken: '',
-    })
-
     auth.logout({
       returnTo: 'http://localhost:8084/logout',
       clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
     })
+
+    // this.setState({
+    //   authenticated: false,
+    //   user: {},
+    //   accessToken: '',
+    // })
   }
 
   handleAuthentication = () =>
