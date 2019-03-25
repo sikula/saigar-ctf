@@ -6,7 +6,7 @@ import { AuthProvider } from './context'
 const auth = new auth0.WebAuth({
   domain: 'sikulatest.auth0.com',
   clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
-  redirectUri: process.env.AUTH0_REDIRECT_URI,
+  redirectUri: 'http://localhost:5000/authcallback',
   responseType: 'token id_token',
   scope: 'openid profile email',
 })
@@ -24,7 +24,7 @@ class Auth extends React.Component {
     localStorage.removeItem('expires_at')
 
     auth.logout({
-      returnTo: 'http://localhost:8084/logout',
+      returnTo: 'http://localhost:5000/logout',
       clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
     })
 
