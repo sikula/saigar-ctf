@@ -5,7 +5,7 @@ import { AuthConsumer } from '../AuthContext/context'
 const AuthCallback = ({ history }) => (
   <AuthConsumer>
     {({ handleAuthentication }) => {
-      const url = JSON.parse(localStorage.getItem('redirectBackTo') || '/home')
+      const url = JSON.parse(localStorage.getItem('redirectBackTo')) || '/home'
       handleAuthentication().then(res => {
         const { groups } = res.idTokenPayload['https://ctf.saigar.io/roles']
         if (groups.includes('ctf_admin')) history.replace(url)
