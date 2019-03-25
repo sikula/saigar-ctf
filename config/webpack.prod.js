@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const Dotenv = require('dotenv-webpack')
 
 const config = {
   devtool: 'source-map',
@@ -36,6 +37,7 @@ const plugins = [
     },
     chunksSortMode: 'auto',
   }),
+  new Dotenv({ safe: true, path: '.env.prod' }),
 ]
 
 const Config = {
