@@ -41,7 +41,7 @@ const plugins = [
   }),
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
-  // new Dotenv({ safe: true }),
+  new Dotenv({ safe: true, path: '.env.dev' }),
   // new BundleAnalyzerPlugin(),
 ]
 

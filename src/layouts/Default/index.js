@@ -29,13 +29,30 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
             </a>
           </li>
         </UL>
-        <UL>
-          <li className={pathname === '/home' ? 'active' : ''}>
-            <Link to="home">
-              <Icon icon={IconNames.HOME} iconSize={20} />
-            </Link>
-          </li>
-        </UL>
+        <Can
+          role={'ctf_admin' || 'judge'}
+          yes={() => (
+            <UL>
+              <li className={pathname === '/home' ? 'active' : ''}>
+                <Link to="home">
+                  <Icon icon={IconNames.HOME} iconSize={20} />
+                </Link>
+              </li>
+            </UL>
+          )}
+        />
+        <Can
+          role="contestant"
+          yes={() => (
+            <UL>
+              <li className={pathname === '/challenges' ? 'active' : ''}>
+                <Link to="challenges">
+                  <Icon icon={IconNames.FOLDER_OPEN} iconSize={20} />
+                </Link>
+              </li>
+            </UL>
+          )}
+        />
         <Can
           role="ctf_admin"
           yes={() => (
