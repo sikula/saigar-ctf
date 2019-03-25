@@ -6,7 +6,7 @@ import { AuthProvider } from './context'
 const auth = new auth0.WebAuth({
   domain: 'sikulatest.auth0.com',
   clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
-  redirectUri: 'http://localhost:8084/authcallback',
+  redirectUri: process.env.AUTH0_REDIRECT_URI,
   responseType: 'token id_token',
   scope: 'openid profile email',
 })

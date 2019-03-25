@@ -1,1 +1,1 @@
-web: yarn workspace saigar-ctf start
+web: yarn run start

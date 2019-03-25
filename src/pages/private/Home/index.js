@@ -1,10 +1,10 @@
 import React from 'react'
-import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
 import { Query } from 'react-apollo'
+import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
 
 import ScoreGraph from '../../../features/ScoreGraph'
-
 import { HOME_QUERY } from './graphql/adminQueries'
+import Can from '../../../_Common/components/AuthContext/Can'
 
 import './index.scss'
 
@@ -128,7 +128,7 @@ class Countdown extends React.Component {
   }
 }
 
-const HomePage = () => (
+const HomePageData = () => (
   <Query query={HOME_QUERY}>
     {({ data, loading, error }) => {
       if (loading) return <div>Loading...</div>
@@ -147,7 +147,7 @@ const HomePage = () => (
                   style={{ backgroundColor: '#FFFFFF', color: '#394B59', height: '100%' }}
                 >
                   <h1 style={{ color: '#5C7080', fontWeight: '350', textAlign: 'center' }}>
-                    Welcome, Robert!
+                    Welcome, Admin!
                   </h1>
                   {/* <h3 style={{ color: '#738694', fontWeight: 'normal', textAlign: 'center' }}>
                     Please review the following cases
@@ -182,7 +182,7 @@ const HomePage = () => (
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" animate>
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
-                  <Tab id="statistics" title="Statistics" panel={<div>goodbye</div>} />
+                  <Tab id="statistics" title="Statistics" panel={<div>nothing yet</div>} />
                 </Tabs>
               </div>
             </div>
@@ -192,5 +192,7 @@ const HomePage = () => (
     }}
   </Query>
 )
+
+const HomePage = () => <Can role={'ctf_admin' || 'judge'} yes={() => <HomePageData />} />
 
 export default HomePage

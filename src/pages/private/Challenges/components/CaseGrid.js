@@ -4,6 +4,9 @@ import FlipMove from 'react-flip-move'
 // Custom Components
 import CaseCard from './CaseCard'
 
+// styles
+import '../index.scss'
+
 const CaseGrid = ({ cases }) => (
   <FlipMove className="case-card__grid" duration={500}>
     {cases.map(_case => (

@@ -32,14 +32,14 @@ import { PanelProvider, PanelRoot } from '../../_Common/components/Panel'
 // const TestComponent = React.lazy(() => import(/* webpackChunkName: "TestComponent */ './TestComponentt'))
 
 const LoginPage = ({ location }) => {
-  const redirectTo = location.state.from || { from: { pathname: '/' } }
+  const redirectTo = location.state ? location.state.from : { from: { pathname: '/' } }
   localStorage.setItem('redirectBackTo', JSON.stringify(redirectTo))
   return (
     <AuthConsumer>
       {({ initiateLogin }) => {
         initiateLogin()
 
-        return <div>Loading..../</div>
+        return <div>Loading....</div>
       }}
     </AuthConsumer>
   )
