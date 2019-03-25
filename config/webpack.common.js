@@ -62,8 +62,7 @@ const optimizations = {
 const rules = [
   {
     test: /\.js$/,
-    // include: /node_modules\/@saigar/,
-    include: [/node_modules\/@saigar/, path.resolve(__dirname, '../src')],
+    exclude: /node_modules/,
     loader: 'babel-loader',
     query: {
       presets: [
@@ -71,6 +70,9 @@ const rules = [
           '@babel/env',
           {
             useBuiltIns: 'usage',
+            targets: {
+              node: 'current',
+            },
           },
         ],
         '@babel/react',

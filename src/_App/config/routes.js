@@ -39,7 +39,7 @@ const LoginPage = ({ location }) => {
       {({ initiateLogin }) => {
         initiateLogin()
 
-        return <div>Loading..../</div>
+        return <div>Loading....</div>
       }}
     </AuthConsumer>
   )

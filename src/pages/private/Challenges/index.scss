@@ -1,0 +1,57 @@
+@import '../../../_Design/index.scss';
+$case-grid-gutter: $space-l;
+
+
+#case-card {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.case-view {
+    &__controls {
+        margin-top: $space-xl;
+        margin-bottom: $space-xl;
+        background: $color-light2;
+        // border-bottom: 1px solid  $color-medium3; 
+        border-bottom: 1px solid #E0E6EC;
+        border-radius: 0;
+        padding: 0 $space-m;
+        height: 56px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        // box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.1), 0 0 0 rgba(16, 22, 26, 0), 0 1px 1px rgba(16, 22, 26, 0.2)
+        box-shadow: none;
+    }
+}
+
+.case-card {
+    &__grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-right: -$space-l;
+        padding: 1em;
+    }
+
+    &__wrapper {
+        width: calc(25% - #{$case-grid-gutter});
+        margin-right: $case-grid-gutter;
+        margin-bottom: $case-grid-gutter;
+        border: 1px solid $color-light1;; 
+        overflow: hidden;  
+    }
+
+    &__actions {
+        width: calc(100% + 2px);
+        margin-left: -1px;
+        padding: 12px;
+        background: $color-light1;
+        border-top: 1px solid  $color-light2;
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px; 
+        justify-content: space-evenly;
+        display: flex;
+        overflow: hidden;
+    }
+}

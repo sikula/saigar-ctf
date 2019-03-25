@@ -9,6 +9,9 @@ import { IconNames } from '@blueprintjs/icons'
 import { SlidingPanelConsumer } from '../../../../_Common/components/SlidingPane'
 import NewSubmission from './NewSubmission'
 
+// styles
+import '../index.scss'
+
 const NewSubmissionButton = ({ id }) => (
   <SlidingPanelConsumer>
     {({ openSlider }) => (

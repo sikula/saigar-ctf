@@ -147,7 +147,7 @@ const HomePageData = () => (
                   style={{ backgroundColor: '#FFFFFF', color: '#394B59', height: '100%' }}
                 >
                   <h1 style={{ color: '#5C7080', fontWeight: '350', textAlign: 'center' }}>
-                    Welcome, Robert!
+                    Welcome, Admin!
                   </h1>
                   {/* <h3 style={{ color: '#738694', fontWeight: 'normal', textAlign: 'center' }}>
                     Please review the following cases
@@ -182,7 +182,7 @@ const HomePageData = () => (
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" animate>
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
-                  <Tab id="statistics" title="Statistics" panel={<div>goodbye</div>} />
+                  <Tab id="statistics" title="Statistics" panel={<div>nothing yet</div>} />
                 </Tabs>
               </div>
             </div>
