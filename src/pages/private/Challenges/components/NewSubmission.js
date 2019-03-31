@@ -1,6 +1,8 @@
 import React from 'react'
-import { Mutation } from 'react-apollo'
+import { Query, Mutation } from 'react-apollo'
 import { Formik } from 'formik'
+import { isWithinRange } from 'date-fns'
+import { adopt } from 'react-adopt'
 
 // Styles
 import { Icon } from '@blueprintjs/core'
@@ -9,7 +11,16 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom Components
 import { SlidingPane } from '../../../../_Common/components/SlidingPane'
 import NewSubmissionForm from './NewSubmission-form'
-import { NEW_SUBMISSION_MUTATION } from '../graphql/queries'
+import { NEW_SUBMISSION_MUTATION, SUBMISSION_CONFIGURATION } from '../graphql/queries'
+
+// const NewSubmissionContainer = adopt({
+//   event: <Query query={SUBMISSION_CONFIGURATION} />,
+//   newSubmission: ({ render }) => (
+//     <Mutation mutation={NEW_SUBMISSION_MUTATION}>
+//       {(mutation, result) => render({ mutation, result })}
+//     </Mutation>
+//   ),
+// })
 
 const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane

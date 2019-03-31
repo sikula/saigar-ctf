@@ -6,7 +6,8 @@ import { AuthProvider } from './context'
 const auth = new auth0.WebAuth({
   domain: 'sikulatest.auth0.com',
   clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
-  redirectUri: 'https://saigar-ctf-demo.herokuapp.com/authcallback',
+  // redirectUri: 'https://saigar-ctf-demo.herokuapp.com/authcallback',
+  redirectUri: 'http://localhost:8084/authcallback',
   responseType: 'token id_token',
   scope: 'openid profile email',
 })
