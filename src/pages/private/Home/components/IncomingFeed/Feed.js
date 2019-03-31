@@ -45,14 +45,22 @@ const SubmissionItem = ({ data }) => (
               justifyContent: 'space-between',
             }}
           >
-            <Tag>{SUBMISSION_TYPES[data.category] || ''}</Tag>
+            <Tag>{SUBMISSION_TYPES[data.submissionConfigurationByconfigId.category] || ''}</Tag>
             <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
           </span>
           <span style={{ paddingTop: '8px', paddingBottom: '8px' }}>
             <a href={data.content}>{data.content}</a>
           </span>
           <span>{data.explanation}</span>
-          <div style={{ textAlign: 'right' }}>
+          <div
+            style={{
+              textAlign: 'right',
+              display: 'inline-flex',
+              justifyContent: 'space-between',
+              marginTop: 8,
+            }}
+          >
+            <strong>{data.case.name}</strong>
             <PanelConsumer>
               {({ showPanel }) => (
                 <a type="button" onClick={() => showPanel(FeedPanel, data)}>

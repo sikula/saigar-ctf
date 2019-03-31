@@ -18,6 +18,12 @@ const LIVE_FEED = gql`
         content
         category
         explanation
+        case {
+          name
+        }
+        submissionConfigurationByconfigId {
+          category
+        }
         teamByteamId {
           name
         }
@@ -35,6 +41,12 @@ const LIVE_FEED_FILTERED = gql`
         content
         category
         explanation
+        case {
+          name
+        }
+        submissionConfigurationByconfigId {
+          category
+        }
         teamByteamId {
           name
         }

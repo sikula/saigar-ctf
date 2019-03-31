@@ -1,34 +1,45 @@
 import React from 'react'
+import { Query } from 'react-apollo'
+import { isWithinRange } from 'date-fns'
 import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
 
-const SUBMISSION_TYPE = {
-  FAMILY: 'Family',
-  FRIENDS: 'Friends',
-  HOME: 'Home',
-  EMPLOYMENT: 'Employment',
-  BASIC_SUBJECT_INFO: 'Basic Subject Info',
-  ADVANCED_SUBJECT_INFO: 'Advanced Subject Info',
-  LOCATION: 'Location',
-  DAY_LAST_SEEN: 'Day Last Seen',
-  DARK_WEB: 'Dark Web',
-}
+import { SUBMISSION_CONFIGURATION } from '../graphql/queries'
 
 const NewSubmissionForm = ({ handleSubmit, handleChange, values }) => (
-  <form id="newSubmissionForm" onSubmit={handleSubmit}>
-    <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
-      <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
-        {Object.entries(SUBMISSION_TYPE).map(([key, value]) => (
-          <option value={key}>{value}</option>
-        ))}
-      </HTMLSelect>
-    </FormGroup>
-    <FormGroup label="Proof" labelInfo="(required)" labelFor="text-input">
-      <TextArea name="proof" fill value={values.proof} onChange={handleChange} />
-    </FormGroup>
-    <FormGroup label="Explanation" labelInfo="(required)" labelFor="text-input">
-      <TextArea name="explanation" fill value={values.explanation} onChange={handleChange} />
-    </FormGroup>
-  </form>
+  <Query query={SUBMISSION_CONFIGURATION}>
+    {({ error, loading, data }) => {
+      if (loading) return null
+      if (error) return null
+
+      const canCreateSubmission = isWithinRange(
+        new Date(data.event.start_time),
+        new Date(),
+        new Date(data.event.end_time),
+      )
+
+      return canCreateSubmission ? (
+        <form id="newSubmissionForm" onSubmit={handleSubmit}>
+          <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
+            <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
+              {data.submission_configuration.map(config => (
+                <option id={config.uuid} value={config.category}>{`${config.category} (${
+                  config.points
+                } pts.)`}</option>
+              ))}
+            </HTMLSelect>
+          </FormGroup>
+          <FormGroup label="Proof" labelInfo="(required)" labelFor="text-input">
+            <TextArea name="proof" fill value={values.proof} onChange={handleChange} />
+          </FormGroup>
+          <FormGroup label="Explanation" labelInfo="(required)" labelFor="text-input">
+            <TextArea name="explanation" fill value={values.explanation} onChange={handleChange} />
+          </FormGroup>
+        </form>
+      ) : (
+        <div>Competition is over</div>
+      )
+    }}
+  </Query>
 )
 
 export default NewSubmissionForm
