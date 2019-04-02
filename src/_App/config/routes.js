@@ -16,6 +16,7 @@ import CtfRoutes from '@pages/routes'
 /* React Router History */
 import history from './history'
 
+import { SlidingPanelRoot, SlidingPanelProvider } from '../../_Common/components/SlidingPane'
 import { PanelProvider, PanelRoot } from '../../_Common/components/Panel'
 
 /*
@@ -48,25 +49,28 @@ const LoginPage = ({ location }) => {
 const configureRoutes = () => (
   <Router history={history}>
     <React.Suspense fallback={<div>Loading...</div>}>
-      <PanelProvider>
-        {/* SPECIAL ROUTES */}
-        <Switch>
-          <Route exact path="/authcallback" render={AuthCallback} />
-          <Route exact path="/login" render={LoginPage} />
-          <Route
-            exact
-            path="/logout"
-            render={props => (
-              <AuthConsumer>
-                {({ logout }) => <Button text="logout" onClick={logout} />}
-              </AuthConsumer>
-            )}
-          />
-          <Route path="/" component={CtfRoutes} />
-          <Route component={NotFound} />
-        </Switch>
-        <PanelRoot />
-      </PanelProvider>
+      <SlidingPanelProvider>
+        <PanelProvider>
+          {/* SPECIAL ROUTES */}
+          <Switch>
+            <Route exact path="/authcallback" render={AuthCallback} />
+            <Route exact path="/login" render={LoginPage} />
+            <Route
+              exact
+              path="/logout"
+              render={props => (
+                <AuthConsumer>
+                  {({ logout }) => <Button text="logout" onClick={logout} />}
+                </AuthConsumer>
+              )}
+            />
+            <Route path="/" component={CtfRoutes} />
+            <Route component={NotFound} />
+          </Switch>
+          <PanelRoot />
+        </PanelProvider>
+        <SlidingPanelRoot />
+      </SlidingPanelProvider>
     </React.Suspense>
   </Router>
 )

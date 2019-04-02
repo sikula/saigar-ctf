@@ -3,10 +3,10 @@ import { Query } from 'react-apollo'
 import { isWithinRange } from 'date-fns'
 import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
 
-import { SUBMISSION_CONFIGURATION } from '../graphql/queries'
+import { SUBMISION_INFO } from '../graphql/queries'
 
 const NewSubmissionForm = ({ handleSubmit, handleChange, values }) => (
-  <Query query={SUBMISSION_CONFIGURATION}>
+  <Query query={SUBMISION_INFO} fetchPolicy="cache-first">
     {({ error, loading, data }) => {
       if (loading) return null
       if (error) return null
@@ -17,14 +17,14 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values }) => (
         new Date(data.event.end_time),
       )
 
-      return canCreateSubmission ? (
+      return !canCreateSubmission ? (
         <form id="newSubmissionForm" onSubmit={handleSubmit}>
           <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
             <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
               {data.submission_configuration.map(config => (
-                <option id={config.uuid} value={config.category}>{`${config.category} (${
-                  config.points
-                } pts.)`}</option>
+                <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+                  config.category
+                } (${config.points} pts.)`}</option>
               ))}
             </HTMLSelect>
           </FormGroup>

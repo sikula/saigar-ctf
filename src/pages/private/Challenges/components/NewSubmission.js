@@ -11,16 +11,16 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom Components
 import { SlidingPane } from '../../../../_Common/components/SlidingPane'
 import NewSubmissionForm from './NewSubmission-form'
-import { NEW_SUBMISSION_MUTATION, SUBMISSION_CONFIGURATION } from '../graphql/queries'
+import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO } from '../graphql/queries'
 
-// const NewSubmissionContainer = adopt({
-//   event: <Query query={SUBMISSION_CONFIGURATION} />,
-//   newSubmission: ({ render }) => (
-//     <Mutation mutation={NEW_SUBMISSION_MUTATION}>
-//       {(mutation, result) => render({ mutation, result })}
-//     </Mutation>
-//   ),
-// })
+const NewSubmissionContainer = adopt({
+  submissionInfo: ({ render }) => <Query query={SUBMISION_INFO}>{render}</Query>,
+  newSubmission: ({ render }) => (
+    <Mutation mutation={NEW_SUBMISSION_MUTATION}>
+      {(mutation, result) => render({ mutation, result })}
+    </Mutation>
+  ),
+})
 
 const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
@@ -36,27 +36,33 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Mutation mutation={NEW_SUBMISSION_MUTATION}>
-        {insert_submission => (
-          <Formik
-            initialValues={{
-              category: '',
-              proof: '',
-              explanation: '',
-            }}
-            onSubmit={values =>
-              insert_submission({
-                variables: {
-                  category: values.category,
-                  content: values.proof,
-                  explanation: values.explanation,
-                },
-              })
-            }
-            render={formikProps => <NewSubmissionForm {...formikProps} />}
-          />
-        )}
-      </Mutation>
+      <NewSubmissionContainer>
+        {({ submissionInfo: { data, loading, error }, newSubmission }) => {
+          if (loading) return null
+          if (error) return null
+          return (
+            <Formik
+              initialValues={{
+                proof: '',
+                explanation: '',
+              }}
+              onSubmit={values =>
+                newSubmission.mutation({
+                  variables: {
+                    content: values.proof,
+                    explanation: values.explanation,
+                    teamId: data.user_team[0].team.uuid,
+                    eventId: data.event[0].uuid,
+                    caseId: otherProps.caseID,
+                    configId: values.category,
+                  },
+                })
+              }
+              render={formikProps => <NewSubmissionForm {...formikProps} />}
+            />
+          )
+        }}
+      </NewSubmissionContainer>
     </SlidingPane.Content>
 
     <SlidingPane.Actions form="newSubmissionForm">SUBMIT</SlidingPane.Actions>
