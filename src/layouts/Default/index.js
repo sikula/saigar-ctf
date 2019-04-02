@@ -45,6 +45,18 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           role="contestant"
           yes={() => (
             <UL>
+              <li>
+                <a href="#">
+                  <Icon icon={IconNames.HELP} iconSize={20} />
+                </a>
+              </li>
+            </UL>
+          )}
+        />
+        <Can
+          role="contestant"
+          yes={() => (
+            <UL>
               <li className={pathname === '/challenges' ? 'active' : ''}>
                 <Link to="challenges">
                   <Icon icon={IconNames.FOLDER_OPEN} iconSize={20} />

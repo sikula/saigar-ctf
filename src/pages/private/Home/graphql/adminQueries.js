@@ -12,11 +12,10 @@ const HOME_QUERY = gql`
 const LIVE_FEED = gql`
   subscription liveFeed($teams: [uuid]) {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { processed: { _eq: "PENDING" } }) {
+      submissions(where: { processed: { _eq: "PENDING" } }, order_by: { submitted_at: desc }) {
         uuid
         processed
         content
-        category
         explanation
         case {
           name
@@ -35,11 +34,13 @@ const LIVE_FEED = gql`
 const LIVE_FEED_FILTERED = gql`
   subscription liveFeedFilter($teams: [uuid]) {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }) {
+      submissions(
+        where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
+        order_by: { submitted_at: desc }
+      ) {
         uuid
         processed
         content
-        category
         explanation
         case {
           name
