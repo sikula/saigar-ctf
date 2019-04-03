@@ -2,8 +2,8 @@ import React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 
 /* Custom Routes */
-import PrivateRoute from '@common/components/PrivateRoute'
-import PublicRoute from '@common/components/PublicRoute'
+import PrivateRoute from '@shared/routes/PrivateRoute'
+import PublicRoute from '@shared/routes/PublicRoute'
 
 /* Layouts */
 import DefaultLayout from '../layouts/Default'

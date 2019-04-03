@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { AuthConsumer } from '../AuthContext/context'
+import { AuthConsumer } from '../../components/AuthContext/context'
 
 const AuthCallback = ({ history }) => (
   <AuthConsumer>

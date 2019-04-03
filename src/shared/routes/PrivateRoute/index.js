@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom'
 
 import { injectAsyncReducer } from '@app/config/reducer'
 import configureStore from '@app/config/store'
-import { AuthConsumer } from '../AuthContext/context'
+import { AuthConsumer } from '../../components/AuthContext/context'
 
 const PrivateRoute = ({ layout: Layout, component: Component, featureName, ...rest }) => (
   /*
