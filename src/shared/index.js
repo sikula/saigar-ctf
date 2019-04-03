@@ -1,8 +1,8 @@
 // Routes
-export { default as AuthRoute } from './components/AuthRoute'
-export { default as NotFound } from './components/NotFound'
-export { default as PublicRoute } from './components/PublicRoute'
-export { default as PrivateRoute } from './components/PrivateRoute'
+export { default as AuthRoute } from './routes/AuthRoute'
+export { default as NotFound } from './routes/NotFound'
+export { default as PublicRoute } from './routes/PublicRoute'
+export { default as PrivateRoute } from './routes/PrivateRoute'
 
 // General type components
 export { default as AuthContext } from './components/AuthContext'

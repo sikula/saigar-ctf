@@ -7,10 +7,10 @@ import { Button } from '@blueprintjs/core'
 
 // import Auth from '@common/components/AuthContext'
 
-import AuthCallback from '@common/components/AuthRoute'
-import NotFound from '@common/components/NotFound'
+import AuthCallback from '@shared/routes/AuthRoute'
+import NotFound from '@shared/routes/NotFound'
 
-import { AuthConsumer } from '@common/components/AuthContext/context'
+import { AuthConsumer } from '@shared/components/AuthContext/context'
 import CtfRoutes from '@pages/routes'
 
 /* React Router History */

@@ -4,7 +4,7 @@ import { ApolloProvider } from 'react-apollo'
 import { Provider } from 'react-redux'
 import { hot } from 'react-hot-loader'
 
-import Auth from '@common/components/AuthContext'
+import Auth from '@shared/components/AuthContext'
 
 import configureRoutes from '@app/config/routes'
 import configureClient from '@app/config/client'
