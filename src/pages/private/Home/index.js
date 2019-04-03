@@ -4,7 +4,7 @@ import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
 
 import ScoreGraph from '../../../features/ScoreGraph'
 import { HOME_QUERY } from './graphql/adminQueries'
-import Can from '../../../_Common/components/AuthContext/Can'
+import Can from '../../../shared/components/AuthContext/Can'
 
 import './index.scss'
 
@@ -128,7 +128,7 @@ class Countdown extends React.Component {
   }
 }
 
-const HomePageData = () => (
+const HomePageData = props => (
   <Query query={HOME_QUERY}>
     {({ data, loading, error }) => {
       if (loading) return <div>Loading...</div>

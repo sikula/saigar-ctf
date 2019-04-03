@@ -6,11 +6,11 @@ import { Card, Button, Tabs, Tab, Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPanelConsumer } from '../../../_Common/components/SlidingPane'
 import { CreateCase, EditCase, CreateEvent, EditEvent } from './components'
 import { EVENTS_QUERY, CASES_QUERY } from './graphql/graphQueries'
 
-import Can from '../../../_Common/components/AuthContext/Can'
+import { SlidingPanelConsumer } from '../../../shared/components/SlidingPane'
+import Can from '../../../shared/components/AuthContext/Can'
 
 import './index.scss'
 

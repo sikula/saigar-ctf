@@ -7,7 +7,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../_Common/components/SlidingPane'
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
 import { EDIT_EVENT_MUTATION, EVENTS_QUERY } from '../graphql/graphQueries'
 import EditEventForm from './EditEvent-form'
 

@@ -9,7 +9,7 @@ import { IconNames } from '@blueprintjs/icons'
 
 import { LIVE_FEED, LIVE_FEED_FILTERED, PROCESS_SUBMISSION } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
-import { PanelConsumer } from '../../../../../_Common/components/Panel'
+import { PanelConsumer } from '../../../../../shared/components/Panel'
 
 const SUBMISSION_TYPES = {
   DARK_WEB: 'Dark Web',

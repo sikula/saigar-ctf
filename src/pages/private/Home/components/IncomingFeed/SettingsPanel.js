@@ -1,16 +1,16 @@
 import React from 'react'
-import { Query, withApollo } from 'react-apollo'
-import { bindActionCreators, compose } from 'redux'
+import { Query } from 'react-apollo'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+
 // Styles
 import { Button, Icon, Switch } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
-import { PanelConsumer } from '../../../../../_Common/components/Panel'
+import { PanelConsumer } from '../../../../../shared/components/Panel'
 import { GET_TEAMS } from '../../graphql/adminQueries'
 import { actions as actionCreators } from '../../redux'
-import { from } from 'zen-observable';
 
 function mapStateToProps(state) {
   return {

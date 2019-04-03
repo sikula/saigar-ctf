@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout, Fixed, Flex } from 'react-layout-pane'
-import { AuthConsumer } from '../../_Common/components/AuthContext/context'
+import { AuthConsumer } from '../../shared/components/AuthContext/context'
 
 import './index.scss'
 

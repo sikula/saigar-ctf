@@ -141,11 +141,8 @@ const common = {
     alias: {
       '@app': path.resolve(__dirname, '../src/_App'),
       '@features': path.resolve(__dirname, '../src/features'),
-      '@common': path.resolve(__dirname, '../src/_Common'),
-      '@shared': path.resolve(__dirname, '../src/_Shared'),
-      '@layouts': path.resolve(__dirname, '../src/_Layouts'),
+      '@common': path.resolve(__dirname, '../src/shared'),
       '@utils': path.resolve(__dirname, '../src/utils'),
-      '@services': path.resolve(__dirname, '../src/services'),
       '@pages': path.resolve(__dirname, '../src/pages'),
     },
   },

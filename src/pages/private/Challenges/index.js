@@ -4,7 +4,7 @@ import { Query } from 'react-apollo'
 // Custom Components
 import CaseGrid from './components/CaseGrid'
 import { CASE_LIST } from './graphql/queries'
-import Can from '../../../_Common/components/AuthContext/Can'
+import Can from '../../../shared/components/AuthContext/Can'
 
 const ChallengesPage = () => (
   <Can

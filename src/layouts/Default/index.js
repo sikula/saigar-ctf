@@ -4,8 +4,8 @@ import { Layout, Flex, Fixed } from 'react-layout-pane'
 import { Icon, UL } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 import '../../_Design/index.scss'
-import { AuthConsumer } from '../../_Common/components/AuthContext/context'
-import Can from '../../_Common/components/AuthContext/Can'
+import { AuthConsumer } from '../../shared/components/AuthContext/context'
+import Can from '../../shared/components/AuthContext/Can'
 
 import './index.scss'
 
@@ -37,18 +37,6 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
                 <Link to="home">
                   <Icon icon={IconNames.HOME} iconSize={20} />
                 </Link>
-              </li>
-            </UL>
-          )}
-        />
-        <Can
-          role="contestant"
-          yes={() => (
-            <UL>
-              <li>
-                <a href="#">
-                  <Icon icon={IconNames.HELP} iconSize={20} />
-                </a>
               </li>
             </UL>
           )}

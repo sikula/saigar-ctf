@@ -5,7 +5,7 @@ import { Formik } from 'formik'
 import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
-import { SlidingPane } from '../../../../_Common/components/SlidingPane'
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
 import { EVENTS_QUERY, CREATE_EVENT_MUTATION } from '../graphql/graphQueries'
 import CreateEventForm from './CreateEvent-form'
 

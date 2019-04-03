@@ -7,7 +7,7 @@ import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
 import { PROCESS_SUBMISSION } from '../../graphql/adminQueries'
-import { PanelConsumer } from '../../../../../_Common/components/Panel'
+import { PanelConsumer } from '../../../../../shared/components/Panel'
 
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
