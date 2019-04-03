@@ -9,7 +9,7 @@ import { Icon, Button } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../_Common/components/SlidingPane'
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
 import {
   EDIT_EVENT_CASE_MUTATION,
   EDIT_CASE_MUTATION,

@@ -9,7 +9,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../_Common/components/SlidingPane'
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
 import NewSubmissionForm from './NewSubmission-form'
 import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO } from '../graphql/queries'
 
@@ -43,6 +43,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
           return (
             <Formik
               initialValues={{
+                category: data.submission_configuration[0].uuid,
                 proof: '',
                 explanation: '',
               }}

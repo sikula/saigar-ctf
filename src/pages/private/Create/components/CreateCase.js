@@ -7,7 +7,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom custom component
-import { SlidingPane } from '../../../../_Common/components/SlidingPane'
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
 import { CASES_QUERY, CREATE_CASE_MUTATION } from '../graphql/graphQueries'
 import CreateCaseForm from './CreateCase-form'
 

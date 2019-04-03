@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 import { ConnectedRouter as Router } from 'connected-react-router'
 import { Button } from '@blueprintjs/core'
 
@@ -16,8 +16,8 @@ import CtfRoutes from '@pages/routes'
 /* React Router History */
 import history from './history'
 
-import { SlidingPanelRoot, SlidingPanelProvider } from '../../_Common/components/SlidingPane'
-import { PanelProvider, PanelRoot } from '../../_Common/components/Panel'
+import { SlidingPanelRoot, SlidingPanelProvider } from '../../shared/components/SlidingPane'
+import { PanelProvider, PanelRoot } from '../../shared/components/Panel'
 
 /*
   @NOTE(Peter):
@@ -55,15 +55,6 @@ const configureRoutes = () => (
           <Switch>
             <Route exact path="/authcallback" render={AuthCallback} />
             <Route exact path="/login" render={LoginPage} />
-            <Route
-              exact
-              path="/logout"
-              render={props => (
-                <AuthConsumer>
-                  {({ logout }) => <Button text="logout" onClick={logout} />}
-                </AuthConsumer>
-              )}
-            />
             <Route path="/" component={CtfRoutes} />
             <Route component={NotFound} />
           </Switch>

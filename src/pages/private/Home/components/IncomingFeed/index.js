@@ -6,7 +6,7 @@ import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
 import SubmissionList from './Feed'
-import { PanelConsumer } from '../../../../../_Common/components/Panel'
+import { PanelConsumer } from '../../../../../shared/components/Panel'
 import SettingsPanel from './SettingsPanel'
 
 import './index.scss'

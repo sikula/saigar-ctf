@@ -6,7 +6,7 @@ import { Card, Button, Icon, Tag, H5 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPanelConsumer } from '../../../../_Common/components/SlidingPane'
+import { SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
 import NewSubmission from './NewSubmission'
 
 // styles
