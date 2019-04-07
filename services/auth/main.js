@@ -1,9 +1,9 @@
-'use strict'
+
 
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const {ManagementClient} = require('auth0')
+const { ManagementClient } = require('auth0')
 
 const auth0 = new ManagementClient({
   domain: 'blah',
@@ -42,6 +42,6 @@ app.post('/', async (req, res) => {
   }
 })
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log('SERVER IS RUNNING')
 })
