@@ -1,0 +1,17 @@
+{
+    "name": "saigar-ctf-auth",
+    "env": {
+      "PROCFILE": {
+        "required": true
+      }
+    },
+    "buildpacks": [
+      {
+        "url": "heroku/nodejs"
+      },
+      {
+        "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+      }
+    ]
+  }
+  
