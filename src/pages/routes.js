@@ -1,5 +1,6 @@
 import React from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { Switch, Redirect } from 'react-router-dom'
 
 /* Custom Routes */
 import PrivateRoute from '@shared/routes/PrivateRoute'
@@ -10,21 +11,21 @@ import DefaultLayout from '../layouts/Default'
 import ScoreboardLayout from '../layouts/Scoreboard'
 
 /* Custom Components */
-import IncomingFeed from './private/Home/components/IncomingFeed'
+import IncomingFeed from './Admin/Home/components/IncomingFeed'
 
 /* Route Components */
-const AsyncHomePage = React.lazy(() => import(/* webpackChunkName: "HomePage" */ './private/Home'))
+const AsyncHomePage = React.lazy(() => import(/* webpackChunkName: "HomePage" */ './Admin/Home'))
 const AsyncCreatePage = React.lazy(() =>
-  import(/* webpackChunkName: "CreatePage" */ './private/Create'),
+  import(/* webpackChunkName: "CreatePage" */ './Admin/Create'),
 )
 const AsyncSubmissionPage = React.lazy(() =>
-  import(/* webpackChunkName: "SubmissionPage" */ './private/Submission'),
+  import(/* webpackChunkName: "SubmissionPage" */ './Admin/Submission'),
 )
 const AsyncChallengesPage = React.lazy(() =>
-  import(/* webpackChunkName: "ChallengesPage" */ './private/Challenges'),
+  import(/* webpackChunkName: "ChallengesPage" */ './Contestant/Challenges'),
 )
 const AsyncScoreboardPage = React.lazy(() =>
-  import(/* webpackChunkName: "ScoreBoardPage" */ './public/ScoreBoard'),
+  import(/* webpackChunkName: "ScoreBoardPage" */ './Public/ScoreBoard'),
 )
 
 const CtfRoutes = ({ match }) => (
@@ -76,5 +77,11 @@ const CtfRoutes = ({ match }) => (
     />
   </Switch>
 )
+
+CtfRoutes.propTypes = {
+  match: PropTypes.shape({
+    url: PropTypes.string.isRequired,
+  }).isRequired,
+}
 
 export default CtfRoutes

@@ -1,4 +1,6 @@
+/* eslint-disable no-plusplus, no-param-reassign */
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Subscription } from 'react-apollo'
 import Chart from 'react-apexcharts'
 
@@ -37,7 +39,7 @@ const transformData = data => {
   return teamSeries
 }
 
-const createChartOptions = (theme) => ({
+const createChartOptions = theme => ({
   chart: {
     id: 'line',
   },
@@ -121,5 +123,9 @@ const ScoreGraph = ({ dark }) => (
     }}
   </Subscription>
 )
+
+ScoreGraph.propTypes = {
+  dark: PropTypes.bool.isRequired,
+}
 
 export default ScoreGraph

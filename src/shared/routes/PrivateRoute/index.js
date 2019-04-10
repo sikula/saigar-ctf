@@ -1,11 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Route, Redirect } from 'react-router-dom'
 
-import { injectAsyncReducer } from '@app/config/reducer'
-import configureStore from '@app/config/store'
+// import { injectAsyncReducer } from '@app/config/reducer'
+// import configureStore from '@app/config/store'
 import { AuthConsumer } from '../../components/AuthContext/context'
 
-const PrivateRoute = ({ layout: Layout, component: Component, featureName, ...rest }) => (
+const PrivateRoute = ({ layout: Layout, component: Component, ...rest }) => (
   /*
     @NOTE(Peter):
       I don't know if this is the best way to do this... but it is one way.  It might
@@ -40,5 +41,11 @@ const PrivateRoute = ({ layout: Layout, component: Component, featureName, ...re
     )}
   />
 )
+
+PrivateRoute.propTypes = {
+  layout: PropTypes.element.isRequired,
+  component: PropTypes.element.isRequired,
+  rest: PropTypes.objectOf(PropTypes.object()).isRequired,
+}
 
 export default PrivateRoute

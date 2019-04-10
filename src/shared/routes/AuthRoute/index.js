@@ -1,5 +1,5 @@
 import React from 'react'
-
+import PropTypes from 'prop-types'
 import { AuthConsumer } from '../../components/AuthContext/context'
 
 const AuthCallback = ({ history }) => (
@@ -22,4 +22,9 @@ const AuthCallback = ({ history }) => (
   </AuthConsumer>
 )
 
+AuthCallback.propTypes = {
+  history: PropTypes.shape({
+    replace: PropTypes.func.isRequired,
+  }).isRequired,
+}
 export default AuthCallback
