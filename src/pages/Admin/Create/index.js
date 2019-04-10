@@ -7,7 +7,11 @@ import { Card, Button, Tabs, Tab, Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { CreateCase, EditCase, CreateEvent, EditEvent } from './components'
+import CreateCase from './components/CreateCase'
+import EditCase from './components/EditCase'
+import CreateEvent from './components/CreateEvent'
+import EditEvent from './components/EditEvent'
+
 import { EVENTS_QUERY, CASES_QUERY } from './graphql/graphQueries'
 
 import { SlidingPanelConsumer } from '../../../shared/components/SlidingPane'

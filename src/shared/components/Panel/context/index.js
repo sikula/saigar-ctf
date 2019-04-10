@@ -42,7 +42,7 @@ export class PanelProvider extends React.Component {
 }
 
 PanelProvider.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 export const PanelConsumer = PanelContext.Consumer

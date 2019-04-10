@@ -46,7 +46,7 @@ const CaseCard = ({ caseData }) => (
 )
 
 CaseCard.propTypes = {
-  caseData: PropTypes.objectOf(PropTypes.object()).isRequired,
+  caseData: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 export default CaseCard

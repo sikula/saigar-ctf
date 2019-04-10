@@ -128,7 +128,7 @@ const FeedPanel = ({ uuid, teamByteamId, explanation, content }) => (
 
 FeedPanel.propTypes = {
   uuid: PropTypes.string.isRequired,
-  teamByteamId: PropTypes.objectOf(PropTypes.object()).isRequired,
+  teamByteamId: PropTypes.objectOf(PropTypes.object).isRequired,
   explanation: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
 }

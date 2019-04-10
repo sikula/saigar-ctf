@@ -17,7 +17,7 @@ const CaseGrid = ({ cases }) => (
 )
 
 CaseGrid.propTypes = {
-  cases: PropTypes.objectOf(PropTypes.object()).isRequired,
+  cases: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 export default CaseGrid

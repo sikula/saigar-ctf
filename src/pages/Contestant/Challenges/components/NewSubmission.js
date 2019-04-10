@@ -77,7 +77,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
 NewSubmission.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  otherProps: PropTypes.objectOf(PropTypes.object()).isRequired,
+  otherProps: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 export default NewSubmission

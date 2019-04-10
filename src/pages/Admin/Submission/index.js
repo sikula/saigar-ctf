@@ -35,7 +35,7 @@ const SubmissionPage = ({ match }) => {
 
 SubmissionPage.propTypes = {
   match: PropTypes.shape({
-    params: PropTypes.objectOf(PropTypes.object()).isRequired,
+    params: PropTypes.objectOf(PropTypes.object).isRequired,
   }).isRequired,
 }
 

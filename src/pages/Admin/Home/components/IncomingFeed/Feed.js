@@ -110,7 +110,7 @@ const SubmissionItem = ({ data }) => (
 )
 
 SubmissionItem.propTypes = {
-  data: PropTypes.objectOf(PropTypes.object()).isRequired,
+  data: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 function mapStateToProps(state) {
@@ -153,8 +153,8 @@ const SubscriptionData = ({ subscription, teams }) => (
   </Subscription>
 )
 SubscriptionData.propTypes = {
-  subscription: PropTypes.string.isRequired,
-  teams: PropTypes.arrayOf(PropTypes.array()).isRequired,
+  subscription: PropTypes.objectOf(PropTypes.object).isRequired,
+  teams: PropTypes.arrayOf(PropTypes.array).isRequired,
 }
 
 const SubmissionList = ({ teamFilter }) => {
@@ -166,7 +166,7 @@ const SubmissionList = ({ teamFilter }) => {
 }
 
 SubmissionList.propTypes = {
-  teamFilter: PropTypes.arrayOf(PropTypes.array()).isRequired,
+  teamFilter: PropTypes.arrayOf(PropTypes.array).isRequired,
 }
 
 export default connect(

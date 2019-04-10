@@ -48,7 +48,7 @@ const LoginPage = ({ location }) => {
 
 LoginPage.propTypes = {
   location: PropTypes.shape({
-    state: PropTypes.objectOf(PropTypes.object()).isRequired,
+    state: PropTypes.objectOf(PropTypes.object).isRequired,
   }).isRequired,
 }
 

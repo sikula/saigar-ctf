@@ -68,7 +68,7 @@ class SlidingPanelProvider extends React.Component {
 }
 
 SlidingPanelProvider.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 const SlidingPanelConsumer = SlidingPanelContext.Consumer

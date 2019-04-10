@@ -261,7 +261,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values }) => (
 NewSubmissionForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
-  values: PropTypes.objectOf(PropTypes.object()).isRequired,
+  values: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 export default React.memo(NewSubmissionForm)

@@ -12,15 +12,15 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../shared/components/SlidingPane'
+import { SlidingPane } from '../../../../../../shared/components/SlidingPane'
 import {
   EDIT_EVENT_CASE_MUTATION,
   EDIT_CASE_MUTATION,
   CASES_QUERY,
   CASE_QUERY,
-} from '../graphql/graphQueries'
+} from '../../../graphql/graphQueries'
 
-import EditCaseForm from './EditCase-form'
+import EditCaseForm from './Form'
 
 /*
   @TODO(Peter):
