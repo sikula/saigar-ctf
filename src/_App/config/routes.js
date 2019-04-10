@@ -1,7 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Switch, Route } from 'react-router-dom'
 import { ConnectedRouter as Router } from 'connected-react-router'
-import { Button } from '@blueprintjs/core'
 
 /* Features/Code Splitting */
 
@@ -44,6 +44,12 @@ const LoginPage = ({ location }) => {
       }}
     </AuthConsumer>
   )
+}
+
+LoginPage.propTypes = {
+  location: PropTypes.shape({
+    state: PropTypes.objectOf(PropTypes.object()).isRequired,
+  }).isRequired,
 }
 
 const configureRoutes = () => (

@@ -1,4 +1,6 @@
+/* eslint-disable react/no-unused-state, react/sort-comp */
 import React, { createContext } from 'react'
+import PropTypes from 'prop-types'
 
 const PanelContext = createContext({
   component: null,
@@ -37,6 +39,10 @@ export class PanelProvider extends React.Component {
     const { children } = this.props
     return <PanelContext.Provider value={this.state}>{children}</PanelContext.Provider>
   }
+}
+
+PanelProvider.propTypes = {
+  children: PropTypes.element.isRequired,
 }
 
 export const PanelConsumer = PanelContext.Consumer

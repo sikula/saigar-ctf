@@ -1,8 +1,10 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /*
     @NOTE:
         Heavily borrowed from (https://github.com/DimitryDushkin/sliding-pane/blob/master/src/index.js)
 */
 import React from 'react'
+import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 
 import './index.scss'
@@ -13,6 +15,9 @@ const SlidingPaneHeaderMenu = ({ children }) => (
   <div className="slide-pane__header__menu">{children}</div>
 )
 SlidingPaneHeaderMenu.displayName = 'SlidingPaneHeaderMenu'
+SlidingPaneHeaderMenu.propTypes = {
+  children: PropTypes.element.isRequired,
+}
 
 const SlidingPaneHeaderTitle = ({ title, subtitle }) => (
   <div className="slide-pane__title-wrapper">
@@ -21,13 +26,23 @@ const SlidingPaneHeaderTitle = ({ title, subtitle }) => (
   </div>
 )
 SlidingPaneHeaderTitle.displayName = 'SlidingPaneHeaderTitle'
+SlidingPaneHeaderTitle.propTypes = {
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+}
 
 const SlidingPaneHeaderActions = ({ children, onActionClick }) => (
   <div className="slide-pane__header__actions">
-    <span onClick={onActionClick}>{children}</span>
+    <span onClick={onActionClick} onKeyDown={onActionClick}>
+      {children}
+    </span>
   </div>
 )
 SlidingPaneHeaderActions.displayName = 'SlidingPaneHeaderActions'
+SlidingPaneHeaderActions.propTypes = {
+  children: PropTypes.element.isRequired,
+  onActionClick: PropTypes.func.isRequired,
+}
 
 const SlidingPaneHeader = ({ children }) => (
   <div className="slide-pane__header">
@@ -48,6 +63,9 @@ const SlidingPaneHeader = ({ children }) => (
   </div>
 )
 SlidingPaneHeader.displayName = 'SlidingPaneHeader'
+SlidingPaneHeader.propTypes = {
+  children: PropTypes.element.isRequired,
+}
 
 SlidingPaneHeader.Title = SlidingPaneHeaderTitle
 SlidingPaneHeader.Menu = SlidingPaneHeaderMenu
@@ -57,6 +75,10 @@ const SlidingPaneContent = ({ children, className }) => (
   <div className={className || 'slide-pane__content'}>{children}</div>
 )
 SlidingPaneContent.displayName = 'SlidingPaneContent'
+SlidingPaneContent.propTypes = {
+  children: PropTypes.element.isRequired,
+  className: PropTypes.string.isRequired,
+}
 
 const SlidingPaneActions = ({ children, onClick, form }) => (
   <div className="slide-pane__action">
@@ -66,6 +88,11 @@ const SlidingPaneActions = ({ children, onClick, form }) => (
   </div>
 )
 SlidingPaneActions.displayName = 'SlidingPaneActions'
+SlidingPaneActions.propTypes = {
+  children: PropTypes.element.isRequired,
+  onClick: PropTypes.func.isRequired,
+  form: PropTypes.string.isRequired,
+}
 
 const SlidingPane = ({
   isOpen,
@@ -102,9 +129,21 @@ const SlidingPane = ({
         if (child.type.displayName === 'SlidingPaneActions') {
           return React.cloneElement(child, child.props)
         }
+
+        return <div />
       })}
     </Modal>
   )
+}
+SlidingPane.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onRequestClose: PropTypes.func.isRequired,
+  onAfterOpen: PropTypes.func.isRequired,
+  children: PropTypes.element.isRequired,
+  className: PropTypes.string.isRequired,
+  overlayClassName: PropTypes.string.isRequired,
+  from: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired,
 }
 
 SlidingPane.Header = SlidingPaneHeader

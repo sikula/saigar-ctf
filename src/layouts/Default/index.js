@@ -1,5 +1,7 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { Link, withRouter } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import { Layout, Flex, Fixed } from 'react-layout-pane'
 import { Icon, UL } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
@@ -30,7 +32,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           </li>
         </UL>
         <Can
-          role={'ctf_admin' || 'judge'}
+          allowedRole={'ctf_admin' || 'judge'}
           yes={() => (
             <UL>
               <li className={pathname === '/home' ? 'active' : ''}>
@@ -42,7 +44,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           )}
         />
         <Can
-          role="contestant"
+          allowedRole="contestant"
           yes={() => (
             <UL>
               <li className={pathname === '/challenges' ? 'active' : ''}>
@@ -54,7 +56,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           )}
         />
         <Can
-          role="ctf_admin"
+          allowedRole="ctf_admin"
           yes={() => (
             <UL>
               <li className={pathname === '/create' ? 'active' : ''}>
@@ -144,5 +146,12 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
     </div> */}
   </Layout>
 )
+
+DefaultLayout.propTypes = {
+  children: PropTypes.element.isRequired,
+  pathname: PropTypes.string.isRequired,
+  showFeed: PropTypes.bool.isRequired,
+  feed: PropTypes.element.isRequired,
+}
 
 export default DefaultLayout

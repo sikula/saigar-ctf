@@ -1,5 +1,7 @@
+/* eslint-disable react/sort-comp, react/no-unused-state */
 import React, { createContext } from 'react'
-import SlidingPane from '../components'
+import PropTypes from 'prop-types'
+// import SlidingPane from '../components'
 
 // const SlidingPanelContext = createContext({
 //   component: null,
@@ -63,6 +65,10 @@ class SlidingPanelProvider extends React.Component {
       <SlidingPanelContext.Provider value={this.state}>{children}</SlidingPanelContext.Provider>
     )
   }
+}
+
+SlidingPanelProvider.propTypes = {
+  children: PropTypes.element.isRequired,
 }
 
 const SlidingPanelConsumer = SlidingPanelContext.Consumer

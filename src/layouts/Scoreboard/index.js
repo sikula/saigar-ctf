@@ -1,4 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Layout, Fixed, Flex } from 'react-layout-pane'
 import { AuthConsumer } from '../../shared/components/AuthContext/context'
 
@@ -49,5 +51,9 @@ const ScoreboardLayout = ({ children }) => (
     </Fixed>
   </Layout>
 )
+
+ScoreboardLayout.propTypes = {
+  children: PropTypes.element.isRequired,
+}
 
 export default ScoreboardLayout

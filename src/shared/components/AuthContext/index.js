@@ -1,4 +1,8 @@
+/* eslint-disable react/sort-comp */
+
 import React from 'react'
+import PropTypes from 'prop-types'
+
 import auth0 from 'auth0-js'
 
 import { AuthProvider } from './context'
@@ -84,8 +88,13 @@ class Auth extends React.Component {
       logout: this.logout,
       handleAuthentication: this.handleAuthentication,
     }
-    return <AuthProvider value={authProviderValue}>{this.props.children}</AuthProvider>
+    const { children } = this.props
+    return <AuthProvider value={authProviderValue}>{children}</AuthProvider>
   }
+}
+
+Auth.propTypes = {
+  children: PropTypes.element.isRequired,
 }
 
 export default Auth

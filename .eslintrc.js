@@ -7,6 +7,7 @@ const Config = {
     'react/jsx-filename-extension': ['error', { extensions: ['.js'] }],
     'import/no-unresolved': 'off',
   },
+  env: { browser: true, jest: true },
   overrides: {
     files: [
       '**/config/webpack.common.js',

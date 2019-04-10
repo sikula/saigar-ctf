@@ -1,10 +1,10 @@
 import jwtDecode from 'jwt-decode'
 
-const check = (role, action) => {
+const check = allowedRole => {
   const token = localStorage.getItem('id_token')
   const claims = jwtDecode(token)['https://ctf.saigar.io/roles']
 
-  if (claims.groups.includes(role)) {
+  if (claims.groups.includes(allowedRole)) {
     // if (!claims.permissions) {
     //   return false
     // }
@@ -19,7 +19,7 @@ const check = (role, action) => {
   return false
 }
 
-const Can = props => (check(props.role, props.perform) ? props.yes() : props.no())
+const Can = props => (check(props.allowedRole, props.perform) ? props.yes() : props.no())
 
 Can.defaultProps = {
   yes: () => null,

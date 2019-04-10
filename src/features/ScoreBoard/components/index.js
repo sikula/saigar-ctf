@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Subscription } from 'react-apollo'
 import FlipMove from 'react-flip-move'
 
@@ -7,20 +8,24 @@ import { GET_SCOREBOARD } from '../graphql/queries'
 const TeamList = ({ teams }) => (
   <FlipMove typeName="tbody" leaveAnimation="accordionVertical" duration={500}>
     {teams.map((team, index) => {
-      const team_name = team.name
-      const team_points = team.total_points
-      const team_submissions = team.submission_count
+      const teamName = team.name
+      const teamPoints = team.total_points
+      const teamSubmissions = team.submission_count
       return (
-        <tr key={`${team.name}-${index}`}>
+        <tr key={`${team.name}`}>
           <td>{index + 1}</td>
-          <td>{team_name}</td>
-          <td>{team_submissions}</td>
-          <td>{team_points}</td>
+          <td>{teamName}</td>
+          <td>{teamSubmissions}</td>
+          <td>{teamPoints}</td>
         </tr>
       )
     })}
   </FlipMove>
 )
+
+TeamList.propTypes = {
+  teams: PropTypes.objectOf(PropTypes.object()).isRequired,
+}
 
 const ScoreBoard = () => (
   <Subscription subscription={GET_SCOREBOARD}>
