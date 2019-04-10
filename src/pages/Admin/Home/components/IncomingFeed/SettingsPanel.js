@@ -89,7 +89,7 @@ const SettingTable = class extends React.Component {
 
 SettingTable.propTypes = {
   updateFilter: PropTypes.func.isRequired,
-  data: PropTypes.objectOf(PropTypes.object()).isRequired,
+  data: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 const ApolloSettingTable = connect(

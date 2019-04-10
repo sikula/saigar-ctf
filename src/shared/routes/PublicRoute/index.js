@@ -14,9 +14,11 @@ const PublicRoute = ({ layout: Layout, component: Component, ...rest }) => (
 )
 
 PublicRoute.propTypes = {
-  layout: PropTypes.element.isRequired,
-  component: PropTypes.element.isRequired,
-  rest: PropTypes.objectOf(PropTypes.object()).isRequired,
+  layout: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  component: PropTypes.any.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  rest: PropTypes.objectOf(PropTypes.object),
 }
 
 export default PublicRoute

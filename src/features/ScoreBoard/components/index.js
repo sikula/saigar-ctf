@@ -24,7 +24,7 @@ const TeamList = ({ teams }) => (
 )
 
 TeamList.propTypes = {
-  teams: PropTypes.objectOf(PropTypes.object()).isRequired,
+  teams: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
 const ScoreBoard = () => (
