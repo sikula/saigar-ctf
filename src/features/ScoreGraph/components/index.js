@@ -101,7 +101,7 @@ const ScoreGraph = ({ dark }) => (
 
       if (error) return <div>`${error.message}`</div>
 
-      const teamSeries = transformData(data.score_graph)
+      const teamSeries = transformData(data.scoreGraph)
 
       return (
         <div
