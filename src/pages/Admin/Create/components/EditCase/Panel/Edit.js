@@ -80,7 +80,7 @@ const EditCase = ({ isOpen, onRequestClose, ...otherProps }) => (
           if (loading) return null
           if (error) return <div>{error.message}</div>
 
-          const { event_id: eventId, ...rest } = data.event_case[0]
+          const { event_id: eventId, ...rest } = data.eventCase[0]
 
           return (
             <ComposedMutations>

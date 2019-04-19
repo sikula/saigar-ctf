@@ -68,7 +68,8 @@ CreateEventForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   setFieldValue: PropTypes.func.isRequired,
-  values: PropTypes.objectOf(PropTypes.object).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  values: PropTypes.any.isRequired,
 }
 
 export default CreateEventForm

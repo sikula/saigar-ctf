@@ -56,7 +56,8 @@ const EditEvent = ({ isOpen, onRequestClose, ...otherProps }) => (
 EditEvent.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  otherProps: PropTypes.objectOf(PropTypes.object).isRequired,
+  // eslint-disable-next-line react/require-default-props
+  otherProps: PropTypes.objectOf(PropTypes.object),
 }
 
 export default EditEvent

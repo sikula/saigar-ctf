@@ -110,7 +110,8 @@ const SubmissionItem = ({ data }) => (
 )
 
 SubmissionItem.propTypes = {
-  data: PropTypes.objectOf(PropTypes.object).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  data: PropTypes.any.isRequired,
 }
 
 function mapStateToProps(state) {
@@ -152,8 +153,10 @@ const SubscriptionData = ({ subscription, teams }) => (
     }}
   </Subscription>
 )
+
 SubscriptionData.propTypes = {
-  subscription: PropTypes.objectOf(PropTypes.object).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  subscription: PropTypes.any.isRequired,
   teams: PropTypes.arrayOf(PropTypes.array).isRequired,
 }
 

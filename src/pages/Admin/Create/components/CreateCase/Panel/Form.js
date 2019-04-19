@@ -120,7 +120,8 @@ const EventSelect = ({ values, handleChange }) => (
 )
 
 EventSelect.propTypes = {
-  values: PropTypes.objectOf(PropTypes.object).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  values: PropTypes.any.isRequired,
   handleChange: PropTypes.func.isRequired,
 }
 

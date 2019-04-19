@@ -132,7 +132,7 @@ class Countdown extends React.Component {
 }
 
 Countdown.propTypes = {
-  date: PropTypes.string.isRequired,
+  date: PropTypes.objectOf(Date).isRequired,
 }
 
 const HomePageData = () => (
@@ -189,7 +189,6 @@ const HomePageData = () => (
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" animate>
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
-                  <Tab id="statistics" title="Statistics" panel={<div>nothing yet</div>} />
                 </Tabs>
               </div>
             </div>
