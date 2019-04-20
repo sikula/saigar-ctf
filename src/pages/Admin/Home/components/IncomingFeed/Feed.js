@@ -5,7 +5,7 @@ import { Mutation, Subscription } from 'react-apollo'
 import { connect } from 'react-redux'
 
 import { Motion, spring } from 'react-motion'
-import { Icon, Tag } from '@blueprintjs/core'
+import { Icon, Tag, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import { LIVE_FEED, LIVE_FEED_FILTERED, PROCESS_SUBMISSION } from '../../graphql/adminQueries'
@@ -82,6 +82,7 @@ const SubmissionItem = ({ data }) => (
                     variables: {
                       submissionID: data.uuid,
                       value: 'ACCEPTED', // processed = ACCEPTED
+                      processedAt: new Date(),
                     },
                   })
                 }
@@ -95,6 +96,7 @@ const SubmissionItem = ({ data }) => (
                     variables: {
                       submissionID: data.uuid,
                       value: 'REJECTED', // processed = REJECTED
+                      processedAt: new Date(),
                     },
                   })
                 }
@@ -146,7 +148,7 @@ const SubscriptionData = ({ subscription, teams }) => (
       const { submissions } = data.event[0]
 
       if (!Array.isArray(submissions) || !submissions.length) {
-        return <div>No Submissions</div>
+        return <H3 style={{ textAlign: 'center', padding: 20 }}>No Submissions Yet</H3>
       }
 
       return <SubmissionListView data={submissions} />

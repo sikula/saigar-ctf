@@ -64,7 +64,7 @@ const SlidingPaneHeader = ({ children }) => (
 )
 SlidingPaneHeader.displayName = 'SlidingPaneHeader'
 SlidingPaneHeader.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.node.isRequired,
 }
 
 SlidingPaneHeader.Title = SlidingPaneHeaderTitle
@@ -77,7 +77,8 @@ const SlidingPaneContent = ({ children, className }) => (
 SlidingPaneContent.displayName = 'SlidingPaneContent'
 SlidingPaneContent.propTypes = {
   children: PropTypes.element.isRequired,
-  className: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  className: PropTypes.string,
 }
 
 const SlidingPaneActions = ({ children, onClick, form }) => (
@@ -89,8 +90,10 @@ const SlidingPaneActions = ({ children, onClick, form }) => (
 )
 SlidingPaneActions.displayName = 'SlidingPaneActions'
 SlidingPaneActions.propTypes = {
-  children: PropTypes.element.isRequired,
-  onClick: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  children: PropTypes.any.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  onClick: PropTypes.func,
   form: PropTypes.string.isRequired,
 }
 
@@ -138,12 +141,21 @@ const SlidingPane = ({
 SlidingPane.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  onAfterOpen: PropTypes.func.isRequired,
-  children: PropTypes.element.isRequired,
-  className: PropTypes.string.isRequired,
-  overlayClassName: PropTypes.string.isRequired,
-  from: PropTypes.string.isRequired,
-  width: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  onAfterOpen: PropTypes.func,
+  // eslint-disable-next-line react/forbid-prop-types
+  children: PropTypes.any.isRequired,
+  className: PropTypes.string,
+  overlayClassName: PropTypes.string,
+  from: PropTypes.string,
+  width: PropTypes.string,
+}
+
+SlidingPane.defaultProps = {
+  className: '',
+  overlayClassName: '',
+  from: 'right',
+  width: '375px',
 }
 
 SlidingPane.Header = SlidingPaneHeader
