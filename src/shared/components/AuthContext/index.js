@@ -29,7 +29,7 @@ class Auth extends React.Component {
     localStorage.removeItem('access_token')
     localStorage.removeItem('id_token')
     localStorage.removeItem('expires_at')
-    localStorage.removeItem('redirectBackTo')
+    sessionStorage.removeItem('redirectBackTo')
 
     auth.logout({
       returnTo:
@@ -66,6 +66,7 @@ class Auth extends React.Component {
     const user = {
       id: idTokenPayload.sub,
       email: idTokenPayload.email,
+      nickname: idTokenPayload.nickname,
       authorization: idTokenPayload['https://ctf.saigar.io/roles'],
     }
     this.setState({

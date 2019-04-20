@@ -4,7 +4,7 @@ const check = allowedRole => {
   const token = localStorage.getItem('id_token')
   const claims = jwtDecode(token)['https://ctf.saigar.io/roles']
 
-  if (claims.groups.includes(allowedRole)) {
+  if (claims.groups.some(r => allowedRole.includes(r))) {
     // if (!claims.permissions) {
     //   return false
     // }

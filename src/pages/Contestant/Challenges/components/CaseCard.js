@@ -46,7 +46,8 @@ const CaseCard = ({ caseData }) => (
 )
 
 CaseCard.propTypes = {
-  caseData: PropTypes.objectOf(PropTypes.object).isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  caseData: PropTypes.any.isRequired,
 }
 
 export default CaseCard

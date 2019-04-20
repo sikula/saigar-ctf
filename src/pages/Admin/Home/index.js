@@ -1,12 +1,14 @@
 /* eslint-disable class-methods-use-this, no-unused-expressions */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Query } from 'react-apollo'
-import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
+import { Query, Mutation, Subscription } from 'react-apollo'
+import { Tabs, Tab, Card, Elevation, Tag, Button, H5, HTMLSelect } from '@blueprintjs/core'
+import { IconNames } from '@blueprintjs/icons'
 
 import ScoreGraph from '../../../features/ScoreGraph'
-import { HOME_QUERY } from './graphql/adminQueries'
+import { HOME_QUERY, SUBMISSION_HISTORY, PROCESS_SUBMISSION } from './graphql/adminQueries'
 import Can from '../../../shared/components/AuthContext/Can'
+import { AuthConsumer } from '../../../shared/components/AuthContext/context'
 
 import './index.scss'
 
@@ -135,6 +137,99 @@ Countdown.propTypes = {
   date: PropTypes.objectOf(Date).isRequired,
 }
 
+const HistoryData = () => (
+  <Subscription subscription={SUBMISSION_HISTORY}>
+    {({ data, loading, error }) => {
+      if (loading) return <div> Loading... </div>
+      if (error) return <div>Error: `${error.message}`</div>
+
+      return data.event[0].submissions.map(submission => (
+        <Card style={{ marginBottom: 20 }}>
+          <div style={{ width: '100%', display: 'inline-flex' }}>
+            <div style={{ flexGrow: 1 }}>
+              <H5>{submission.processed}</H5>
+              {/* <Tag>
+                <strong>Submitted By: </strong>
+                {submission.teamByteamId.name}
+              </Tag>
+              <Tag>{submission.submissionConfigurationByconfigId.category}</Tag> */}
+              {/* {submission.case.name} */}
+            </div>
+            <div>
+              <HTMLSelect>
+                <option>Hi</option>
+              </HTMLSelect>
+            </div>
+          </div>
+          <code style={{ background: '#cdcdcd' }}>
+            <p>{submission.content}</p>
+            <p>{submission.explanation}</p>
+          </code>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <Tag large style={{ marginRight: 10 }}>
+                <strong>Team: </strong>
+                {submission.teamByteamId.name}
+              </Tag>
+              <Tag large style={{ marginRight: 10 }}>
+                <strong>Case: </strong>
+                {submission.case.name}
+              </Tag>
+              <Tag large>
+                <strong>Category: </strong>
+                {submission.submissionConfigurationByconfigId.category}
+              </Tag>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Mutation mutation={PROCESS_SUBMISSION}>
+                {updateSubmission => (
+                  <Button
+                    intent="success"
+                    large
+                    icon={IconNames.TICK}
+                    style={{ marginRight: 10 }}
+                    onClick={() =>
+                      updateSubmission({
+                        variables: {
+                          submissionID: submission.uuid,
+                          value: 'ACCEPTED',
+                          processedAt: new Date(),
+                        },
+                      })
+                    }
+                  >
+                    Approve
+                  </Button>
+                )}
+              </Mutation>
+              <Mutation mutation={PROCESS_SUBMISSION}>
+                {updateSubmission => (
+                  <Button
+                    intent="danger"
+                    large
+                    icon={IconNames.CROSS}
+                    onClick={() =>
+                      updateSubmission({
+                        variables: {
+                          submissionID: submission.uuid,
+                          value: 'REJECTED',
+                          processedAt: new Date(),
+                        },
+                      })
+                    }
+                  >
+                    Reject
+                  </Button>
+                )}
+              </Mutation>
+            </div>
+          </div>
+        </Card>
+      ))
+    }}
+  </Subscription>
+)
+
 const HomePageData = () => (
   <Query query={HOME_QUERY}>
     {({ data, loading, error }) => {
@@ -153,12 +248,13 @@ const HomePageData = () => (
                   elevation={Elevation.ONE}
                   style={{ backgroundColor: '#FFFFFF', color: '#394B59', height: '100%' }}
                 >
-                  <h1 style={{ color: '#5C7080', fontWeight: '350', textAlign: 'center' }}>
-                    Welcome, Admin!
-                  </h1>
-                  {/* <h3 style={{ color: '#738694', fontWeight: 'normal', textAlign: 'center' }}>
-                    Please review the following cases
-                  </h3> */}
+                  <AuthConsumer>
+                    {({ user }) => (
+                      <h1 style={{ color: '#5C7080', fontWeight: '350', textAlign: 'center' }}>
+                        Welcome, {user.nickname}!
+                      </h1>
+                    )}
+                  </AuthConsumer>
                 </Card>
               </div>
 
@@ -184,11 +280,12 @@ const HomePageData = () => (
             </div>
           </div>
 
-          <div className="row" style={{ marginBttom: '10px' }}>
+          <div className="row" style={{ marginBttom: '10px', overflowY: 'scroll' }}>
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
-                <Tabs id="homePageTabs" animate>
+                <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
+                  <Tab id="history" title="History" panel={<HistoryData />} />
                 </Tabs>
               </div>
             </div>
@@ -199,6 +296,6 @@ const HomePageData = () => (
   </Query>
 )
 
-const HomePage = () => <Can allowedRole={'ctf_admin' || 'judge'} yes={() => <HomePageData />} />
+const HomePage = () => <Can allowedRole={['ctf_admin', 'judge']} yes={() => <HomePageData />} />
 
 export default HomePage

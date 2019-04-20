@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react/require-default-props, react/forbid-prop-types, jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Query, Mutation } from 'react-apollo'
@@ -77,7 +77,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
 NewSubmission.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
-  otherProps: PropTypes.objectOf(PropTypes.object).isRequired,
+  otherProps: PropTypes.any,
 }
 
 export default NewSubmission
