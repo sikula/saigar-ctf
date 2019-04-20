@@ -34,7 +34,7 @@ import { PanelProvider, PanelRoot } from '../../shared/components/Panel'
 
 const LoginPage = ({ location }) => {
   const redirectTo = location.state ? location.state.from : { from: { pathname: '/' } }
-  localStorage.setItem('redirectBackTo', JSON.stringify(redirectTo))
+  sessionStorage.setItem('redirectBackTo', JSON.stringify(redirectTo))
   return (
     <AuthConsumer>
       {({ initiateLogin }) => {

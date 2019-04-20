@@ -9,6 +9,31 @@ const HOME_QUERY = gql`
   }
 `
 
+const SUBMISSION_HISTORY = gql`
+  subscription submissionHistory {
+    event(order_by: { start_time: desc }, limit: 1) {
+      submissions(
+        where: { processed: { _in: ["ACCEPTED", "REJECTED"] } }
+        order_by: { processed_at: desc }
+      ) {
+        uuid
+        processed
+        content
+        explanation
+        case {
+          name
+        }
+        submissionConfigurationByconfigId {
+          category
+        }
+        teamByteamId {
+          name
+        }
+      }
+    }
+  }
+`
+
 const LIVE_FEED = gql`
   subscription liveFeed($teams: [uuid]) {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -54,9 +79,9 @@ const LIVE_FEED_FILTERED = gql`
 `
 
 const PROCESS_SUBMISSION = gql`
-  mutation approveSubmission($submissionID: uuid!, $value: String!) {
+  mutation approveSubmission($submissionID: uuid!, $value: String!, $processedAt: timestamptz!) {
     updateSubmission: update_submission(
-      _set: { processed: $value }
+      _set: { processed: $value, processed_at: $processedAt }
       where: { uuid: { _eq: $submissionID } }
     ) {
       affected_rows
@@ -80,4 +105,11 @@ const GET_TEAMS = gql`
   }
 `
 
-export { HOME_QUERY, LIVE_FEED, LIVE_FEED_FILTERED, PROCESS_SUBMISSION, GET_TEAMS }
+export {
+  HOME_QUERY,
+  SUBMISSION_HISTORY,
+  LIVE_FEED,
+  LIVE_FEED_FILTERED,
+  PROCESS_SUBMISSION,
+  GET_TEAMS,
+}
