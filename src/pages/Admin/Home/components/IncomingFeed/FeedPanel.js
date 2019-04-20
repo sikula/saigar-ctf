@@ -82,6 +82,7 @@ const FeedPanel = ({ uuid, teamByteamId, explanation, content }) => (
                     variables: {
                       submissionID: uuid,
                       value: 'ACCEPTED',
+                      processedAt: new Date(),
                     },
                   }).then(() => hidePanel())
                 }
@@ -101,6 +102,7 @@ const FeedPanel = ({ uuid, teamByteamId, explanation, content }) => (
                     variables: {
                       submissionID: uuid,
                       value: 'REJECTED',
+                      processedAt: new Date(),
                     },
                   }).then(() => hidePanel())
                 }

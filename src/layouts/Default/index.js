@@ -105,11 +105,19 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
     </Fixed>
     <Flex>
       <Layout type="column">
-        <Flex className="content" style={{ background: '#F5F8FA' }}>
+        <Flex
+          className="content"
+          style={{
+            background: '#F5F8FA',
+          }}
+        >
           {children}
         </Flex>
         <Fixed className="footer">
-          Powered by <a href="https://saigar.io">saigar.io</a>
+          Powered by <a href="https://saigar.io">saigar.io</a> |{' '}
+          <a href="http://localhost:8084/terms-of-service" style={{ color: '#bfbfbf' }}>
+            Terms of Service
+          </a>
         </Fixed>
       </Layout>
     </Flex>
@@ -150,8 +158,13 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
 DefaultLayout.propTypes = {
   children: PropTypes.element.isRequired,
   pathname: PropTypes.string.isRequired,
-  showFeed: PropTypes.bool.isRequired,
-  feed: PropTypes.element.isRequired,
+  showFeed: PropTypes.bool,
+  feed: PropTypes.element,
+}
+
+DefaultLayout.defaultProps = {
+  showFeed: false,
+  feed: null,
 }
 
 export default DefaultLayout
