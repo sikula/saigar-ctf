@@ -399,7 +399,7 @@ const HomePageData = () => (
             </div>
           </div>
 
-          <div className="row" style={{ marginBttom: '10px', overflowY: 'scroll' }}>
+          <div className="row" style={{ marginBttom: '10px' }}>
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
