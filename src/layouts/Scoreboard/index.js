@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
+
 import { Layout, Fixed, Flex } from 'react-layout-pane'
 import { AuthConsumer } from '../../shared/components/AuthContext/context'
 
@@ -47,7 +49,10 @@ const ScoreboardLayout = ({ children }) => (
     </Fixed>
     <Flex className="content">{children}</Flex>
     <Fixed className="footer">
-      Powered by <a href="https://saigar.io">saigar.io</a>
+      Powered by <a href="https://saigar.io">saigar.io</a> |{' '}
+      <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
+        Terms of Service
+      </Link>
     </Fixed>
   </Layout>
 )
