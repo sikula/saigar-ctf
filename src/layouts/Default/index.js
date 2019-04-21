@@ -109,6 +109,8 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           className="content"
           style={{
             background: '#F5F8FA',
+            overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {children}
