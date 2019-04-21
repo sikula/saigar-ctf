@@ -1,9 +1,24 @@
+/* eslint-disable no-return-assign */
+/* eslint-disable react/no-multi-comp */
 /* eslint-disable class-methods-use-this, no-unused-expressions */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Query, Mutation, Subscription } from 'react-apollo'
-import { Tabs, Tab, Card, Elevation, Tag, Button, H5, HTMLSelect } from '@blueprintjs/core'
+import {
+  Tabs,
+  Tab,
+  Card,
+  Elevation,
+  Tag,
+  Button,
+  Toaster,
+  Position,
+  H5,
+  HTMLSelect,
+} from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
+
+import gql from 'graphql-tag'
 
 import ScoreGraph from '../../../features/ScoreGraph'
 import { HOME_QUERY, SUBMISSION_HISTORY, PROCESS_SUBMISSION } from './graphql/adminQueries'
@@ -137,6 +152,190 @@ Countdown.propTypes = {
   date: PropTypes.objectOf(Date).isRequired,
 }
 
+/* TODO(peter): This code is duplicated, should be extracted to a shared component */
+const FeedToaster = Toaster.create({
+  classname: 'feed-toaster',
+  position: Position.TOP_LEFT,
+})
+
+const ShareButton = class extends React.PureComponent {
+  copySubmissionUrl = e => {
+    this.textArea.select()
+    document.execCommand('copy')
+    e.target.focus()
+
+    FeedToaster.show({ message: 'Shareable link copied successfully!' })
+  }
+
+  render() {
+    const { uuid } = this.props
+    return (
+      <React.Fragment>
+        <Button
+          intent="primary"
+          large
+          icon={IconNames.CLIPBOARD}
+          onClick={this.copySubmissionUrl}
+          style={{ marginRight: 10 }}
+        >
+          Share
+        </Button>
+        <textarea
+          ref={textArea => (this.textArea = textArea)}
+          readOnly
+          value={`https://localhost:8084/submission/${uuid}`}
+          style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
+        />
+      </React.Fragment>
+    )
+  }
+}
+ShareButton.propTypes = {
+  uuid: PropTypes.string.isRequired,
+}
+/* -- END -- */
+
+/* TODO(peter): This code is duplicated, can also be extracted */
+const SUBMISSION_DETAILS = gql`
+  query submissionConfig {
+    submission_configuration {
+      uuid
+      category
+      points
+    }
+  }
+`
+
+const CategoryList = ({ currentCategory, handleChange }) => (
+  <Query query={SUBMISSION_DETAILS} fetchPolicy="cache-first">
+    {({ error, loading, data }) => {
+      if (loading) return null
+      if (error) return <div>{`${error.message}`}</div>
+
+      return (
+        <HTMLSelect name="category" value={currentCategory} onChange={handleChange} fill large>
+          {data.submission_configuration.map(config => (
+            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+              config.category
+            } (${config.points} pts.)`}</option>
+          ))}
+        </HTMLSelect>
+      )
+    }}
+  </Query>
+)
+
+CategoryList.propTypes = {
+  currentCategory: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
+}
+/* -- END -- */
+
+class SubmissionItem extends React.Component {
+  state = {
+    // eslint-disable-next-line react/destructuring-assignment
+    category: this.props.submission.submissionConfigurationByconfigId.uuid,
+  }
+
+  handleChange = e => {
+    this.setState({
+      category: e.currentTarget.value,
+    })
+  }
+
+  render() {
+    const { submission } = this.props
+    const { category } = this.state
+
+    return (
+      <Card style={{ marginBottom: 20 }}>
+        <div style={{ width: '100%', display: 'inline-flex' }}>
+          <div style={{ flexGrow: 1 }}>
+            <H5>{submission.processed}</H5>
+          </div>
+          <div>
+            <CategoryList
+              currenctCategory={submission.submissionConfigurationByconfigId.uuid}
+              handleChange={this.handleChange}
+            />
+          </div>
+        </div>
+        <code style={{ background: '#cdcdcd' }}>
+          <p>{submission.content}</p>
+          <p>{submission.explanation}</p>
+        </code>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <Tag large style={{ marginRight: 10 }}>
+              <strong>Team: </strong>
+              {submission.teamByteamId.name}
+            </Tag>
+            <Tag large style={{ marginRight: 10 }}>
+              <strong>Case: </strong>
+              {submission.case.name}
+            </Tag>
+            <Tag large>
+              <strong>Category: </strong>
+              {submission.submissionConfigurationByconfigId.category}
+            </Tag>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <ShareButton uuid={submission.uuid} />
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
+                  intent="success"
+                  large
+                  icon={IconNames.TICK}
+                  style={{ marginRight: 10 }}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: submission.uuid,
+                        value: 'ACCEPTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                  }
+                >
+                  Approve
+                </Button>
+              )}
+            </Mutation>
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
+                  intent="danger"
+                  large
+                  icon={IconNames.CROSS}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: submission.uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                  }
+                >
+                  Reject
+                </Button>
+              )}
+            </Mutation>
+          </div>
+        </div>
+      </Card>
+    )
+  }
+}
+
+SubmissionItem.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  submission: PropTypes.any.isRequired,
+}
+
 const HistoryData = () => (
   <Subscription subscription={SUBMISSION_HISTORY}>
     {({ data, loading, error }) => {
@@ -144,87 +343,7 @@ const HistoryData = () => (
       if (error) return <div>Error: `${error.message}`</div>
 
       return data.event[0].submissions.map(submission => (
-        <Card style={{ marginBottom: 20 }}>
-          <div style={{ width: '100%', display: 'inline-flex' }}>
-            <div style={{ flexGrow: 1 }}>
-              <H5>{submission.processed}</H5>
-              {/* <Tag>
-                <strong>Submitted By: </strong>
-                {submission.teamByteamId.name}
-              </Tag>
-              <Tag>{submission.submissionConfigurationByconfigId.category}</Tag> */}
-              {/* {submission.case.name} */}
-            </div>
-            <div>
-              <HTMLSelect>
-                <option>Hi</option>
-              </HTMLSelect>
-            </div>
-          </div>
-          <code style={{ background: '#cdcdcd' }}>
-            <p>{submission.content}</p>
-            <p>{submission.explanation}</p>
-          </code>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <Tag large style={{ marginRight: 10 }}>
-                <strong>Team: </strong>
-                {submission.teamByteamId.name}
-              </Tag>
-              <Tag large style={{ marginRight: 10 }}>
-                <strong>Case: </strong>
-                {submission.case.name}
-              </Tag>
-              <Tag large>
-                <strong>Category: </strong>
-                {submission.submissionConfigurationByconfigId.category}
-              </Tag>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Mutation mutation={PROCESS_SUBMISSION}>
-                {updateSubmission => (
-                  <Button
-                    intent="success"
-                    large
-                    icon={IconNames.TICK}
-                    style={{ marginRight: 10 }}
-                    onClick={() =>
-                      updateSubmission({
-                        variables: {
-                          submissionID: submission.uuid,
-                          value: 'ACCEPTED',
-                          processedAt: new Date(),
-                        },
-                      })
-                    }
-                  >
-                    Approve
-                  </Button>
-                )}
-              </Mutation>
-              <Mutation mutation={PROCESS_SUBMISSION}>
-                {updateSubmission => (
-                  <Button
-                    intent="danger"
-                    large
-                    icon={IconNames.CROSS}
-                    onClick={() =>
-                      updateSubmission({
-                        variables: {
-                          submissionID: submission.uuid,
-                          value: 'REJECTED',
-                          processedAt: new Date(),
-                        },
-                      })
-                    }
-                  >
-                    Reject
-                  </Button>
-                )}
-              </Mutation>
-            </div>
-          </div>
-        </Card>
+        <SubmissionItem key={submission.uuid} submission={submission} />
       ))
     }}
   </Subscription>

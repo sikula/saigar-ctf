@@ -24,6 +24,7 @@ const SUBMISSION_HISTORY = gql`
           name
         }
         submissionConfigurationByconfigId {
+          uuid
           category
         }
         teamByteamId {
@@ -46,6 +47,7 @@ const LIVE_FEED = gql`
           name
         }
         submissionConfigurationByconfigId {
+          uuid
           category
         }
         teamByteamId {
@@ -68,6 +70,7 @@ const LIVE_FEED_FILTERED = gql`
           name
         }
         submissionConfigurationByconfigId {
+          uuid
           category
         }
         teamByteamId {
@@ -79,9 +82,14 @@ const LIVE_FEED_FILTERED = gql`
 `
 
 const PROCESS_SUBMISSION = gql`
-  mutation approveSubmission($submissionID: uuid!, $value: String!, $processedAt: timestamptz!) {
+  mutation approveSubmission(
+    $submissionID: uuid!
+    $value: String!
+    $processedAt: timestamptz!
+    $category: uuid!
+  ) {
     updateSubmission: update_submission(
-      _set: { processed: $value, processed_at: $processedAt }
+      _set: { processed: $value, processed_at: $processedAt, config_id: $category }
       where: { uuid: { _eq: $submissionID } }
     ) {
       affected_rows
