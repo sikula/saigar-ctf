@@ -115,9 +115,9 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
         </Flex>
         <Fixed className="footer">
           Powered by <a href="https://saigar.io">saigar.io</a> |{' '}
-          <a href="http://localhost:8084/terms-of-service" style={{ color: '#bfbfbf' }}>
+          <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
             Terms of Service
-          </a>
+          </Link>
         </Fixed>
       </Layout>
     </Flex>
