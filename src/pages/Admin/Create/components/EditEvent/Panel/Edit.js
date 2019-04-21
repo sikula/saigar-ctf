@@ -9,7 +9,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../../../shared/components/SlidingPane'
+import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 import { EDIT_EVENT_MUTATION, EVENTS_QUERY } from '../../../graphql/graphQueries'
 import EditEventForm from './Form'
 
@@ -27,32 +27,41 @@ const EditEvent = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Mutation mutation={EDIT_EVENT_MUTATION} refetchQueries={[{ query: EVENTS_QUERY }]}>
-        {updateEvent => (
-          <Formik
-            initialValues={{
-              event_name: otherProps.eventName,
-              start_time: otherProps.startTime,
-              end_time: otherProps.endTime,
-            }}
-            onSubmit={values => {
-              const { event_name: eventName, ...rest } = values
-              updateEvent({
-                variables: {
-                  eventID: otherProps.eventID,
-                  input: { name: eventName, ...rest },
-                },
-              })
-            }}
-            render={formikProps => <EditEventForm {...formikProps} />}
-          />
+      <SlidingPanelConsumer>
+        {({ closeSlider }) => (
+          <Mutation
+            mutation={EDIT_EVENT_MUTATION}
+            refetchQueries={[{ query: EVENTS_QUERY }]}
+            onCompleted={() => closeSlider()}
+          >
+            {updateEvent => (
+              <Formik
+                initialValues={{
+                  event_name: otherProps.eventName,
+                  start_time: otherProps.startTime,
+                  end_time: otherProps.endTime,
+                }}
+                onSubmit={values => {
+                  const { event_name: eventName, ...rest } = values
+                  updateEvent({
+                    variables: {
+                      eventID: otherProps.eventID,
+                      input: { name: eventName, ...rest },
+                    },
+                  })
+                }}
+                render={formikProps => <EditEventForm {...formikProps} />}
+              />
+            )}
+          </Mutation>
         )}
-      </Mutation>
+      </SlidingPanelConsumer>
     </SlidingPane.Content>
 
     <SlidingPane.Actions form="editEventForm">SAVE</SlidingPane.Actions>
   </SlidingPane>
 )
+
 EditEvent.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,

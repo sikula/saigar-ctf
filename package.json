@@ -24,6 +24,7 @@
     "@blueprintjs/datetime": "^3.7.1",
     "@blueprintjs/icons": "^3.6.0",
     "@blueprintjs/select": "^3.7.0",
+    "@vtex/react-csv-parse": "^3.0.2",
     "apexcharts": "^3.5.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",

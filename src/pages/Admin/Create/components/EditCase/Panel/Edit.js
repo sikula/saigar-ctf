@@ -12,7 +12,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../../../shared/components/SlidingPane'
+import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 import {
   EDIT_EVENT_CASE_MUTATION,
   EDIT_CASE_MUTATION,
@@ -74,49 +74,57 @@ const EditCase = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Query query={CASE_QUERY} variables={{ caseID: otherProps.caseID }} skip={!otherProps.caseID}>
-        {({ data, loading, error }) => {
-          if (!data) return null
-          if (loading) return null
-          if (error) return <div>{error.message}</div>
+      <SlidingPanelConsumer>
+        {({ closeSlider }) => (
+          <Query
+            query={CASE_QUERY}
+            variables={{ caseID: otherProps.caseID }}
+            skip={!otherProps.caseID}
+          >
+            {({ data, loading, error }) => {
+              if (!data) return null
+              if (loading) return null
+              if (error) return <div>{error.message}</div>
 
-          const { event_id: eventId, ...rest } = data.eventCase[0]
+              const { event_id: eventId, ...rest } = data.eventCase[0]
 
-          return (
-            <ComposedMutations>
-              {({ updateCase, updateEventCase }) => {
-                const saveCase = async values => {
-                  const { eventID, ..._case } = values
-                  await updateEventCase.mutation({ variables: { eventID } })
-                  await updateCase.mutation({
-                    variables: { caseID: otherProps.caseID, input: { ..._case } },
-                  })
-                }
+              return (
+                <ComposedMutations>
+                  {({ updateCase, updateEventCase }) => {
+                    const saveCase = async values => {
+                      const { eventID, ..._case } = values
+                      await updateEventCase.mutation({ variables: { eventID } })
+                      await updateCase.mutation({
+                        variables: { caseID: otherProps.caseID, input: { ..._case } },
+                      })
+                    }
 
-                return (
-                  <Formik
-                    initialValues={{
-                      eventID: eventId,
-                      name: rest.case.name,
-                      missing_since: rest.case.missing_since,
-                      missing_from: rest.case.missing_from,
-                      dob: rest.case.dob,
-                      age: rest.case.age,
-                      height: rest.case.height,
-                      weight: rest.case.weight,
-                      characteristics: rest.case.characteristics,
-                      disappearance_details: rest.case.disappearance_details,
-                      other_notes: rest.case.other_notes,
-                    }}
-                    onSubmit={values => saveCase(values)}
-                    render={formikProps => <EditCaseForm {...formikProps} />}
-                  />
-                )
-              }}
-            </ComposedMutations>
-          )
-        }}
-      </Query>
+                    return (
+                      <Formik
+                        initialValues={{
+                          eventID: eventId,
+                          name: rest.case.name,
+                          missing_since: rest.case.missing_since,
+                          missing_from: rest.case.missing_from,
+                          dob: rest.case.dob,
+                          age: rest.case.age,
+                          height: rest.case.height,
+                          weight: rest.case.weight,
+                          characteristics: rest.case.characteristics,
+                          disappearance_details: rest.case.disappearance_details,
+                          other_notes: rest.case.other_notes,
+                        }}
+                        onSubmit={values => saveCase(values).then(() => closeSlider())}
+                        render={formikProps => <EditCaseForm {...formikProps} />}
+                      />
+                    )
+                  }}
+                </ComposedMutations>
+              )
+            }}
+          </Query>
+        )}
+      </SlidingPanelConsumer>
     </SlidingPane.Content>
 
     <SlidingPane.Actions form="editCaseForm">SAVE</SlidingPane.Actions>
