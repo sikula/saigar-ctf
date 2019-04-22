@@ -50,22 +50,6 @@ const authLink = setContext((_, { headers }) => ({
   },
 }))
 
-// const stateLink = withClientState({
-//   cache,
-//   defaults: {
-//     visibilityFilter: 'SHOW_ALL',
-//     isFeedVisible: false,
-//     isSettingsVisible: false,
-//   },
-//   resolvers: {
-//     Mutation: {
-//       updateVisibilityFilter,
-//       toggleFeedPanel,
-//       toggleSettingsPanel,
-//     },
-//   },
-// })
-
 const terminatingLink = split(
   ({ query }) => {
     const { kind, operation } = getMainDefinition(query)

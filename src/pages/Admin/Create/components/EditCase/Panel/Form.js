@@ -42,40 +42,7 @@ MissingSinceInput.propTypes = {
   onChange: PropTypes.func.isRequired,
 }
 
-const DobInput = ({ value, onChange }) => {
-  const handleChange = inputValue => {
-    onChange('dob', inputValue)
-  }
-
-  return (
-    <DateInput
-      id="text-input"
-      name="dob"
-      value={value}
-      onChange={handleChange}
-      formatDate={date => date.toLocaleString()}
-      parseDate={str => new Date(str)}
-      minDate={new Date('1919', '01', '01')}
-      placeholder="M/D/YYY"
-      showActionsBar
-      popoverProps={{
-        targetProps: {
-          style: { width: '100%' },
-        },
-      }}
-      inputProps={{
-        large: true,
-      }}
-    />
-  )
-}
-
-DobInput.propTypes = {
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-}
-
-const AgeInput = ({ onChange }) => {
+const AgeInput = ({ value, onChange }) => {
   const handleChange = inputValue => {
     onChange('age', inputValue)
   }
@@ -87,6 +54,7 @@ const AgeInput = ({ onChange }) => {
       large
       fill
       name="age"
+      value={value || ''}
       onChange={handleChange}
       id="text-input"
       placeholder="14"
@@ -99,6 +67,7 @@ const AgeInput = ({ onChange }) => {
 
 AgeInput.propTypes = {
   onChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
 }
 
 const EventSelect = ({ values, handleChange }) => (
@@ -146,9 +115,6 @@ const EditCaseForm = ({ handleSubmit, handleChange, setFieldValue, values }) => 
         large
       />
     </FormGroup>
-    <FormGroup label="Date of Birth" labelFor="text-input" labelInfo="(required)">
-      <DobInput onChange={setFieldValue} value={new Date(values.dob)} valueFor="dob" />
-    </FormGroup>
     <FormGroup label="Missing Since" labelInfo="(required)" labelFor="text-input">
       <MissingSinceInput
         onChange={setFieldValue}
@@ -167,7 +133,7 @@ const EditCaseForm = ({ handleSubmit, handleChange, setFieldValue, values }) => 
       />
     </FormGroup>
     <FormGroup label="Age" labelFor="text-input">
-      <AgeInput onChange={setFieldValue} />
+      <AgeInput value={values.age} onChange={setFieldValue} />
     </FormGroup>
     <FormGroup label="Height" labelFor="text-input">
       <InputGroup
@@ -187,6 +153,16 @@ const EditCaseForm = ({ handleSubmit, handleChange, setFieldValue, values }) => 
         onChange={handleChange}
         placeholder="86KG"
         large
+      />
+    </FormGroup>
+    <FormGroup label="Source Url" labelFor="text-input">
+      <TextArea
+        id="text-input"
+        name="source_url"
+        value={values.source_url}
+        onChange={handleChange}
+        placeholder="(e.g. reported missing last night)"
+        fill
       />
     </FormGroup>
     <FormGroup label="Details of Disappearance" labelFor="text-input">

@@ -40,9 +40,9 @@ const CreateCase = ({ isOpen, onRequestClose }) => (
                 initialValues={{
                   eventID: undefined,
                   name: undefined,
+                  source_url: '',
                   missing_since: '',
                   missing_from: '',
-                  dob: '',
                   age: null,
                   height: '',
                   weight: '',
