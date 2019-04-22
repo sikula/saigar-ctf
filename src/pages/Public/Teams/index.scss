@@ -1,0 +1,8 @@
+.team-name {
+    padding: 20px
+}
+
+.team-name:nth-of-type(odd) {
+    padding: 20px;
+    background: #efe7e7;
+}

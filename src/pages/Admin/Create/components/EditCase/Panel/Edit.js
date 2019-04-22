@@ -106,7 +106,7 @@ const EditCase = ({ isOpen, onRequestClose, ...otherProps }) => (
                           name: rest.case.name,
                           missing_since: rest.case.missing_since,
                           missing_from: rest.case.missing_from,
-                          dob: rest.case.dob,
+                          source_url: rest.case.source_url,
                           age: rest.case.age,
                           height: rest.case.height,
                           weight: rest.case.weight,

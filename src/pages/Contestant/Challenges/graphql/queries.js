@@ -2,11 +2,22 @@ import gql from 'graphql-tag'
 
 const CASE_LIST = gql`
   query caseList {
+    user(where: { auth0id: { _eq: "test" } }) {
+      acceptedTos
+    }
     case {
       uuid
       name
       missing_since
       missing_from
+    }
+  }
+`
+
+const ACCEPT_TERMS = gql`
+  mutation acceptTerms {
+    update_user(_set: { acceptedTos: true }, where: { auth0id: { _eq: "test" } }) {
+      affected_rows
     }
   }
 `
@@ -66,4 +77,4 @@ const SUBMISION_INFO = gql`
   }
 `
 
-export { CASE_LIST, NEW_SUBMISSION_MUTATION, SUBMISION_INFO }
+export { CASE_LIST, ACCEPT_TERMS, NEW_SUBMISSION_MUTATION, SUBMISION_INFO }

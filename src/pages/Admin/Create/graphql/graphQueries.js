@@ -56,11 +56,11 @@ const CASE_QUERY = gql`
         name
         missing_since
         missing_from
-        dob
         age
         height
         weight
         characteristics
+        source_url
         disappearance_details
         other_notes
       }
