@@ -9,7 +9,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom custom component
-import { SlidingPane } from '../../../../../../shared/components/SlidingPane'
+import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 import { CASES_QUERY, CREATE_CASE_MUTATION } from '../../../graphql/graphQueries'
 import CreateCaseForm from './Form'
 
@@ -28,35 +28,43 @@ const CreateCase = ({ isOpen, onRequestClose }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Mutation mutation={CREATE_CASE_MUTATION} refetchQueries={[{ query: CASES_QUERY }]}>
-        {insertEventCase => (
-          <Formik
-            initialValues={{
-              eventID: undefined,
-              name: undefined,
-              missing_since: '',
-              missing_from: '',
-              dob: '',
-              age: null,
-              height: '',
-              weight: '',
-              characteristics: '',
-              disappearance_details: '',
-              other_notes: '',
-            }}
-            onSubmit={values => {
-              const { eventID, ...rest } = values
-              insertEventCase({
-                variables: {
-                  eventID,
-                  caseData: rest,
-                },
-              })
-            }}
-            render={formikProps => <CreateCaseForm {...formikProps} />}
-          />
+      <SlidingPanelConsumer>
+        {({ closeSlider }) => (
+          <Mutation
+            mutation={CREATE_CASE_MUTATION}
+            refetchQueries={[{ query: CASES_QUERY }]}
+            onCompleted={() => closeSlider()}
+          >
+            {insertEventCase => (
+              <Formik
+                initialValues={{
+                  eventID: undefined,
+                  name: undefined,
+                  source_url: '',
+                  missing_since: '',
+                  missing_from: '',
+                  age: null,
+                  height: '',
+                  weight: '',
+                  characteristics: '',
+                  disappearance_details: '',
+                  other_notes: '',
+                }}
+                onSubmit={values => {
+                  const { eventID, ...rest } = values
+                  insertEventCase({
+                    variables: {
+                      eventID,
+                      caseData: rest,
+                    },
+                  })
+                }}
+                render={formikProps => <CreateCaseForm {...formikProps} />}
+              />
+            )}
+          </Mutation>
         )}
-      </Mutation>
+      </SlidingPanelConsumer>
     </SlidingPane.Content>
     <SlidingPane.Actions form="createCaseForm">CREATE CASE</SlidingPane.Actions>
   </SlidingPane>

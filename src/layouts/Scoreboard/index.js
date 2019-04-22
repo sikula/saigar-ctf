@@ -24,6 +24,9 @@ const ScoreboardLayout = ({ children }) => (
             <li>
               <a href="#">Resources</a>
             </li>
+            <li>
+              <Link to="/teams">Teams</Link>
+            </li>
           </ul>
         </div>
         <div style={{ float: 'right' }}>
@@ -38,7 +41,7 @@ const ScoreboardLayout = ({ children }) => (
               ) : (
                 <ul>
                   <li>
-                    <a href="#">Home</a>
+                    <Link to="/">Home</Link>
                   </li>
                 </ul>
               )

@@ -40,36 +40,6 @@ MissingSinceInput.propTypes = {
   onChange: PropTypes.func.isRequired,
 }
 
-const DobInput = ({ onChange }) => {
-  const handleChange = inputValue => {
-    onChange('dob', inputValue)
-  }
-
-  return (
-    <DateInput
-      id="text-input"
-      name="dob"
-      onChange={handleChange}
-      formatDate={date => date.toLocaleString()}
-      parseDate={str => new Date(str)}
-      placeholder="M/D/YYY"
-      showActionsBar
-      popoverProps={{
-        targetProps: {
-          style: { width: '100%' },
-        },
-      }}
-      inputProps={{
-        large: true,
-      }}
-    />
-  )
-}
-
-DobInput.propTypes = {
-  onChange: PropTypes.func.isRequired,
-}
-
 const AgeInput = ({ onChange }) => {
   const handleChange = inputValue => {
     onChange('age', inputValue)
@@ -141,9 +111,6 @@ export const CreateCaseForm = ({ handleSubmit, handleChange, values, setFieldVal
         large
       />
     </FormGroup>
-    <FormGroup label="Date of Birth" labelFor="text-input" labelInfo="(required)">
-      <DobInput onChange={setFieldValue} valueFor="dob" />
-    </FormGroup>
     <FormGroup label="Missing Since" labelInfo="(required)" labelFor="text-input">
       <MissingSinceInput onChange={setFieldValue} valueFor="missing_since" />
     </FormGroup>
@@ -178,6 +145,16 @@ export const CreateCaseForm = ({ handleSubmit, handleChange, values, setFieldVal
         onChange={handleChange}
         placeholder="86KG"
         large
+      />
+    </FormGroup>
+    <FormGroup label="Source Url" labelFor="text-input">
+      <TextArea
+        id="text-input"
+        name="source_url"
+        value={values.source_url}
+        onChange={handleChange}
+        placeholder="(e.g. https://rcmp.com/missing-person/jane-doe)"
+        fill
       />
     </FormGroup>
     <FormGroup label="Details of Disappearance" labelFor="text-input">
