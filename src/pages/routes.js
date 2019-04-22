@@ -30,6 +30,9 @@ const AsyncScoreboardPage = React.lazy(() =>
 const AsyncTermsPage = React.lazy(() =>
   import(/* webpackChunkName: "TermsPage" */ './Public/TermsOfService'),
 )
+const AsyncTeamsPage = React.lazy(() =>
+  import(/* webpackChunkName: "TeamsPage" */ './Public/Teams'),
+)
 const CtfRoutes = ({ match }) => (
   <Switch>
     <Redirect exact from="/" to="/home" />
@@ -82,6 +85,12 @@ const CtfRoutes = ({ match }) => (
       path={`${match.url}terms-of-service`}
       layout={ScoreboardLayout}
       component={AsyncTermsPage}
+    />
+    <PublicRoute
+      exact
+      path={`${match.url}teams`}
+      layout={ScoreboardLayout}
+      component={AsyncTeamsPage}
     />
   </Switch>
 )

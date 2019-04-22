@@ -17,7 +17,6 @@ import CtfRoutes from '@pages/routes'
 import history from './history'
 
 import { SlidingPanelRoot, SlidingPanelProvider } from '../../shared/components/SlidingPane'
-import { PanelProvider, PanelRoot } from '../../shared/components/Panel'
 
 /*
   @NOTE(Peter):
@@ -56,16 +55,13 @@ const configureRoutes = () => (
   <Router history={history}>
     <React.Suspense fallback={<div>Loading...</div>}>
       <SlidingPanelProvider>
-        <PanelProvider>
-          {/* SPECIAL ROUTES */}
-          <Switch>
-            <Route exact path="/authcallback" render={AuthCallback} />
-            <Route exact path="/login" render={LoginPage} />
-            <Route path="/" component={CtfRoutes} />
-            <Route component={NotFound} />
-          </Switch>
-          <PanelRoot />
-        </PanelProvider>
+        {/* SPECIAL ROUTES */}
+        <Switch>
+          <Route exact path="/authcallback" render={AuthCallback} />
+          <Route exact path="/login" render={LoginPage} />
+          <Route path="/" component={CtfRoutes} />
+          <Route component={NotFound} />
+        </Switch>
         <SlidingPanelRoot />
       </SlidingPanelProvider>
     </React.Suspense>

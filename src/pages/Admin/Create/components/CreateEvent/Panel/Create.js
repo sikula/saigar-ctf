@@ -7,7 +7,7 @@ import { Formik } from 'formik'
 import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
-import { SlidingPane } from '../../../../../../shared/components/SlidingPane'
+import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 import { EVENTS_QUERY, CREATE_EVENT_MUTATION } from '../../../graphql/graphQueries'
 import CreateEventForm from './Form'
 
@@ -36,26 +36,34 @@ const CreateEvent = ({ isOpen, onRequestClose }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Mutation mutation={CREATE_EVENT_MUTATION} refetchQueries={[{ query: EVENTS_QUERY }]}>
-        {insertEvent => (
-          <Formik
-            initialValues={{
-              event_name: '',
-              start_time: '',
-              end_time: '',
-            }}
-            onSubmit={values => {
-              const { event_name: eventName, ...rest } = values
-              insertEvent({
-                variables: {
-                  input: { name: eventName, ...rest },
-                },
-              })
-            }}
-            render={formikProps => <CreateEventForm {...formikProps} />}
-          />
+      <SlidingPanelConsumer>
+        {({ closeSlider }) => (
+          <Mutation
+            mutation={CREATE_EVENT_MUTATION}
+            refetchQueries={[{ query: EVENTS_QUERY }]}
+            onCompleted={() => closeSlider()}
+          >
+            {insertEvent => (
+              <Formik
+                initialValues={{
+                  event_name: '',
+                  start_time: '',
+                  end_time: '',
+                }}
+                onSubmit={values => {
+                  const { event_name: eventName, ...rest } = values
+                  insertEvent({
+                    variables: {
+                      input: { name: eventName, ...rest },
+                    },
+                  })
+                }}
+                render={formikProps => <CreateEventForm {...formikProps} />}
+              />
+            )}
+          </Mutation>
         )}
-      </Mutation>
+      </SlidingPanelConsumer>
     </SlidingPane.Content>
     <SlidingPane.Actions form="createEventForm">SAVE</SlidingPane.Actions>
   </SlidingPane>

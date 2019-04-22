@@ -11,6 +11,7 @@ import CreateCase from './components/CreateCase'
 import EditCase from './components/EditCase'
 import CreateEvent from './components/CreateEvent'
 import EditEvent from './components/EditEvent'
+import UploadUser from './components/UploadUser'
 
 import { EVENTS_QUERY, CASES_QUERY } from './graphql/graphQueries'
 
@@ -41,6 +42,15 @@ const EventCard = ({ eventID, name, startTime, endTime }) => (
             minimal
             icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(EditEvent, { eventID, eventName: name, startTime, endTime })}
+          />
+        )}
+      </SlidingPanelConsumer>
+      <SlidingPanelConsumer>
+        {({ openSlider }) => (
+          <Button
+            minimal
+            icon={<Icon icon={IconNames.NEW_PERSON} style={{ color: '#394B59' }} iconSize={20} />}
+            onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
           />
         )}
       </SlidingPanelConsumer>

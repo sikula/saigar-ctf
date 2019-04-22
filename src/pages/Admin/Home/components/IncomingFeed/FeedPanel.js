@@ -1,6 +1,7 @@
 /* eslint-disable no-return-assign, react/no-multi-comp */
 import React from 'react'
 import PropTypes from 'prop-types'
+
 import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -218,6 +219,7 @@ const FeedPanel = ({
           content={content}
           submissionConfiguration={submissionConfigurationByconfigId}
           hidePanel={hidePanel}
+          key={uuid}
         />
       </div>
     )}

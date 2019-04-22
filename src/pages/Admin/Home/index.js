@@ -254,10 +254,7 @@ class SubmissionItem extends React.Component {
             <H5>{submission.processed}</H5>
           </div>
           <div>
-            <CategoryList
-              currenctCategory={submission.submissionConfigurationByconfigId.uuid}
-              handleChange={this.handleChange}
-            />
+            <CategoryList currentCategory={category} handleChange={this.handleChange} />
           </div>
         </div>
         <code style={{ background: '#cdcdcd' }}>
