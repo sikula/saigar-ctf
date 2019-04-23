@@ -37,7 +37,7 @@ const SettingTable = class extends React.Component {
 
     // TODO(peter):
     //  Integrate Apollo-Client into this (eventually will swap out for Redux, but AC is simpler)
-    // why does this work.......
+    //  this can be simplified using Maps, see the TosDialog component for an example
     if (!checked) {
       this.setState(prevState => ({
         items: prevState.items.filter(item => item !== id),
@@ -75,13 +75,21 @@ const SettingTable = class extends React.Component {
                 />
               </td>
               <td style={{ textAlign: 'center' }}>
-                {team.submissionsByteamId_aggregate.aggregate.count}
+                {team.submissionByTeamAggregate.aggregate.count}
               </td>
               <td style={{ textAlign: 'center' }}>{team.name}</td>
             </tr>
           ))}
         </table>
-        <Button onClick={() => this.executeFilter()}>Save</Button>
+        <Button
+          fill
+          intent="primary"
+          large
+          style={{ marginTop: 10 }}
+          onClick={() => this.executeFilter()}
+        >
+          Save
+        </Button>
       </React.Fragment>
     )
   }
