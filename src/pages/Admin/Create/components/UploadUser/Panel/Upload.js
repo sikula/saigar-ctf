@@ -2,8 +2,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
-// import { Mutation } from 'react-apollo'
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
 
+import { adopt } from 'react-adopt'
 import CsvParse from '@vtex/react-csv-parse'
 
 // Styles
@@ -13,9 +15,97 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom Components
 import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 
+const ADD_USERS_TO_TEAM = gql`
+  mutation addUserToTeam($objects: [user_team_insert_input!]!) {
+    insert_user_team(objects: $objects) {
+      returning {
+        team_id
+      }
+    }
+  }
+  # mutation addUserToTeam {
+  #   insert_user_team(objects:[
+  #     {
+  #       user:{
+  #         data:{
+  #           nickname:"Peter"
+  #           email:"test@test.com"
+  #           avatar:"hello"
+  #         }
+  #       }
+  #       team:{
+  #         data:{
+  #           name:"Saigar Team 4"
+  #         }
+  #       }
+  #     }
+  #   ]) {
+  #     returning {
+  #       team_id
+  #     }
+  #   }
+  # }
+`
+
+const ADD_TEAM_TO_EVENT = gql`
+  mutation addTeamToEvent($objects: [team_event_insert_input!]!) {
+    insert_team_event(objects: $objects) {
+      returning {
+        team_id
+      }
+    }
+  }
+`
+
+const addUsersToTeam = ({ render }) => (
+  <Mutation mutation={ADD_USERS_TO_TEAM}>
+    {(mutation, result) => render({ mutation, result })}
+  </Mutation>
+)
+
+const addTeamToEvent = ({ render }) => (
+  <Mutation mutation={ADD_TEAM_TO_EVENT}>
+    {(mutation, result) => render({ mutation, result })}
+  </Mutation>
+)
+
+const UserManager = adopt({
+  addUsersToTeam,
+  addTeamToEvent,
+})
+
 class UploadUser extends React.Component {
   state = {
     data: null,
+  }
+
+
+  transformUsers = () => {
+    const { data } = this.state
+
+    return data.map(user => ({
+      user: {
+        data: {
+          nickname: `${user["Team Member First Name"]}.${user["Team Member Last Name"]}`,
+          email: user["Team Member Email"],
+          avatar: ''
+        }
+      },
+      team: {
+        data: {
+          name: user['Team Name']
+        }
+      }
+    }))
+  }
+
+  transformTeams = (teams, eventId) => {
+    const { data } = this.state
+
+    return teams.map(team => ({
+      team_id: team.team_id,
+      event_id: eventId
+    }))
   }
 
   render() {
@@ -64,16 +154,42 @@ class UploadUser extends React.Component {
           </SlidingPanelConsumer>
           {JSON.stringify(this.state)}
         </SlidingPane.Content>
+        
+        <Mutation mutation={ADD_USERS_TO_TEAM}>
+          {(insert_user_team, { data }) => (
+            <Mutation mutation={ADD_TEAM_TO_EVENT}>
+              {insert_team_event => {
+                const addUsers = async () => {
 
-        <div>
-          <SlidingPane.Actions
-            form="uploadUserForm"
-            // eslint-disable-next-line no-console
-            onClick={() => console.log('HELLO THER WORLDDDDDDD')}
-          >
-            SAVE
-          </SlidingPane.Actions>
-        </div>
+                  const data = await insert_user_team({
+                    variables: {
+                      objects: this.transformUsers()
+                    }
+                  })
+                  const { returning } = data.data.insert_user_team
+                  
+
+                  const teamData = this.transformTeams(returning, '968af993-9684-4313-8210-62b3ce14db42')
+                  const dataResult = await insert_team_event({
+                    variables: {
+                      objects: teamData
+                    }
+                  })
+                }
+
+                return (
+                  <SlidingPane.Actions
+                  form="uploadUserForm"
+                  // eslint-disable-next-line no-console
+                  onClick={() => addUsers()}
+                >
+                  SAVE
+                </SlidingPane.Actions>
+                )
+              }}
+            </Mutation>
+          )}
+        </Mutation>
       </SlidingPane>
     )
   }
@@ -88,6 +204,31 @@ UploadUser.propTypes = {
 
 export default UploadUser
 
+
+{/* <UserManager>
+          {({ addUsersToTeam, addTeamToEvent }) => {
+
+            // const users = this.transformUsers()
+            // const teams = this.transformTeams()
+
+            const addUsers = async () => {
+              // console.log(this.transformUsers())
+              // console.log(this.transformTeams())
+
+              await addUsersToTeam.mutation({
+                variables: {
+                  objects: this.transformUsers()
+                }
+              })
+
+              console.log("RESULT: ", addUsersToTeam.result)
+
+              // await addTeamToEvent.mutation({
+              //   variables: objects: [
+
+              //   ]
+              // })
+            } */}
 // mutation {
 //     insert_user_team(objects:{
 //       user:{
