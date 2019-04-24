@@ -23,15 +23,11 @@ const handler = async event => {
 
     // #1 Create User
     const createUserOpts = {
-      email: 'rocco56@gmail.com',
       connection: 'ctfuser',
-      username: 'foxxy',
-      nickname: 'adam',
+      email: event.data.new.email,
       password: `${uuid()}`,
       email_verified: true,
       app_metadata: {
-        team_name: 'Saigar Team 1',
-        tos_accepted: false,
         role: 'contestant',
       },
     }
