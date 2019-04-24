@@ -32,7 +32,7 @@ const handler = async event => {
       },
     }
 
-    const { email } = await auth0.createUser(createUserOpts)
+    const { email } = await auth0.createUser(createUserOpts).catch(err => console.log(err))
 
     // #2 Create Reset Ticket
     const createResetOpts = {
@@ -40,7 +40,9 @@ const handler = async event => {
       connection_id: 'con_C7x24ofiVd6bVRXp',
     }
 
-    const { ticket } = await auth0.createPasswordChangeTicket(createResetOpts)
+    const { ticket } = await auth0
+      .createPasswordChangeTicket(createResetOpts)
+      .catch(err => console.log(err))
 
     // #3 Send email with reset ticket
     // const msg = {
