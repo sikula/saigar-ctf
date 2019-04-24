@@ -14,8 +14,8 @@ const auth0 = new ManagementClient({
 
 const auth0A = new AuthenticationClient({
   domain: 'sikulatest.auth0.com',
-  clientId: 'uB0gs971j8jWcYicr9b5Dfy5aSN24Bss',
-  clientSecret: '7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L',
+  clientId: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
+  clientSecret: 'tPI1zZm3m7LMMbA5bOWv-gm381ltkgOCNwhrxrHSbCa5ZxcbEooQEXdXLXfAaPQ0',
   audience: 'https://sikulatest.auth0.com/api/v2/',
 })
 
@@ -47,10 +47,12 @@ const handler = async event => {
     //   connection_id: 'con_C7x24ofiVd6bVRXp',
     // }
 
-    await auth0A.requestChangePasswordEmail({
-      email: event.data.new.email,
-      connection: 'ctf-user',
-    })
+    await auth0A
+      .requestChangePasswordEmail({
+        email: event.data.new.email,
+        connection: 'ctf-user',
+      })
+      .catch(err => console.log(err))
 
     // const { ticket } = await auth0
     //   .createPasswordChangeTicket(createResetOpts)
