@@ -35,7 +35,9 @@ const handler = async event => {
       username: event.data.new.username,
       password: `${uuid()}`,
       app_metadata: {
-        role: 'contestant',
+        authorization: {
+          groups: ['contestant'],
+        },
       },
     }
 
