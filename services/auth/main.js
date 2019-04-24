@@ -50,7 +50,7 @@ const handler = async event => {
     await auth0A
       .requestChangePasswordEmail({
         email: event.data.new.email,
-        connection: 'ctf-user',
+        connection: 'ctfuser',
       })
       .catch(err => console.log(err))
 
