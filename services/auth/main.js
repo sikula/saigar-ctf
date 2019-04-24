@@ -2,10 +2,17 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const uuid = require('uuid/v4')
 
-const { ManagementClient } = require('auth0')
+const { ManagementClient, AuthenticationClient } = require('auth0')
 const sgMailer = require('@sendgrid/mail')
 
 const auth0 = new ManagementClient({
+  domain: 'sikulatest.auth0.com',
+  clientId: 'uB0gs971j8jWcYicr9b5Dfy5aSN24Bss',
+  clientSecret: '7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L',
+  audience: 'https://sikulatest.auth0.com/api/v2/',
+})
+
+const auth0A = new AuthenticationClient({
   domain: 'sikulatest.auth0.com',
   clientId: 'uB0gs971j8jWcYicr9b5Dfy5aSN24Bss',
   clientSecret: '7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L',
@@ -27,7 +34,6 @@ const handler = async event => {
       email: event.data.new.email,
       username: event.data.new.username,
       password: `${uuid()}`,
-      email_verified: true,
       app_metadata: {
         role: 'contestant',
       },
@@ -36,14 +42,19 @@ const handler = async event => {
     const { email } = await auth0.createUser(createUserOpts).catch(err => console.log(err))
 
     // #2 Create Reset Ticket
-    const createResetOpts = {
-      email,
-      connection_id: 'con_C7x24ofiVd6bVRXp',
-    }
+    // const createResetOpts = {
+    //   email,
+    //   connection_id: 'con_C7x24ofiVd6bVRXp',
+    // }
 
-    const { ticket } = await auth0
-      .createPasswordChangeTicket(createResetOpts)
-      .catch(err => console.log(err))
+    await auth0A.requestChangePasswordEmail({
+      email: event.data.new.email,
+      connection: 'ctf-user',
+    })
+
+    // const { ticket } = await auth0
+    //   .createPasswordChangeTicket(createResetOpts)
+    //   .catch(err => console.log(err))
 
     // #3 Send email with reset ticket
     // const msg = {
@@ -51,7 +62,7 @@ const handler = async event => {
     //     from:
     // }
     // eslint-disable-next-line no-console
-    console.log('INSERT', ticket)
+    // console.log('INSERT', ticket)
   }
 }
 
