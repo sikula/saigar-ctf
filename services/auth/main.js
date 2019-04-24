@@ -25,6 +25,7 @@ const handler = async event => {
     const createUserOpts = {
       connection: 'ctfuser',
       email: event.data.new.email,
+      username: event.data.new.username,
       password: `${uuid()}`,
       email_verified: true,
       app_metadata: {
