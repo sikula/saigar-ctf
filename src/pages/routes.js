@@ -7,6 +7,7 @@ import PrivateRoute from '@shared/routes/PrivateRoute'
 import PublicRoute from '@shared/routes/PublicRoute'
 
 /* Layouts */
+import Can from '@shared/components/AuthContext/Can'
 import DefaultLayout from '../layouts/Default'
 import ScoreboardLayout from '../layouts/Scoreboard'
 
@@ -30,12 +31,18 @@ const AsyncScoreboardPage = React.lazy(() =>
 const AsyncTermsPage = React.lazy(() =>
   import(/* webpackChunkName: "TermsPage" */ './Public/TermsOfService'),
 )
+const AsyncRulesPage = React.lazy(() =>
+  import(/* webpackChunkName: "TermsPage" */ './Public/Rules'),
+)
+const AsyncResourcesPage = React.lazy(() =>
+  import(/* webpackChunkName: "TermsPage" */ './Public/Resources'),
+)
 const AsyncTeamsPage = React.lazy(() =>
   import(/* webpackChunkName: "TeamsPage" */ './Public/Teams'),
 )
 const CtfRoutes = ({ match }) => (
   <Switch>
-    <Redirect exact from="/" to="/home" />
+    <Redirect exact from="/" to="/login" />
     {/* ADMIN ROUTES */}
     <PrivateRoute
       exact
@@ -49,7 +56,6 @@ const CtfRoutes = ({ match }) => (
       layout={DefaultLayout}
       component={AsyncCreatePage}
     />
-    
 
     {/* JUDGE ROUTES */}
     {/* Judge & Admin homepage is the same */}
@@ -80,6 +86,18 @@ const CtfRoutes = ({ match }) => (
       path={`${match.url}scoreboard`}
       layout={ScoreboardLayout}
       component={AsyncScoreboardPage}
+    />
+    <PublicRoute
+      exact
+      path={`${match.url}rules`}
+      layout={ScoreboardLayout}
+      component={AsyncRulesPage}
+    />
+    <PublicRoute
+      exact
+      path={`${match.url}resources`}
+      layout={ScoreboardLayout}
+      component={AsyncResourcesPage}
     />
     <PublicRoute
       exact

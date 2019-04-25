@@ -63,7 +63,7 @@ const SettingTable = class extends React.Component {
       <React.Fragment>
         <table style={{ width: '100%' }}>
           <th>Tracked</th>
-          <th>Submissions</th>
+          <th>Pending</th>
           <th>Name</th>
           {data.team.map(team => (
             <tr key={team.uuid}>
