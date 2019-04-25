@@ -12,7 +12,7 @@ const SUBMISSION_INFO = {
     name: 'LOCATION',
     text: (
       <div>
-        <strong>EMPLOYMENT</strong>
+        <strong>LOCATION</strong>
         <p>
           Relevant information pertaining to the current location of the subject. This can include
           but not limited to: new information on location (this does not include a Police update
@@ -228,7 +228,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values }) => (
               ))}
             </HTMLSelect>
           </FormGroup>
-          <FormGroup label="Proof" labelInfo="(required)" labelFor="text-input">
+          <FormGroup label="URL" labelInfo="(required)" labelFor="text-input">
             <TextArea name="proof" fill value={values.proof} onChange={handleChange} />
           </FormGroup>
           <FormGroup label="Explanation" labelInfo="(required)" labelFor="text-input">

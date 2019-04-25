@@ -55,3 +55,39 @@ $case-grid-gutter: $space-l;
         overflow: hidden;
     }
 }
+
+
+nav.challenges {
+    border-bottom: 1px solid #fbeeee;
+    ul {
+        list-style: none;
+        text-align: center;
+        margin: 0;
+        height: 60px;
+      }
+
+      ul li {
+        display: inline-block;
+      }
+
+      ul li a {
+        display: block;
+        padding: 15px;
+        text-decoration: none;
+        color: #000;
+        font-weight: 500;
+        text-transform: uppercase;
+        margin: 0 5px;
+      }
+
+      ul li a,
+      nav ul li a:after,
+      nav ul li a:before {
+        transition: all .5s;
+      }
+
+      ul li a:hover {
+        color: darken(#FFFFFF, 30%);
+        text-decoration: none;
+      }
+}

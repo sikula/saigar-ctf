@@ -83,7 +83,7 @@ const SubmissionItem = ({ data }) => (
                       submissionID: data.uuid,
                       value: 'ACCEPTED', // processed = ACCEPTED
                       processedAt: new Date(),
-                      category: data.submissionConfigurationByconfigId.uuid
+                      category: data.submissionConfigurationByconfigId.uuid,
                     },
                   })
                 }
@@ -98,7 +98,7 @@ const SubmissionItem = ({ data }) => (
                       submissionID: data.uuid,
                       value: 'REJECTED', // processed = REJECTED
                       processedAt: new Date(),
-                      category: data.submissionConfigurationByconfigId.uuid
+                      category: data.submissionConfigurationByconfigId.uuid,
                     },
                   })
                 }
@@ -150,7 +150,7 @@ const SubscriptionData = ({ subscription, teams }) => (
       const { submissions } = data.event[0]
 
       if (!Array.isArray(submissions) || !submissions.length) {
-        return <H3 style={{ textAlign: 'center', padding: 20 }}>No Submissions Yet</H3>
+        return <H3 style={{ textAlign: 'center', padding: 20 }}>No Pending Submissions</H3>
       }
 
       return <SubmissionListView data={submissions} />
