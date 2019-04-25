@@ -122,7 +122,7 @@ class PanelContent extends React.Component {
           <div>{explanation}</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
-          <ShareButton />
+          <ShareButton uuid={uuid} />
           <Mutation mutation={PROCESS_SUBMISSION}>
             {updateSubmission => (
               <Button

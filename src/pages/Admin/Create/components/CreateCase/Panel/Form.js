@@ -40,7 +40,7 @@ MissingSinceInput.propTypes = {
   onChange: PropTypes.func.isRequired,
 }
 
-const AgeInput = ({ onChange }) => {
+const AgeInput = ({ value, onChange }) => {
   const handleChange = inputValue => {
     onChange('age', inputValue)
   }
@@ -52,6 +52,7 @@ const AgeInput = ({ onChange }) => {
       large
       fill
       name="age"
+      value={value || ''}
       onChange={handleChange}
       id="text-input"
       placeholder="14"
@@ -64,6 +65,7 @@ const AgeInput = ({ onChange }) => {
 
 AgeInput.propTypes = {
   onChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
 }
 
 const EventSelect = ({ values, handleChange }) => (
@@ -125,7 +127,7 @@ export const CreateCaseForm = ({ handleSubmit, handleChange, values, setFieldVal
       />
     </FormGroup>
     <FormGroup label="Age" labelFor="text-input">
-      <AgeInput onChange={setFieldValue} />
+      <AgeInput value={values.age} onChange={setFieldValue} />
     </FormGroup>
     <FormGroup label="Height" labelFor="text-input">
       <InputGroup

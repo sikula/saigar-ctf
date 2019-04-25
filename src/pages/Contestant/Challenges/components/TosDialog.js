@@ -46,9 +46,7 @@ export default class TosDialog extends React.Component {
           <H3>Disclaimer</H3>
           <p>
             By participating in the Missing Persons CTF, there is a risk of being exposed to graphic
-            or disturbing material. This can include websites with suicide related content, websites
-            facilitating illegal activity such as human trafficking, and content encountered on the
-            dark web.
+            or disturbing material.
           </p>
 
           <p>

@@ -83,6 +83,7 @@ const SubmissionItem = ({ data }) => (
                       submissionID: data.uuid,
                       value: 'ACCEPTED', // processed = ACCEPTED
                       processedAt: new Date(),
+                      category: data.submissionConfigurationByconfigId.uuid
                     },
                   })
                 }
@@ -97,6 +98,7 @@ const SubmissionItem = ({ data }) => (
                       submissionID: data.uuid,
                       value: 'REJECTED', // processed = REJECTED
                       processedAt: new Date(),
+                      category: data.submissionConfigurationByconfigId.uuid
                     },
                   })
                 }

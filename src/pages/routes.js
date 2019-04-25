@@ -49,12 +49,7 @@ const CtfRoutes = ({ match }) => (
       layout={DefaultLayout}
       component={AsyncCreatePage}
     />
-    <PrivateRoute
-      exact
-      path={`${match.url}submission/:submissionID`}
-      layout={props => <div {...props} />}
-      component={AsyncSubmissionPage}
-    />
+    
 
     {/* JUDGE ROUTES */}
     {/* Judge & Admin homepage is the same */}
@@ -74,6 +69,12 @@ const CtfRoutes = ({ match }) => (
     />
 
     {/* PUBLIC ROUTES */}
+    <PublicRoute
+      exact
+      path={`${match.url}submission/:submissionID`}
+      layout={props => <div {...props} />}
+      component={AsyncSubmissionPage}
+    />
     <PublicRoute
       exact
       path={`${match.url}scoreboard`}

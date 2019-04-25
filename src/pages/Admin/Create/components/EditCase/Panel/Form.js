@@ -161,7 +161,7 @@ const EditCaseForm = ({ handleSubmit, handleChange, setFieldValue, values }) => 
         name="source_url"
         value={values.source_url}
         onChange={handleChange}
-        placeholder="(e.g. reported missing last night)"
+        placeholder="(e.g. https://rcmp.com/missing-person/jane-doe)"
         fill
       />
     </FormGroup>
