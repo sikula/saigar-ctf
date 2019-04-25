@@ -79,23 +79,23 @@ class UploadUser extends React.Component {
     data: null,
   }
 
-
   transformUsers = () => {
     const { data } = this.state
 
     return data.map(user => ({
       user: {
         data: {
-          nickname: `${user["Team Member First Name"]}.${user["Team Member Last Name"]}`,
-          email: user["Team Member Email"],
-          avatar: ''
-        }
+          nickname: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+          email: user['Team Member Email'],
+          username: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+          avatar: '',
+        },
       },
       team: {
         data: {
-          name: user['Team Name']
-        }
-      }
+          name: user['Team Name'],
+        },
+      },
     }))
   }
 
@@ -104,12 +104,12 @@ class UploadUser extends React.Component {
 
     return teams.map(team => ({
       team_id: team.team_id,
-      event_id: eventId
+      event_id: eventId,
     }))
   }
 
   render() {
-    const { isOpen, onRequestClose } = this.props
+    const { isOpen, onRequestClose, eventID } = this.props
 
     return (
       <SlidingPane
@@ -152,39 +152,40 @@ class UploadUser extends React.Component {
               />
             )}
           </SlidingPanelConsumer>
-          {JSON.stringify(this.state)}
         </SlidingPane.Content>
-        
+
         <Mutation mutation={ADD_USERS_TO_TEAM}>
           {(insert_user_team, { data }) => (
             <Mutation mutation={ADD_TEAM_TO_EVENT}>
               {insert_team_event => {
                 const addUsers = async () => {
-
                   const data = await insert_user_team({
                     variables: {
-                      objects: this.transformUsers()
-                    }
+                      objects: this.transformUsers(),
+                    },
                   })
                   const { returning } = data.data.insert_user_team
-                  
 
-                  const teamData = this.transformTeams(returning, '968af993-9684-4313-8210-62b3ce14db42')
+                  const teamData = this.transformTeams(returning, eventID)
                   const dataResult = await insert_team_event({
                     variables: {
-                      objects: teamData
-                    }
+                      objects: teamData,
+                    },
                   })
                 }
 
                 return (
-                  <SlidingPane.Actions
-                  form="uploadUserForm"
-                  // eslint-disable-next-line no-console
-                  onClick={() => addUsers()}
-                >
-                  SAVE
-                </SlidingPane.Actions>
+                  <SlidingPanelConsumer>
+                    {({ closeSlider }) => (
+                      <SlidingPane.Actions
+                        form="uploadUserForm"
+                        // eslint-disable-next-line no-console
+                        onClick={() => addUsers().then(() => closeSlider())}
+                      >
+                        SAVE
+                      </SlidingPane.Actions>
+                    )}
+                  </SlidingPanelConsumer>
                 )
               }}
             </Mutation>
@@ -204,8 +205,8 @@ UploadUser.propTypes = {
 
 export default UploadUser
 
-
-{/* <UserManager>
+{
+  /* <UserManager>
           {({ addUsersToTeam, addTeamToEvent }) => {
 
             // const users = this.transformUsers()
@@ -228,7 +229,8 @@ export default UploadUser
 
               //   ]
               // })
-            } */}
+            } */
+}
 // mutation {
 //     insert_user_team(objects:{
 //       user:{
