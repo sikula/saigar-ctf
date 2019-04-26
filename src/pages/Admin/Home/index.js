@@ -183,7 +183,7 @@ const ShareButton = class extends React.PureComponent {
         <textarea
           ref={textArea => (this.textArea = textArea)}
           readOnly
-          value={`https://demo.tracelabs.org/submission/${uuid}`}
+          value={`https://saigar-ctf-demo.herokuapp.com/submission/${uuid}`}
           style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
         />
       </React.Fragment>
