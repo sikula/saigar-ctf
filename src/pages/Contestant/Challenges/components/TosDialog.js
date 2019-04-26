@@ -83,7 +83,7 @@ export default class TosDialog extends React.Component {
                   intent="primary"
                   onClick={() => acceptTerms().then(() => this.handleClose())}
                 >
-                  Let me play!
+                 I Accept
                 </Button>
               )}
             </Mutation>
