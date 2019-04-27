@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Query } from 'react-apollo'
 
 // Custom Components
@@ -21,12 +22,26 @@ const ChallengesPage = () => (
           const user = data.user[0]
 
           return (
-            <div className="row">
-              <div className="col-xs">
-                {user.acceptedTos === false && <TosDialog />}
-                <CaseGrid cases={cases} />
+            <React.Fragment>
+              <nav className="challenges" style={{ background: '#fff' }}>
+                <div>
+                  <ul>
+                    <li>
+                      <Link to="/rules">Rules</Link>
+                    </li>
+                    <li>
+                      <Link to="/resources">Resources</Link>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+              <div className="row">
+                <div className="col-xs">
+                  {user.acceptedTos === false && <TosDialog />}
+                  <CaseGrid cases={cases} />
+                </div>
               </div>
-            </div>
+            </React.Fragment>
           )
         }}
       </Query>
