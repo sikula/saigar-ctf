@@ -19,10 +19,13 @@ const ScoreboardLayout = ({ children }) => (
               Saigar
             </li>
             <li>
-              <a href="#">Rules</a>
+              <Link to="/scoreboard">ScoreBoard</Link>
             </li>
             <li>
-              <a href="#">Resources</a>
+              <Link to="/rules">Rules</Link>
+            </li>
+            <li>
+              <Link to="/resources">Resources</Link>
             </li>
             <li>
               <Link to="/teams">Teams</Link>
@@ -35,7 +38,7 @@ const ScoreboardLayout = ({ children }) => (
               !authenticated ? (
                 <ul>
                   <li>
-                    <a href="#">Login</a>
+                    <Link to="/login">Login</Link>
                   </li>
                 </ul>
               ) : (

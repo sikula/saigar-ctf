@@ -10,7 +10,7 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../shared/components/SlidingPane'
+import { SlidingPane, SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
 import NewSubmissionForm from './NewSubmission-form'
 import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO } from '../graphql/queries'
 
@@ -40,34 +40,40 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <NewSubmissionContainer>
-        {({ submissionInfo: { data, loading, error }, newSubmission }) => {
-          if (loading) return null
-          if (error) return null
-          return (
-            <Formik
-              initialValues={{
-                category: data.submission_configuration[0].uuid,
-                proof: '',
-                explanation: '',
-              }}
-              onSubmit={values =>
-                newSubmission.mutation({
-                  variables: {
-                    content: values.proof,
-                    explanation: values.explanation,
-                    teamId: data.user_team[0].team.uuid,
-                    eventId: data.event[0].uuid,
-                    caseId: otherProps.caseID,
-                    configId: values.category,
-                  },
-                })
-              }
-              render={formikProps => <NewSubmissionForm {...formikProps} />}
-            />
-          )
-        }}
-      </NewSubmissionContainer>
+      <SlidingPanelConsumer>
+        {({ closeSlider }) => (
+          <NewSubmissionContainer>
+            {({ submissionInfo: { data, loading, error }, newSubmission }) => {
+              if (loading) return null
+              if (error) return null
+              return (
+                <Formik
+                  initialValues={{
+                    category: data.submission_configuration[0].uuid,
+                    proof: '',
+                    explanation: '',
+                  }}
+                  onSubmit={values =>
+                    newSubmission
+                      .mutation({
+                        variables: {
+                          content: values.proof,
+                          explanation: values.explanation,
+                          teamId: data.user_team[0].team.uuid,
+                          eventId: data.event[0].uuid,
+                          caseId: otherProps.caseID,
+                          configId: values.category,
+                        },
+                      })
+                      .then(() => closeSlider())
+                  }
+                  render={formikProps => <NewSubmissionForm {...formikProps} />}
+                />
+              )
+            }}
+          </NewSubmissionContainer>
+        )}
+      </SlidingPanelConsumer>
     </SlidingPane.Content>
 
     <SlidingPane.Actions form="newSubmissionForm">SUBMIT</SlidingPane.Actions>

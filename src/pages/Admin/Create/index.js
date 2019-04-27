@@ -1,10 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Query } from 'react-apollo'
+import { Query, ApolloConsumer } from 'react-apollo'
+import gql from 'graphql-tag'
 
 // Styles
 import { Card, Button, Tabs, Tab, Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
+
+import { CSVLink } from 'react-csv'
 
 // Custom Components
 import CreateCase from './components/CreateCase'
@@ -20,6 +23,69 @@ import Can from '../../../shared/components/AuthContext/Can'
 
 import './index.scss'
 
+class DownloadCsvButton extends React.Component {
+  state = {
+    data: [],
+  }
+
+  transformData = results => {
+    // const data = results.event.map( => ({
+    //   eventName: 'Hello There World',
+    //   submission: 'TESTING THIS ONE HERE RIGHT NOW',
+    // }))
+
+    // console.log(data)
+
+    this.setState({
+      data: results.event,
+    })
+  }
+
+  render() {
+    return (
+      <ApolloConsumer>
+        {client => {
+          return (
+            <CSVLink
+              filename="me"
+              data={this.state.data}
+              onClick={() => {
+                client
+                  .query({
+                    query: gql`
+                      query getData($eventID: uuid!) {
+                        event(where: { uuid: { _eq: $eventID } }) {
+                          name
+                          eventCasesByeventId {
+                            case {
+                              name
+                              submissions {
+                                processed
+                                explanation
+                              }
+                            }
+                          }
+                        }
+                      }
+                    `,
+                    variables: { eventID: this.props.event },
+                  })
+                  .then(({ data }) => this.transformData(data))
+                // console.log(results)
+                // this.transformData()
+              }}
+            >
+              <Button
+                minimal
+                icon={<Icon icon={IconNames.DOWNLOAD} style={{ color: '#394B59' }} iconSize={20} />}
+              />
+            </CSVLink>
+          )
+        }}
+      </ApolloConsumer>
+    )
+  }
+}
 const EventCard = ({ eventID, name, startTime, endTime }) => (
   <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
     <Card id="case-card">
@@ -54,6 +120,7 @@ const EventCard = ({ eventID, name, startTime, endTime }) => (
           />
         )}
       </SlidingPanelConsumer>
+      {/* <DownloadCsvButton event={eventID} /> */}
     </div>
   </div>
 )

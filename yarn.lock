@@ -8355,6 +8355,16 @@ react-countdown-now@^2.1.0:
     lodash.isequal "^4.5.0"
     prop-types "^15.6.2"
 
+react-csv-downloader@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-csv-downloader/-/react-csv-downloader-1.1.0.tgz#fd2947aa9981d2cffa039fd636e5430e6ed7065f"
+  integrity sha512-/vmym+AYLyMPBxA9PDrDMEAzLY+bDsxyCaa9gfOKJrGo8ONi/Rbb+A7/lN2oBR8ck3gNkBHD17uPo5kSdZHvtw==
+
+react-csv@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-1.1.1.tgz#718dadd2607a1795bfc8dbd32ca282a043739634"
+  integrity sha512-eQSrkEfzPN+1IeXT58kJaDNmpFr3RhdjfE09jTrw+jdTEp0g0Ig9NOI+TpvMBbCukE1HQhOf4dyrLDRFKgZzbA==
+
 react-day-picker@^7.1.10:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-7.3.0.tgz#59b6d4e19d274650c79dcf49fbcce2637313467d"

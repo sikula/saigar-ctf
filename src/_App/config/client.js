@@ -30,7 +30,6 @@ const wsLink = new WebSocketLink(
   new SubscriptionClient(WEBSOCKET_ENDPOINT, {
     reconnect: true,
     timeout: 30000,
-    lazy: true,
     connectionParams: {
       headers: {
         ...(localStorage.getItem('id_token') && {

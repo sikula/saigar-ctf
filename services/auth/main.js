@@ -2,13 +2,20 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const uuid = require('uuid/v4')
 
-const { ManagementClient } = require('auth0')
+const { ManagementClient, AuthenticationClient } = require('auth0')
 const sgMailer = require('@sendgrid/mail')
 
 const auth0 = new ManagementClient({
   domain: 'sikulatest.auth0.com',
   clientId: 'uB0gs971j8jWcYicr9b5Dfy5aSN24Bss',
   clientSecret: '7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L',
+  audience: 'https://sikulatest.auth0.com/api/v2/',
+})
+
+const auth0A = new AuthenticationClient({
+  domain: 'sikulatest.auth0.com',
+  clientId: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
+  clientSecret: 'tPI1zZm3m7LMMbA5bOWv-gm381ltkgOCNwhrxrHSbCa5ZxcbEooQEXdXLXfAaPQ0',
   audience: 'https://sikulatest.auth0.com/api/v2/',
 })
 
@@ -23,28 +30,35 @@ const handler = async event => {
 
     // #1 Create User
     const createUserOpts = {
-      email: 'rocco56@gmail.com',
       connection: 'ctfuser',
-      username: 'foxxy',
-      nickname: 'adam',
+      email: event.data.new.email,
+      username: event.data.new.username,
       password: `${uuid()}`,
-      email_verified: true,
       app_metadata: {
-        team_name: 'Saigar Team 1',
-        tos_accepted: false,
-        role: 'contestant',
+        authorization: {
+          groups: ['contestant'],
+        },
       },
     }
 
-    const { email } = await auth0.createUser(createUserOpts)
+    const { email } = await auth0.createUser(createUserOpts).catch(err => console.log(err))
 
     // #2 Create Reset Ticket
-    const createResetOpts = {
-      email,
-      connection_id: 'con_C7x24ofiVd6bVRXp',
-    }
+    // const createResetOpts = {
+    //   email,
+    //   connection_id: 'con_C7x24ofiVd6bVRXp',
+    // }
 
-    const { ticket } = await auth0.createPasswordChangeTicket(createResetOpts)
+    await auth0A
+      .requestChangePasswordEmail({
+        email: event.data.new.email,
+        connection: 'ctfuser',
+      })
+      .catch(err => console.log(err))
+
+    // const { ticket } = await auth0
+    //   .createPasswordChangeTicket(createResetOpts)
+    //   .catch(err => console.log(err))
 
     // #3 Send email with reset ticket
     // const msg = {
@@ -52,7 +66,7 @@ const handler = async event => {
     //     from:
     // }
     // eslint-disable-next-line no-console
-    console.log('INSERT', ticket)
+    // console.log('INSERT', ticket)
   }
 }
 

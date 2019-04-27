@@ -43,7 +43,7 @@ const ShareButton = class extends React.PureComponent {
         <textarea
           ref={textArea => (this.textArea = textArea)}
           readOnly
-          value={`https://localhost:8084/submission/${uuid}`}
+          value={`https://saigar-ctf-demo.herokuapp.com/submission/${uuid}`}
           style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
         />
       </React.Fragment>
@@ -122,7 +122,7 @@ class PanelContent extends React.Component {
           <div>{explanation}</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
-          <ShareButton />
+          <ShareButton uuid={uuid} />
           <Mutation mutation={PROCESS_SUBMISSION}>
             {updateSubmission => (
               <Button
