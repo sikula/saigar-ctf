@@ -7,7 +7,9 @@ import gql from 'graphql-tag'
 import { Card, Button, Tabs, Tab, Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
-import { CSVLink } from 'react-csv'
+import { Parser } from 'json2csv'
+import { saveAs } from 'file-saver'
+import JSZip from 'jszip'
 
 // Custom Components
 import CreateCase from './components/CreateCase'
@@ -28,16 +30,57 @@ class DownloadCsvButton extends React.Component {
     data: [],
   }
 
+  groupBy = key => array =>
+    array.reduce((objectsByKeyValue, obj) => {
+      const value = obj[key]
+      objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj)
+      return objectsByKeyValue
+    }, {})
+
   transformData = results => {
-    // const data = results.event.map( => ({
-    //   eventName: 'Hello There World',
-    //   submission: 'TESTING THIS ONE HERE RIGHT NOW',
-    // }))
+    const zip = new JSZip()
 
-    // console.log(data)
+    const groupByCase = this.groupBy('case_name')
+    Object.entries(groupByCase(results.event_export)).forEach(([key, value]) => {
+      const fields = [
+        {
+          label: 'Event Name',
+          value: 'event_name',
+        },
+        {
+          label: 'Case Name',
+          value: 'case_name',
+        },
+        {
+          label: 'Missing From',
+          value: 'missing_from',
+        },
+        {
+          label: 'Category',
+          value: 'category',
+        },
+        {
+          label: 'URL',
+          value: 'content',
+        },
+        {
+          lable: 'Proof',
+          value: 'explanation',
+        },
+      ]
 
-    this.setState({
-      data: results.event,
+      const parser = new Parser({ fields })
+      const csv = parser.parse(value)
+
+      zip.file(`${key.replace(/\s/g, '')}.csv`, csv)
+    })
+
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      // console.log(content)
+      saveAs(
+        content,
+        `${results.event_export[0].event_name.replace(/\s/g, '')}__${new Date().getTime()}`,
+      )
     })
   }
 
@@ -46,25 +89,21 @@ class DownloadCsvButton extends React.Component {
       <ApolloConsumer>
         {client => {
           return (
-            <CSVLink
-              filename="me"
-              data={this.state.data}
+            <Button
+              minimal
+              icon={<Icon icon={IconNames.DOWNLOAD} style={{ color: '#394B59' }} iconSize={20} />}
               onClick={() => {
                 client
                   .query({
                     query: gql`
                       query getData($eventID: uuid!) {
-                        event(where: { uuid: { _eq: $eventID } }) {
-                          name
-                          eventCasesByeventId {
-                            case {
-                              name
-                              submissions {
-                                processed
-                                explanation
-                              }
-                            }
-                          }
+                        event_export(where: { uuid: { _eq: $eventID } }) {
+                          event_name
+                          case_name
+                          missing_from
+                          category
+                          explanation
+                          content
                         }
                       }
                     `,
@@ -74,18 +113,14 @@ class DownloadCsvButton extends React.Component {
                 // console.log(results)
                 // this.transformData()
               }}
-            >
-              <Button
-                minimal
-                icon={<Icon icon={IconNames.DOWNLOAD} style={{ color: '#394B59' }} iconSize={20} />}
-              />
-            </CSVLink>
+            />
           )
         }}
       </ApolloConsumer>
     )
   }
 }
+
 const EventCard = ({ eventID, name, startTime, endTime }) => (
   <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
     <Card id="case-card">
@@ -120,7 +155,7 @@ const EventCard = ({ eventID, name, startTime, endTime }) => (
           />
         )}
       </SlidingPanelConsumer>
-      {/* <DownloadCsvButton event={eventID} /> */}
+      <DownloadCsvButton event={eventID} />
     </div>
   </div>
 )
@@ -210,7 +245,7 @@ const EventsPanel = () => (
 )
 
 const CasesPanel = () => (
-  <div>
+  <React.Fragment>
     <div style={{ paddingBottom: 10 }}>
       <SlidingPanelConsumer>
         {({ openSlider }) => (
@@ -230,26 +265,30 @@ const CasesPanel = () => (
           </Button>
         )}
       </SlidingPanelConsumer>
-      {/* <Button large intent="primary" text="Add Event" icon={IconNames.ADD} /> */}
     </div>
-    <div className="case-card__grid" style={{ padding: 0 }}>
-      <Query query={CASES_QUERY}>
-        {({ data, loading, error }) => {
-          if (loading) return <div>Loading...</div>
-          if (error) return <div>`${error.message}`</div>
+    <Query query={CASES_QUERY}>
+      {({ data, loading, error }) => {
+        if (loading) return <div>Loading....</div>
+        if (error) return <div>`${error.message}`</div>
 
-          return data.case.map(_case => (
-            <CaseCard
-              key={_case.uuid}
-              id={_case.uuid}
-              name={_case.name}
-              missingSince={_case.missing_since}
-            />
-          ))
-        }}
-      </Query>
-    </div>
-  </div>
+        return data.event.map(event => (
+          <div>
+            <h2 style={{ textAlign: 'center' }}>{event.name}</h2>
+            <div className="case-card__grid" style={{ padding: 0 }}>
+              {event.eventCasesByeventId.map(_case => (
+                <CaseCard
+                  key={_case.case.uuid}
+                  id={_case.case.uuid}
+                  name={_case.case.name}
+                  missingSince={_case.case.missing_since}
+                />
+              ))}
+            </div>
+          </div>
+        ))
+      }}
+    </Query>
+  </React.Fragment>
 )
 
 const CreatePage = () => (
