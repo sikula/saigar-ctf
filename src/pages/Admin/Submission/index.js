@@ -24,6 +24,10 @@ const SubmissionPage = ({ match }) => {
                   <div>{content}</div>
                   <div>{explanation}</div>
                 </div>
+                <div>
+                  <div>{data.submission[0].teamByteamId.name}</div>
+                  <div>{data.submission[0].case.name}</div>
+                </div>
               </div>
             </div>
           </div>
