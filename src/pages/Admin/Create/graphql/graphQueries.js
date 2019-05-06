@@ -39,10 +39,15 @@ const CREATE_EVENT_MUTATION = gql`
 
 const CASES_QUERY = gql`
   query getCases {
-    case {
-      uuid
+    event {
       name
-      missing_since
+      eventCasesByeventId {
+        case {
+          uuid
+          name
+          missing_since
+        }
+      }
     }
   }
 `

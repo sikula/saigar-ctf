@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-
+    
     &:nth-child(even) {
         background: darken($color-light2, 3.5%)
     //   background: $color-light2;
@@ -31,6 +31,15 @@
     min-height: 100px;
     height: auto;
     padding: 20px;
+
+    overflow: hidden;
+
+
+    & span.long-text {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 
     &__icons {
         display: flex;

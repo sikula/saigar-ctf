@@ -49,10 +49,10 @@ const SubmissionItem = ({ data }) => (
             <Tag>{SUBMISSION_TYPES[data.submissionConfigurationByconfigId.category] || ''}</Tag>
             <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
           </span>
-          <span style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+          <span className="long-text" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
             <a href={data.content}>{data.content}</a>
           </span>
-          <span>{data.explanation}</span>
+          <span className="long-text">{data.explanation}</span>
           <div
             style={{
               textAlign: 'right',
