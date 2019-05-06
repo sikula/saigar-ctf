@@ -64,7 +64,7 @@ const SettingTable = class extends React.Component {
         <table style={{ width: '100%' }}>
           <th>Tracked</th>
           <th>Pending</th>
-          <th>Name</th>
+          <th>Team</th>
           {data.team.map(team => (
             <tr key={team.uuid}>
               <td style={{ textAlign: 'center' }}>
