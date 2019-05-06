@@ -115,13 +115,25 @@ class PanelContent extends React.Component {
         </div>
         <div style={{ padding: 10 }}>
           <strong>Submission</strong>
-          <div>{content}</div>
+          <div>
+            <p style={{ wordWrap: 'break-word' }}>{content}</p>
+          </div>
         </div>
         <div style={{ padding: 10 }}>
           <strong>Explanation</strong>
-          <div>{explanation}</div>
+          <div>
+            <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
+          </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            marginTop: 10,
+            alignItems: 'center',
+            marginBottom: '30px',
+          }}
+        >
           <ShareButton uuid={uuid} />
           <Mutation mutation={PROCESS_SUBMISSION}>
             {updateSubmission => (
@@ -209,6 +221,7 @@ const FeedPanel = ({
           zIndex: 9999,
           borderRight: '1px solid #e6dddd',
           boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0,0.08)',
+          overflowY: 'auto',
         }}
       >
         <Icon icon={IconNames.CROSS} iconSize={32} onClick={hidePanel} />

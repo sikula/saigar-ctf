@@ -259,7 +259,7 @@ class SubmissionItem extends React.Component {
         </div>
         <code style={{ background: '#cdcdcd' }}>
           <p>{submission.content}</p>
-          <p>{submission.explanation}</p>
+          <p style={{ wordWrap: 'break-word' }}>{submission.explanation}</p>
         </code>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
