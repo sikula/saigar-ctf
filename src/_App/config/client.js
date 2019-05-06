@@ -26,19 +26,21 @@ const httpLink = new HttpLink({
   uri: GRAPHQL_ENDPOINT,
 })
 
-const wsLink = new WebSocketLink(
-  new SubscriptionClient(WEBSOCKET_ENDPOINT, {
-    reconnect: true,
-    timeout: 30000,
-    connectionParams: {
+export const wsClient = new SubscriptionClient(WEBSOCKET_ENDPOINT, {
+  reconnect: true,
+  timeout: 30000,
+  connectionParams: () => {
+    return {
       headers: {
         ...(localStorage.getItem('id_token') && {
           Authorization: `Bearer ${localStorage.getItem('id_token')}`,
         }),
       },
-    },
-  }),
-)
+    }
+  },
+})
+
+const wsLink = new WebSocketLink(wsClient)
 
 const authLink = setContext((_, { headers }) => ({
   headers: {
