@@ -7,6 +7,8 @@ import auth0 from 'auth0-js'
 
 import { AuthProvider } from './context'
 
+import { wsClient } from '../../../_App/config/client'
+
 const auth = new auth0.WebAuth({
   domain: 'sikulatest.auth0.com',
   clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
@@ -80,6 +82,17 @@ class Auth extends React.Component {
     localStorage.setItem('access_token', accessToken)
     localStorage.setItem('id_token', idToken)
     localStorage.setItem('expires_at', expiresAt)
+
+    /*
+      Note(peter): There is an issue with the way the subscriptions work that causes the websocket
+      client to be initialized before the token is stored and retrieved, thus setting empty headers
+      and the authentication failing (blank incoming feed).  This is a quick workaround to fixing it.
+
+      Basically, as soon as we fetch the token, we close and re-open the connection:
+
+      (https://github.com/apollographql/subscriptions-transport-ws/issues/171)
+    */
+    wsClient.close(true)
   }
 
   render() {
