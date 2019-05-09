@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus, no-param-reassign */
 import React from 'react'
 import PropTypes from 'prop-types'
+import { H5 } from '@blueprintjs/core'
 import { Subscription } from 'react-apollo'
 import Chart from 'react-apexcharts'
 
