@@ -11,6 +11,27 @@ const CASE_LIST = gql`
       missing_since
       missing_from
     }
+    team(limit: 1) {
+      pendingSubmissions: submissionsByteamId_aggregate(where: { processed: { _eq: "PENDING" } }) {
+        aggregate {
+          count
+        }
+      }
+      acceptedSubmissions: submissionsByteamId_aggregate(
+        where: { processed: { _eq: "ACCEPTED" } }
+      ) {
+        aggregate {
+          count
+        }
+      }
+      rejectedSubmissions: submissionsByteamId_aggregate(
+        where: { processed: { _eq: "REJECTED" } }
+      ) {
+        aggregate {
+          count
+        }
+      }
+    }
   }
 `
 

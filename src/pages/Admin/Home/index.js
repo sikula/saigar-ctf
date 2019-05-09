@@ -339,6 +339,14 @@ const HistoryData = () => (
       if (loading) return <div> Loading... </div>
       if (error) return <div>Error: `${error.message}`</div>
 
+      if (!Array.isArray(data.event) || !data.event.length) {
+        return (
+          <H5 style={{ textAlign: 'center' }}>
+            There is currently no history, items will appear once submissions have been processed
+          </H5>
+        )
+      }
+
       return data.event[0].submissions.map(submission => (
         <SubmissionItem key={submission.uuid} submission={submission} />
       ))

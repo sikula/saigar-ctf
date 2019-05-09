@@ -4,7 +4,7 @@ import { Query, ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Card, Button, Tabs, Tab, Icon } from '@blueprintjs/core'
+import { Toaster, Position, Card, Button, Tabs, Tab, Icon, H5, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import { Parser } from 'json2csv'
@@ -24,6 +24,24 @@ import { SlidingPanelConsumer } from '../../../shared/components/SlidingPane'
 import Can from '../../../shared/components/AuthContext/Can'
 
 import './index.scss'
+
+const EventsToaster = Toaster.create({
+  classname: 'events-toaster',
+  position: Position.TOP,
+})
+
+const GET_EVENT_EXPORT_DATA = gql`
+  query getData($eventID: uuid!) {
+    event_export(where: { uuid: { _eq: $eventID } }) {
+      event_name
+      case_name
+      missing_from
+      category
+      explanation
+      content
+    }
+  }
+`
 
 class DownloadCsvButton extends React.Component {
   state = {
@@ -76,7 +94,6 @@ class DownloadCsvButton extends React.Component {
     })
 
     zip.generateAsync({ type: 'blob' }).then(content => {
-      // console.log(content)
       saveAs(
         content,
         `${results.event_export[0].event_name.replace(/\s/g, '')}__${new Date().getTime()}`,
@@ -88,6 +105,8 @@ class DownloadCsvButton extends React.Component {
     return (
       <ApolloConsumer>
         {client => {
+          const { event } = this.props
+
           return (
             <Button
               minimal
@@ -95,23 +114,19 @@ class DownloadCsvButton extends React.Component {
               onClick={() => {
                 client
                   .query({
-                    query: gql`
-                      query getData($eventID: uuid!) {
-                        event_export(where: { uuid: { _eq: $eventID } }) {
-                          event_name
-                          case_name
-                          missing_from
-                          category
-                          explanation
-                          content
-                        }
-                      }
-                    `,
-                    variables: { eventID: this.props.event },
+                    query: GET_EVENT_EXPORT_DATA,
+                    variables: { eventID: event },
                   })
-                  .then(({ data }) => this.transformData(data))
-                // console.log(results)
-                // this.transformData()
+                  .then(({ data }) => {
+                    if (!data.event_export.length) {
+                      EventsToaster.show({
+                        message: 'Failed to download data',
+                        intent: 'danger',
+                      })
+                    } else {
+                      this.transformData(data)
+                    }
+                  })
               }}
             />
           )
@@ -121,20 +136,38 @@ class DownloadCsvButton extends React.Component {
   }
 }
 
-const EventCard = ({ eventID, name, startTime, endTime }) => (
+const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
   <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
     <Card id="case-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <h4 className="case-card__header">{name}</h4>
+      <div style={{ textAlign: 'center' }}>
+        <H3 className="case-card__header">{name}</H3>
       </div>
-      <p>
-        <strong>Start Time: </strong>
-        {new Date(startTime).toDateString()}
-      </p>
-      <p>
-        <strong>End Time: </strong>
-        {new Date(endTime).toDateString()}
-      </p>
+      <div
+        style={{
+          display: 'inline-flex',
+          width: '100%',
+          justifyContent: 'space-between',
+          padding: 20,
+        }}
+      >
+        <span style={{ fontWeight: 350, fontSize: '2.6em', }}>
+          <p>
+            {`${new Date(startTime).toDateString().split(' ')[1]} ${
+              new Date(startTime).toDateString().split(' ')[2]
+            }`}
+          </p>
+          <p style={{ textAlign: 'center', fontSize: '0.6em' }}>
+            {`${new Date(startTime).toDateString().split(' ')[0]}`}
+          </p>
+        </span>
+        <span style={{ height: 'auto', width: '1px', background: '#c9c9c9'}}></span>
+        <span
+          style={{ fontWeight: 350, fontSize: '2.0em', display: 'flex', flexDirection: 'column' }}
+        >
+          <p>Submissions</p>
+          <p style={{ textAlign: 'center' }}>{totalSubmissions.aggregate.count}</p>
+        </span>
+      </div>
     </Card>
     <div className="case-card__actions">
       <SlidingPanelConsumer>
@@ -229,6 +262,10 @@ const EventsPanel = () => (
           if (loading) return <div>Loading....</div>
           if (error) return <div>`${error.message}`</div>
 
+          if (!Array.isArray(data.event) || !data.event.length) {
+            return <H5>No events currently. Click the 'Add Event' button to create an event</H5>
+          }
+
           return data.event.map(event => (
             <EventCard
               key={event.uuid}
@@ -236,6 +273,7 @@ const EventsPanel = () => (
               name={event.name}
               startTime={event.start_time}
               endTime={event.end_time}
+              totalSubmissions={event.totalSubmissions}
             />
           ))
         }}
@@ -271,18 +309,32 @@ const CasesPanel = () => (
         if (loading) return <div>Loading....</div>
         if (error) return <div>`${error.message}`</div>
 
+        if (!Array.isArray(data.event) || !data.event.length) {
+          return (
+            <H5>
+              No events currently. Click on the 'Add Event' button in the 'Events' tab to create one
+            </H5>
+          )
+        }
+
         return data.event.map(event => (
           <div>
             <h2 style={{ textAlign: 'center' }}>{event.name}</h2>
             <div className="case-card__grid" style={{ padding: 0 }}>
-              {event.eventCasesByeventId.map(_case => (
-                <CaseCard
-                  key={_case.case.uuid}
-                  id={_case.case.uuid}
-                  name={_case.case.name}
-                  missingSince={_case.case.missing_since}
-                />
-              ))}
+              {!Array.isArray(event.eventCasesByeventId) || !event.eventCasesByeventId.length ? (
+                <div>
+                  <H5>No cases currently. Click on the 'Create Case' button to create one.</H5>
+                </div>
+              ) : (
+                event.eventCasesByeventId.map(_case => (
+                  <CaseCard
+                    key={_case.case.uuid}
+                    id={_case.case.uuid}
+                    name={_case.case.name}
+                    missingSince={_case.case.missing_since}
+                  />
+                ))
+              )}
             </div>
           </div>
         ))
