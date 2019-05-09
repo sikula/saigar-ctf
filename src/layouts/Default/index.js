@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { NavLink, Link} from 'react-router-dom'
 import { Layout, Flex, Fixed } from 'react-layout-pane'
 import { Icon, UL } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
@@ -35,11 +35,13 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           allowedRole={'ctf_admin' || 'judge'}
           yes={() => (
             <UL>
-              <li className={pathname === '/home' ? 'active' : ''}>
-                <Link to="home">
-                  <Icon icon={IconNames.HOME} iconSize={20} />
-                </Link>
-              </li>
+              <NavLink to="home" activeClassName="active">
+                <li className={pathname === '/home' ? 'active' : ''}>
+                  <a>
+                    <Icon icon={IconNames.HOME} iconSize={20} />
+                  </a>
+                </li>
+              </NavLink>
             </UL>
           )}
         />
@@ -47,11 +49,13 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           allowedRole="contestant"
           yes={() => (
             <UL>
-              <li className={pathname === '/challenges' ? 'active' : ''}>
-                <Link to="challenges">
-                  <Icon icon={IconNames.FOLDER_OPEN} iconSize={20} />
-                </Link>
-              </li>
+              <NavLink to="challenges">
+                <li className={pathname === '/challenges' ? 'active' : ''}>
+                  <a>
+                    <Icon icon={IconNames.FOLDER_OPEN} iconSize={20} />
+                  </a>
+                </li>
+              </NavLink>
             </UL>
           )}
         />
@@ -59,20 +63,24 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           allowedRole="ctf_admin"
           yes={() => (
             <UL>
-              <li className={pathname === '/create' ? 'active' : ''}>
-                <Link to="create">
-                  <Icon icon={IconNames.ADD} iconSize={20} />
-                </Link>
-              </li>
+              <NavLink to="create">
+                <li className={pathname === '/create' ? 'active' : ''}>
+                  <a>
+                    <Icon icon={IconNames.ADD} iconSize={20} />
+                  </a>
+                </li>
+              </NavLink>
             </UL>
           )}
         />
         <UL>
-          <li>
-            <Link to="scoreboard">
-              <Icon icon={IconNames.TIMELINE_LINE_CHART} iconSize={20} />
-            </Link>
-          </li>
+          <NavLink to="scoreboard">
+            <li>
+              <a>
+                <Icon icon={IconNames.TIMELINE_LINE_CHART} iconSize={20} />
+              </a>
+            </li>
+          </NavLink>
         </UL>
       </div>
       <div>
@@ -86,8 +94,8 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
         <UL>
           <AuthConsumer>
             {({ logout }) => (
-              <li>
-                <a onClick={logout}>
+              <li onClick={logout}>
+                <a>
                   <Icon icon={IconNames.LOG_OUT} iconSize={20} />
                 </a>
               </li>
