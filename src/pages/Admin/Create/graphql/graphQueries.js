@@ -7,6 +7,11 @@ const EVENTS_QUERY = gql`
       name
       start_time
       end_time
+      totalSubmissions: submissions_aggregate {
+        aggregate {
+          count
+        }
+      }
     }
   }
 `

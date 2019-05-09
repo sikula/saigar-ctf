@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Styles
-import { Button, Icon, Switch } from '@blueprintjs/core'
+import { Button, Icon, Switch, H5 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
@@ -65,7 +65,7 @@ const SettingTable = class extends React.Component {
           <th>Tracked</th>
           <th>Pending</th>
           <th>Team</th>
-          {data.team.map(team => (
+          {data.team_event.map(({ team }) => (
             <tr key={team.uuid}>
               <td style={{ textAlign: 'center' }}>
                 <Switch
@@ -129,6 +129,9 @@ const SettingsPanel = () => (
               if (loading) return <div>Loading...</div>
               if (error) return <div>{error.message}</div>
 
+              if (!Array.isArray(data.team_event) || !data.team_event.length) {
+                return <H5>No teams are registered for this event</H5>
+              }
               return <ApolloSettingTable data={data} />
             }}
           </Query>

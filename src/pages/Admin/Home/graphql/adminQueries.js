@@ -99,14 +99,16 @@ const PROCESS_SUBMISSION = gql`
 
 const GET_TEAMS = gql`
   query getTeams {
-    team {
-      uuid
-      name
-      submissionByTeamAggregate: submissionsByteamId_aggregate(
-        where: { processed: { _eq: "PENDING" } }
-      ) {
-        aggregate {
-          count
+    team_event(order_by: { event: { start_time: desc } }, limit: 1) {
+      team {
+        uuid
+        name
+        submissionByTeamAggregate: submissionsByteamId_aggregate(
+          where: { processed: { _eq: "PENDING" } }
+        ) {
+          aggregate {
+            count
+          }
         }
       }
     }
