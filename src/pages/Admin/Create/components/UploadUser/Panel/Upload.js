@@ -2,18 +2,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Mutation } from 'react-apollo'
+import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import { adopt } from 'react-adopt'
 import CsvParse from '@vtex/react-csv-parse'
 
 // Styles
-import { Icon } from '@blueprintjs/core'
+import { Icon, Tabs, Tab, H4, HTMLSelect } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
 import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
+
+import './Upload.scss'
 
 const ADD_USERS_TO_TEAM = gql`
   mutation addUserToTeam($objects: [user_team_insert_input!]!) {
@@ -23,28 +25,6 @@ const ADD_USERS_TO_TEAM = gql`
       }
     }
   }
-  # mutation addUserToTeam {
-  #   insert_user_team(objects:[
-  #     {
-  #       user:{
-  #         data:{
-  #           nickname:"Peter"
-  #           email:"test@test.com"
-  #           avatar:"hello"
-  #         }
-  #       }
-  #       team:{
-  #         data:{
-  #           name:"Saigar Team 4"
-  #         }
-  #       }
-  #     }
-  #   ]) {
-  #     returning {
-  #       team_id
-  #     }
-  #   }
-  # }
 `
 
 const ADD_TEAM_TO_EVENT = gql`
@@ -52,6 +32,18 @@ const ADD_TEAM_TO_EVENT = gql`
     insert_team_event(objects: $objects) {
       returning {
         team_id
+      }
+    }
+  }
+`
+
+const USER_LIST = gql`
+  query userList($teamId: uuid!) {
+    user_team(where: { team_id: { _eq: $teamId } }) {
+      user {
+        uuid
+        nickname
+        email
       }
     }
   }
@@ -73,6 +65,122 @@ const UserManager = adopt({
   addUsersToTeam,
   addTeamToEvent,
 })
+
+class FileUpload extends React.PureComponent {
+  state = { fileName: null }
+
+  handleChange = e => {
+    const file = e.target.files[0].name
+    this.setState({ fileName: file })
+    this.props.onChange(e)
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <input
+          type="file"
+          name="file"
+          id="file"
+          className="inputfile"
+          onChange={this.handleChange}
+        />
+        <label htmlFor="file">
+          <Icon icon={IconNames.UPLOAD} />
+          {this.state.fileName !== null ? this.state.fileName : 'Choose a file'}
+        </label>
+      </React.Fragment>
+    )
+  }
+}
+
+const TEAMS_QUERY = gql`
+  query teamList($eventId: uuid!) {
+    event(where: { uuid: { _eq: $eventId } }) {
+      team_events {
+        team {
+          uuid
+          name
+        }
+      }
+    }
+  }
+`
+
+const TeamSelect = ({ values, handleChange, eventId }) => (
+  <Query query={TEAMS_QUERY} variables={{ eventId }}>
+    {({ data, loading }) => {
+      if (loading) return null
+
+      return (
+        <HTMLSelect
+          name="eventID"
+          value="8728c3e1-2c92-4c77-be7e-81f0e0231766"
+          onChange={handleChange}
+          fill
+          large
+        >
+          <React.Fragment>
+            <option value="" defaultValue="" hidden>
+              Chose a team
+            </option>
+            {data.event[0].team_events.map(({ team }) => (
+              <option key={team.uuid} value={team.uuid}>
+                {team.name}
+              </option>
+            ))}
+          </React.Fragment>
+        </HTMLSelect>
+      )
+    }}
+  </Query>
+)
+
+TeamSelect.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  values: PropTypes.any.isRequired,
+  handleChange: PropTypes.func.isRequired,
+}
+
+class ManageUserTab extends React.Component {
+  state = { teamId: null }
+
+  handleSelect = e => {
+    this.setState({ teamId: e.target.value })
+  }
+
+  render() {
+    return (
+      <div>
+        <TeamSelect eventId={this.props.eventId} handleChange={this.handleSelect} />
+        <Query query={USER_LIST} variables={{ teamId: this.state.teamId }}>
+          {({ data, loading, error }) => {
+            if (!data) return null
+            if (loading) return <div>Loading...</div>
+            if (error) return <div>Error...</div>
+
+            if (!Array.isArray(data.user_team) || !data.user_team.length) {
+              return <H4>No registered users</H4>
+            }
+
+            return (
+              <div style={{ marginTop: 10 }}>
+                {data.user_team.map(({ user }) => (
+                  <div
+                    key={user.uuid}
+                    style={{ width: '100%', padding: 15, background: 'rgb(255, 242, 242)' }}
+                  >
+                    {user.nickname} | {user.email}
+                  </div>
+                ))}
+              </div>
+            )
+          }}
+        </Query>
+      </div>
+    )
+  }
+}
 
 class UploadUser extends React.Component {
   state = {
@@ -118,40 +226,53 @@ class UploadUser extends React.Component {
         closeIcon={<Icon icon={IconNames.MENU_CLOSED} iconSize={20} />}
       >
         <SlidingPane.Header>
-          <SlidingPane.Header.Title title="Upload Users" subtitle="Fill out the form and save" />
+          <SlidingPane.Header.Title title="Manage Users" subtitle="View and manage users" />
           <SlidingPane.Header.Actions onActionClick={onRequestClose}>
             <a>Cancel</a>
           </SlidingPane.Header.Actions>
         </SlidingPane.Header>
 
         <SlidingPane.Content>
-          <SlidingPanelConsumer>
-            {({ closeSlider }) => (
-              <CsvParse
-                keys={[
-                  'Team Name',
-                  'Attendee ID',
-                  'Number of Registered Members',
-                  'Team Member Last Name',
-                  'Team Member First Name',
-                  'Ticket Type',
-                  'Joined Date',
-                  'Team Member Email',
-                  'Currency',
-                  'Team Captain Last Name',
-                  'Team Captain First Name',
-                  'Team Captain Email',
-                  'Password',
-                  'Created Date',
-                  'Preferred Start Time',
-                ]}
-                onDataUploaded={data => this.setState({ data })}
-                // eslint-disable-next-line no-console
-                onError={error => console.log(error)}
-                render={onChange => <input type="file" onChange={onChange} />}
+          {/* NOTE(Peter): not sure about the negative padding here, but seems ok for now, does the job */}
+          <div style={{ marginTop: '-30px', width: '100%' }}>
+            <Tabs large animate className="eventsTabs">
+              <Tab
+                id="eventsTab"
+                title={<div style={{ fontSize: '1em' }}>Manage</div>}
+                panel={<ManageUserTab eventId={eventID} />}
+                style={{ width: '100%' }}
               />
-            )}
-          </SlidingPanelConsumer>
+              <Tab
+                id="casesTab"
+                title={<div style={{ fontSize: '1em' }}>Import</div>}
+                panel={
+                  <CsvParse
+                    keys={[
+                      'Team Name',
+                      'Attendee ID',
+                      'Number of Registered Members',
+                      'Team Member Last Name',
+                      'Team Member First Name',
+                      'Ticket Type',
+                      'Joined Date',
+                      'Team Member Email',
+                      'Currency',
+                      'Team Captain Last Name',
+                      'Team Captain First Name',
+                      'Team Captain Email',
+                      'Password',
+                      'Created Date',
+                      'Preferred Start Time',
+                    ]}
+                    onDataUploaded={data => this.setState({ data })}
+                    // eslint-disable-next-line no-console
+                    onError={error => console.log(error)}
+                    render={onChange => <FileUpload onChange={onChange} />}
+                  />
+                }
+              />
+            </Tabs>
+          </div>
         </SlidingPane.Content>
 
         <Mutation mutation={ADD_USERS_TO_TEAM}>
@@ -204,77 +325,3 @@ UploadUser.propTypes = {
 }
 
 export default UploadUser
-
-{
-  /* <UserManager>
-          {({ addUsersToTeam, addTeamToEvent }) => {
-
-            // const users = this.transformUsers()
-            // const teams = this.transformTeams()
-
-            const addUsers = async () => {
-              // console.log(this.transformUsers())
-              // console.log(this.transformTeams())
-
-              await addUsersToTeam.mutation({
-                variables: {
-                  objects: this.transformUsers()
-                }
-              })
-
-              console.log("RESULT: ", addUsersToTeam.result)
-
-              // await addTeamToEvent.mutation({
-              //   variables: objects: [
-
-              //   ]
-              // })
-            } */
-}
-// mutation {
-//     insert_user_team(objects:{
-//       user:{
-//         data:{
-//           auth0id:"test"
-//           nickname:"saigarrrrrr"
-//           email:"test@test.com"
-//           avatar:"hello"
-//         }
-//       }
-//       team:{
-//         data:{
-//           name:"SaigarTeamTest"
-//         }
-//       }
-//     }) {
-//       affected_rows
-//     }
-//   }
-
-// mutation {
-//     insert_team_event(objects:{
-//       event:{
-//         data:{
-//           event_id
-//         }
-//       }
-//       team:{
-//         data:{
-//           user_team:{
-//             data:{
-//               user:{
-//                 data:{
-
-//                 }
-//               }
-//               team:{
-//                 data:{
-
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     })
-//   }
