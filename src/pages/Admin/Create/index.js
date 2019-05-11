@@ -146,11 +146,11 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
         style={{
           display: 'inline-flex',
           width: '100%',
-          justifyContent: 'space-between',
+          justifyContent: 'space-around',
           padding: 20,
         }}
       >
-        <span style={{ fontWeight: 350, fontSize: '2.6em', }}>
+        <span style={{ fontWeight: 350, fontSize: '1.8em' }}>
           <p>
             {`${new Date(startTime).toDateString().split(' ')[1]} ${
               new Date(startTime).toDateString().split(' ')[2]
@@ -160,12 +160,12 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
             {`${new Date(startTime).toDateString().split(' ')[0]}`}
           </p>
         </span>
-        <span style={{ height: 'auto', width: '1px', background: '#c9c9c9'}}></span>
+        <span style={{ height: 'auto', width: '1px', background: '#c9c9c9' }} />
         <span
-          style={{ fontWeight: 350, fontSize: '2.0em', display: 'flex', flexDirection: 'column' }}
+          style={{ fontWeight: 350, fontSize: '1.8em', display: 'flex', flexDirection: 'column' }}
         >
           <p>Submissions</p>
-          <p style={{ textAlign: 'center' }}>{totalSubmissions.aggregate.count}</p>
+          <p style={{ textAlign: 'center', fontSize: '0.8em' }}>{totalSubmissions.aggregate.count}</p>
         </span>
       </div>
     </Card>
@@ -183,7 +183,7 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
         {({ openSlider }) => (
           <Button
             minimal
-            icon={<Icon icon={IconNames.NEW_PERSON} style={{ color: '#394B59' }} iconSize={20} />}
+            icon={<Icon icon={IconNames.PEOPLE} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
           />
         )}

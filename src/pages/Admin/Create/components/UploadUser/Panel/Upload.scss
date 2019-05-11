@@ -1,0 +1,48 @@
+//  https://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
+
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  
+    & + label {
+      max-width: 100%;
+      font-size: 1em;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: pointer;
+      color: white;
+      background: #3878A1;
+      display: inline-block;
+      padding: 0.625rem 1.25rem;
+      margin-bottom: 0.625rem;
+      border-radius: 4px;
+      width: 100%;
+    }
+  
+    & + label svg {
+      width: 1em;
+      height: 1em;
+      vertical-align: middle;
+      fill: currentColor;
+      margin-top: -0.25em;
+      /* 4px */
+      margin-right: 0.25em;
+      /* 4px */
+    }
+  
+    & + label:active {
+      color: #10cfc9;
+      background-color: #f4fefe;
+    }
+    //   &: focus + label;
+    //   & + label:hover {
+    //     background-color: #10cfc9;
+    //     color: white;
+    //   }
+  }
+  
