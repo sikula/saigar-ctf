@@ -24,7 +24,7 @@ const ChallengesPage = () => (
               if (loading) return null
               if (error) return <div>{error.message}</div>
 
-              const cases = data.case
+              const cases = data.event[0].eventCasesByeventId
               const duser = data.user[0]
               const team = data.team[0]
 

@@ -5,13 +5,17 @@ const CASE_LIST = gql`
     user(where: { auth0id: { _eq: $auth0id } }) {
       acceptedTos
     }
-    case {
-      uuid
-      name
-      missing_since
-      missing_from
+    event(order_by: { start_time: desc }, limit: 1) {
+      eventCasesByeventId {
+        case {
+          uuid
+          name
+          missing_since
+          missing_from
+        }
+      }
     }
-    team(limit: 1) {
+    team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
       pendingSubmissions: submissionsByteamId_aggregate(where: { processed: { _eq: "PENDING" } }) {
         aggregate {
           count
