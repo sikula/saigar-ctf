@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 const CASE_LIST = gql`
-  query caseList {
-    user(where: { auth0id: { _eq: "test" } }) {
+  query caseList($auth0id: String!) {
+    user(where: { auth0id: { _eq: $auth0id } }) {
       acceptedTos
     }
     case {
@@ -36,8 +36,8 @@ const CASE_LIST = gql`
 `
 
 const ACCEPT_TERMS = gql`
-  mutation acceptTerms {
-    update_user(_set: { acceptedTos: true }, where: { auth0id: { _eq: "test" } }) {
+  mutation acceptTerms($auth0id: String!) {
+    update_user(_set: { acceptedTos: true }, where: { auth0id: { _eq: $auth0id } }) {
       affected_rows
     }
   }

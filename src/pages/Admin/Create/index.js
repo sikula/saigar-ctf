@@ -4,7 +4,7 @@ import { Query, ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Toaster, Position, Card, Button, Tabs, Tab, Icon, H5, H3 } from '@blueprintjs/core'
+import { Toaster, Position, Card, Button, Tabs, Tab, Icon, H5, H4, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import { Parser } from 'json2csv'
@@ -165,7 +165,9 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
           style={{ fontWeight: 350, fontSize: '1.8em', display: 'flex', flexDirection: 'column' }}
         >
           <p>Submissions</p>
-          <p style={{ textAlign: 'center', fontSize: '0.8em' }}>{totalSubmissions.aggregate.count}</p>
+          <p style={{ textAlign: 'center', fontSize: '0.8em' }}>
+            {totalSubmissions.aggregate.count}
+          </p>
         </span>
       </div>
     </Card>
@@ -202,8 +204,10 @@ EventCard.propTypes = {
 const CaseCard = ({ id, name, missingSince }) => (
   <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
     <Card id="case-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <h4 className="case-card__header">{name}</h4>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <H4 className="case-card__header" style={{ textAlign: 'center' }}>
+          {name}
+        </H4>
       </div>
       {/* {/* <p>
           <strong>Start Time: </strong>
