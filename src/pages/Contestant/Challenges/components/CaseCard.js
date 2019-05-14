@@ -9,6 +9,7 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom Components
 import { SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
 import NewSubmission from './NewSubmission'
+import CaseInfo from './CaseInfo'
 
 // styles
 import '../index.scss'
@@ -30,6 +31,22 @@ NewSubmissionButton.propTypes = {
   id: PropTypes.string.isRequired,
 }
 
+const CaseInfoButton = ({ id }) => (
+  <SlidingPanelConsumer>
+    {({ openSlider }) => (
+      <Button
+        className="case-card__actions"
+        minimal
+        icon={<Icon icon={IconNames.INFO_SIGN} style={{ color: '#394B59' }} iconSize={20} />}
+        onClick={() => openSlider(CaseInfo, { caseID: id })}
+      />
+    )}
+  </SlidingPanelConsumer>
+)
+CaseInfoButton.propTypes = {
+  id: PropTypes.string.isRequired,
+}
+
 const CaseCard = ({ caseData }) => (
   <div className="case-card__wrapper">
     <Card id="case-card">
@@ -40,6 +57,7 @@ const CaseCard = ({ caseData }) => (
       <p>{`missing for: ${differenceInDays(new Date(), caseData.missing_since)} days`}</p>
     </Card>
     <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
+      <CaseInfoButton id={caseData.uuid} />
       <NewSubmissionButton id={caseData.uuid} />
     </div>
   </div>

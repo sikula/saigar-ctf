@@ -10,7 +10,7 @@ import '../index.scss'
 
 const CaseGrid = ({ cases }) => (
   <FlipMove className="case-card__grid" duration={500}>
-    {cases.map(_case => (
+    {cases.map(({ case: _case }) => (
       <CaseCard key={_case.uuid} caseData={_case} />
     ))}
   </FlipMove>

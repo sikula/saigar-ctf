@@ -2,6 +2,8 @@ import React from 'react'
 import { Mutation } from 'react-apollo'
 import { Link } from 'react-router-dom'
 
+import { AuthConsumer } from '@shared/components/AuthContext/context'
+
 // Styles
 import { Button, Dialog, Classes, Checkbox, H3 } from '@blueprintjs/core'
 
@@ -75,18 +77,22 @@ export default class TosDialog extends React.Component {
         </div>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <Mutation mutation={ACCEPT_TERMS}>
-              {acceptTerms => (
-                <Button
-                  disabled={!(checkedItems.get('disclaimer') && checkedItems.get('tos'))}
-                  large
-                  intent="primary"
-                  onClick={() => acceptTerms().then(() => this.handleClose())}
-                >
-                 I Accept
-                </Button>
+            <AuthConsumer>
+              {({ user }) => (
+                <Mutation mutation={ACCEPT_TERMS} variables={{ auth0id: user.id }}>
+                  {acceptTerms => (
+                    <Button
+                      disabled={!(checkedItems.get('disclaimer') && checkedItems.get('tos'))}
+                      large
+                      intent="primary"
+                      onClick={() => acceptTerms().then(() => this.handleClose())}
+                    >
+                      I Accept
+                    </Button>
+                  )}
+                </Mutation>
               )}
-            </Mutation>
+            </AuthConsumer>
           </div>
         </div>
       </Dialog>
