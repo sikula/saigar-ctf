@@ -188,16 +188,16 @@ const SUBMISSION_INFO = {
         <strong>FRIENDS</strong>
         <p>Relevant information on Friends. This can include but not limited to:</p>
         <ul>
-          <li>business name</li>
+          <li>name</li>
           <li>aliases</li>
-          <li>manager name</li>
-          <li>start date</li>
-          <li>end date</li>
-          <li>IDs (badge, license, etc)</li>
-          <li>business address</li>
-          <li>business phone</li>
+          <li>birthdate</li>
+          <li>IDs (drivers license, passport, library card, etc)</li>
+          <li>home address</li>
+          <li>home phone number</li>
+          <li>work address</li>
+          <li>work phone number</li>
           <li>email</li>
-          <li>social media</li>
+          <li>social media handle (e.g. Facebook, Twitter, etc)</li>
           <li>any insightful information from friends's comments</li>
         </ul>
       </div>
