@@ -5,14 +5,25 @@ import { Query, Mutation } from 'react-apollo'
 import { Formik } from 'formik'
 import { adopt } from 'react-adopt'
 
+import * as Yup from 'yup'
+
 // Styles
 import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
 import { SlidingPane, SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
+import { AuthConsumer } from '../../../../shared/components/AuthContext/context'
+
 import NewSubmissionForm from './NewSubmission-form'
-import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO } from '../graphql/queries'
+import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO, CASE_LIST } from '../graphql/queries'
+
+const NewSubmissionSchema = Yup.object().shape({
+  proof: Yup.string()
+    .url('not a valid url')
+    .required('required'),
+  explanation: Yup.string().required('required'),
+})
 
 const NewSubmissionContainer = adopt({
   // eslint-disable-next-line react/prop-types
@@ -42,36 +53,50 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
     <SlidingPane.Content>
       <SlidingPanelConsumer>
         {({ closeSlider }) => (
-          <NewSubmissionContainer>
-            {({ submissionInfo: { data, loading, error }, newSubmission }) => {
-              if (loading) return null
-              if (error) return null
-              return (
-                <Formik
-                  initialValues={{
-                    category: data.submission_configuration[0].uuid,
-                    proof: '',
-                    explanation: '',
-                  }}
-                  onSubmit={values =>
-                    newSubmission
-                      .mutation({
-                        variables: {
-                          content: values.proof,
-                          explanation: values.explanation,
-                          teamId: data.user_team[0].team.uuid,
-                          eventId: data.event[0].uuid,
-                          caseId: otherProps.caseID,
-                          configId: values.category,
-                        },
-                      })
-                      .then(() => closeSlider())
-                  }
-                  render={formikProps => <NewSubmissionForm {...formikProps} />}
-                />
-              )
-            }}
-          </NewSubmissionContainer>
+          <AuthConsumer>
+            {({ user }) => (
+              <Query query={SUBMISION_INFO} variables={{ auth0id: user.id }}>
+                {({ data, loading, error }) => {
+                  if (loading) return null
+                  if (error) return null
+
+                  return (
+                    <Mutation mutation={NEW_SUBMISSION_MUTATION}>
+                      {insert_submission => (
+                        <Formik
+                          initialValues={{
+                            category: data.submission_configuration[0].uuid,
+                            proof: '',
+                            explanation: '',
+                          }}
+                          validationSchema={NewSubmissionSchema}
+                          onSubmit={values =>
+                            insert_submission({
+                              variables: {
+                                content: values.proof,
+                                explanation: values.explanation,
+                                teamId: data.user_team[0].team.uuid,
+                                eventId: data.event[0].uuid,
+                                caseId: otherProps.caseID,
+                                configId: values.category,
+                              },
+                              refetchQueries: [
+                                {
+                                  query: CASE_LIST,
+                                  variables: { auth0id: user.id },
+                                },
+                              ],
+                            }).then(() => closeSlider())
+                          }
+                          render={formikProps => <NewSubmissionForm {...formikProps} />}
+                        />
+                      )}
+                    </Mutation>
+                  )
+                }}
+              </Query>
+            )}
+          </AuthConsumer>
         )}
       </SlidingPanelConsumer>
     </SlidingPane.Content>

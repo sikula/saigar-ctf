@@ -21,7 +21,12 @@ import { IconNames } from '@blueprintjs/icons'
 import gql from 'graphql-tag'
 
 import ScoreGraph from '../../../features/ScoreGraph'
-import { HOME_QUERY, SUBMISSION_HISTORY, PROCESS_SUBMISSION } from './graphql/adminQueries'
+import {
+  HOME_QUERY,
+  SUBMISSION_HISTORY,
+  PROCESS_SUBMISSION,
+  SUBMISSION_FILTERS,
+} from './graphql/adminQueries'
 import Can from '../../../shared/components/AuthContext/Can'
 import { AuthConsumer } from '../../../shared/components/AuthContext/context'
 
@@ -333,27 +338,109 @@ SubmissionItem.propTypes = {
   submission: PropTypes.any.isRequired,
 }
 
-const HistoryData = () => (
-  <Subscription subscription={SUBMISSION_HISTORY}>
-    {({ data, loading, error }) => {
-      if (loading) return <div> Loading... </div>
-      if (error) return <div>Error: `${error.message}`</div>
+class HistoryData extends React.Component {
+  state = { teams: null, cases: null, status: ["ACCEPTED", "REJECTED"] }
 
-      if (!Array.isArray(data.event) || !data.event.length) {
-        return (
-          <H5 style={{ textAlign: 'center' }}>
-            There is currently no history, items will appear once submissions have been processed
-          </H5>
-        )
-      }
+  handleSelect = e => {
+    this.setState({
+      [e.currentTarget.name]: e.currentTarget.value === '' ? null : e.currentTarget.value,
+    })
+  }
 
-      return data.event[0].submissions.map(submission => (
-        <SubmissionItem key={submission.uuid} submission={submission} />
-      ))
-    }}
-  </Subscription>
-)
+  handleStatusSelect = e => {
+    this.setState({
+      status: e.currentTarget.value === '' ? ["ACCEPTED", "REJECTED"] : [e.currentTarget.value]
+    })
+  }
 
+  render() {
+    return (
+      <React.Fragment>
+        <Query query={SUBMISSION_FILTERS}>
+          {({ data, loading, error }) => {
+            if (loading) return null
+            if (error) return null
+
+            return (
+              <div style={{ display: 'inline-flex', width: '100%', marginBottom: '20px' }}>
+                <div style={{ width: '100%', marginRight: '20px' }}>
+                  <HTMLSelect
+                    name="teams"
+                    onChange={this.handleSelect}
+                    value={this.state.teams}
+                    fill
+                    large
+                  >
+                    <option value="">All Teams</option>
+                    {data.event[0].team_events.map(({ team }) => (
+                      <option key={team.uuid} value={team.uuid}>
+                        {team.name}
+                      </option>
+                    ))}
+                  </HTMLSelect>
+                </div>
+                <div style={{ width: '100%', marginRight: '20px' }}>
+                  <HTMLSelect
+                    name="cases"
+                    onChange={this.handleSelect}
+                    value={this.state.cases}
+                    label="Filter Cases"
+                    fill
+                    large
+                  >
+                    <option value="">All Cases</option>
+                    {data.event[0].eventCasesByeventId.map(({ case: _case }) => (
+                      <option key={_case.uuid} value={_case.uuid}>
+                        {_case.name}
+                      </option>
+                    ))}
+                  </HTMLSelect>
+                </div>
+                <div style={{ width: '100%' }}>
+                  <HTMLSelect
+                    name="status"
+                    onChange={this.handleStatusSelect}
+                    value={this.state.status}
+                    label="Filter Status"
+                    fill
+                    large
+                  >
+                    <option value="">Any Status</option>
+                    <option value="ACCEPTED">
+                        Accepted
+                    </option>
+                    <option value="REJECTED">
+                        Rejected
+                    </option>
+                  </HTMLSelect>
+                </div>
+              </div>
+            )
+          }}
+        </Query>
+        <Subscription subscription={SUBMISSION_HISTORY} variables={{ team: this.state.teams, case: this.state.cases, status: this.state.status }}>
+          {({ data, loading, error }) => {
+            if (loading) return <div> Loading... </div>
+            if (error) return <div>Error: `${error.message}`</div>
+
+            if (!Array.isArray(data.event) || !data.event.length) {
+              return (
+                <H5 style={{ textAlign: 'center' }}>
+                  There is currently no history, items will appear once submissions have been
+                  processed
+                </H5>
+              )
+            }
+
+            return data.event[0].submissions.map(submission => (
+              <SubmissionItem key={submission.uuid} submission={submission} />
+            ))
+          }}
+        </Subscription>
+      </React.Fragment>
+    )
+  }
+}
 const HomePageData = () => (
   <Query query={HOME_QUERY}>
     {({ data, loading, error }) => {

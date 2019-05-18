@@ -137,7 +137,6 @@ const SubmissionListView = ({ data }) =>
 const SubscriptionData = ({ subscription, teams }) => (
   <Subscription subscription={subscription} variables={{ teams }}>
     {({ data, loading, error }) => {
-      console.log('[ ERROR ] ', error)
       if (!data) return null
       if (loading) {
         return (
@@ -148,7 +147,6 @@ const SubscriptionData = ({ subscription, teams }) => (
       }
       if (error) return <div>`${error.message}`</div>
 
-      console.log(error, loading)
       const { submissions } = data.event[0]
 
       if (!Array.isArray(submissions) || !submissions.length) {
