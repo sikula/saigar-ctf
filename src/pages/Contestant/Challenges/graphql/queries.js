@@ -16,6 +16,7 @@ const CASE_LIST = gql`
       }
     }
     team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
+      name
       pendingSubmissions: submissionsByteamId_aggregate(where: { processed: { _eq: "PENDING" } }) {
         aggregate {
           count
@@ -83,13 +84,13 @@ const NEW_SUBMISSION_MUTATION = gql`
 `
 // TODO(peter): need to fix this, make sure you are querying by the current user
 const SUBMISION_INFO = gql`
-  query submissionConfig {
+  query submissionConfig($auth0id: String!) {
     event(order_by: { start_time: desc }, limit: 1) {
       uuid
       start_time
       end_time
     }
-    user_team {
+    user_team(where: { user: { auth0id: { _eq: $auth0id } } }) {
       team {
         uuid
       }
