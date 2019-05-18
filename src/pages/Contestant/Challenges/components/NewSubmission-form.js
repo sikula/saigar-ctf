@@ -6,6 +6,7 @@ import { isWithinRange } from 'date-fns'
 import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
 
 import { SUBMISION_INFO } from '../graphql/queries'
+import { AuthConsumer } from '../../../../shared/components/AuthContext/context'
 
 const SUBMISSION_INFO = {
   LOCATION: {
@@ -188,16 +189,16 @@ const SUBMISSION_INFO = {
         <strong>FRIENDS</strong>
         <p>Relevant information on Friends. This can include but not limited to:</p>
         <ul>
-          <li>business name</li>
+          <li>name</li>
           <li>aliases</li>
-          <li>manager name</li>
-          <li>start date</li>
-          <li>end date</li>
-          <li>IDs (badge, license, etc)</li>
-          <li>business address</li>
-          <li>business phone</li>
+          <li>birthdate</li>
+          <li>IDs (drivers license, passport, library card, etc)</li>
+          <li>home address</li>
+          <li>home phone number</li>
+          <li>work address</li>
+          <li>work phone number</li>
           <li>email</li>
-          <li>social media</li>
+          <li>social media handle (e.g. Facebook, Twitter, etc)</li>
           <li>any insightful information from friends's comments</li>
         </ul>
       </div>
@@ -205,49 +206,70 @@ const SUBMISSION_INFO = {
   },
 }
 
-const NewSubmissionForm = ({ handleSubmit, handleChange, values }) => (
-  <Query query={SUBMISION_INFO} fetchPolicy="cache-first">
-    {({ error, loading, data }) => {
-      if (loading) return null
-      if (error) return null
+const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched }) => (
+  <AuthConsumer>
+    {({ user }) => (
+      <Query query={SUBMISION_INFO} variables={{ auth0id: user.id }} fetchPolicy="cache-only">
+        {({ error, loading, data }) => {
+          if (loading) return null
+          if (error) return null
 
-      const canCreateSubmission = isWithinRange(
-        new Date(data.event.start_time),
-        new Date(),
-        new Date(data.event.end_time),
-      )
+          const canCreateSubmission = isWithinRange(
+            new Date(data.event.start_time),
+            new Date(),
+            new Date(data.event.end_time),
+          )
 
-      return !canCreateSubmission ? (
-        <form id="newSubmissionForm" onSubmit={handleSubmit}>
-          <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
-            <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
-              {data.submission_configuration.map(config => (
-                <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-                  config.category
-                } (${config.points} pts.)`}</option>
-              ))}
-            </HTMLSelect>
-          </FormGroup>
-          <FormGroup label="URL" labelInfo="(required)" labelFor="text-input">
-            <TextArea name="proof" fill value={values.proof} onChange={handleChange} />
-          </FormGroup>
-          <FormGroup label="Explanation" labelInfo="(required)" labelFor="text-input">
-            <TextArea name="explanation" fill value={values.explanation} onChange={handleChange} />
-          </FormGroup>
-          <div>
-            {
-              SUBMISSION_INFO[
-                data.submission_configuration.filter(item => item.uuid === values.category)[0]
-                  .category
-              ].text
-            }
-          </div>
-        </form>
-      ) : (
-        <div>Competition is over</div>
-      )
-    }}
-  </Query>
+          return !canCreateSubmission ? (
+            <form id="newSubmissionForm" onSubmit={handleSubmit}>
+              <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
+                <HTMLSelect
+                  name="category"
+                  value={values.category}
+                  onChange={handleChange}
+                  fill
+                  large
+                >
+                  {data.submission_configuration.map(config => (
+                    <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+                      config.category
+                    } (${config.points} pts.)`}</option>
+                  ))}
+                </HTMLSelect>
+              </FormGroup>
+              <FormGroup label="URL" labelInfo="(required)" labelFor="text-input">
+                <TextArea name="proof" fill value={values.proof} onChange={handleChange} />
+                {errors.proof && touched.proof ? (
+                  <div style={{ color: 'red' }}>{errors.proof}</div>
+                ) : null}
+              </FormGroup>
+              <FormGroup label="Explanation" labelInfo="(required)" labelFor="text-input">
+                <TextArea
+                  name="explanation"
+                  fill
+                  value={values.explanation}
+                  onChange={handleChange}
+                />
+                {errors.explanation && touched.explanation ? (
+                  <div style={{ color: 'red' }}>{errors.explanation}</div>
+                ) : null}
+              </FormGroup>
+              <div>
+                {
+                  SUBMISSION_INFO[
+                    data.submission_configuration.filter(item => item.uuid === values.category)[0]
+                      .category
+                  ].text
+                }
+              </div>
+            </form>
+          ) : (
+            <div>Competition is over</div>
+          )
+        }}
+      </Query>
+    )}
+  </AuthConsumer>
 )
 
 NewSubmissionForm.propTypes = {

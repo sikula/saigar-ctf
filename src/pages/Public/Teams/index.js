@@ -8,7 +8,7 @@ import './index.scss'
 
 const TEAM_QUERY = gql`
   query teamList {
-    team_event(order_by: { event: { start_time: desc } }, limit: 1) {
+    team_event(order_by: { event: { start_time: desc } }) {
       team {
         uuid
         name

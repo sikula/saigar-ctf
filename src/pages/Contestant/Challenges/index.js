@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Query } from 'react-apollo'
 
 // Styles
-import { Card } from '@blueprintjs/core'
+import { Card, H2 } from '@blueprintjs/core'
 
 // Custom Components
 import { AuthConsumer } from '@shared/components/AuthContext/context'
@@ -42,6 +42,13 @@ const ChallengesPage = () => (
                       </ul>
                     </div>
                   </nav>
+                  <div className="row">
+                    <div className="col-xs">
+                      <div style={{ margin: 15 }}>
+                        <H2>{team.name}</H2>
+                      </div>
+                    </div>
+                  </div>
                   <div className="row">
                     <div className="col-xs">
                       <div style={{ margin: 15, textAlign: 'center' }}>

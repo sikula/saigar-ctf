@@ -9,11 +9,34 @@ const HOME_QUERY = gql`
   }
 `
 
+const SUBMISSION_FILTERS = gql`
+  query filters {
+    event(order_by: { start_time: desc }, limit: 1) {
+      eventCasesByeventId {
+        case {
+          uuid
+          name
+        }
+      }
+      team_events {
+        team {
+          uuid
+          name
+        }
+      }
+    }
+  }
+`
+
 const SUBMISSION_HISTORY = gql`
-  subscription submissionHistory {
+  subscription submissionHistory($team: uuid, $case: uuid, $status: [String]) {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
-        where: { processed: { _in: ["ACCEPTED", "REJECTED"] } }
+        where: {
+          processed: { _in: $status }
+          case_id: { _eq: $case }
+          team_id: { _eq: $team }
+        }
         order_by: { processed_at: desc }
       ) {
         uuid
@@ -99,7 +122,7 @@ const PROCESS_SUBMISSION = gql`
 
 const GET_TEAMS = gql`
   query getTeams {
-    team_event(order_by: { event: { start_time: desc } }, limit: 1) {
+    team_event(order_by: { event: { start_time: desc } }) {
       team {
         uuid
         name
@@ -117,6 +140,7 @@ const GET_TEAMS = gql`
 
 export {
   HOME_QUERY,
+  SUBMISSION_FILTERS,
   SUBMISSION_HISTORY,
   LIVE_FEED,
   LIVE_FEED_FILTERED,
