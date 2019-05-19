@@ -19,8 +19,8 @@ const cache = new InMemoryCache({
   addTypename: false,
 })
 
-const GRAPHQL_ENDPOINT = 'https://saigar-ctf-heroku.herokuapp.com/v1alpha1/graphql'
-const WEBSOCKET_ENDPOINT = 'wss://saigar-ctf-heroku.herokuapp.com/v1alpha1/graphql'
+const GRAPHQL_ENDPOINT = `${process.env.HASURA_HTTP_ENDPOINT}`
+const WEBSOCKET_ENDPOINT = `${process.env.HASURA_WSS_ENDPOINT}`
 
 const httpLink = new HttpLink({
   uri: GRAPHQL_ENDPOINT,

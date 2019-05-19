@@ -10,12 +10,12 @@ import { AuthProvider } from './context'
 import { wsClient } from '../../../_App/config/client'
 
 const auth = new auth0.WebAuth({
-  domain: 'sikulatest.auth0.com',
-  clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
+  domain: `${process.env.AUTH0_DOMAIN}`,
+  clientID: `${process.env.AUTH0_CLIENT_ID}`,
   redirectUri:
     process.env.NODE_ENV !== 'production'
       ? 'http://localhost:8084/authcallback'
-      : 'https://saigar-ctf-demo.herokuapp.com/authcallback',
+      : `${process.env.AUTH0_REDIRECT_URI}`,
   responseType: 'token id_token',
   scope: 'openid profile email',
 })
@@ -37,8 +37,8 @@ class Auth extends React.Component {
       returnTo:
         process.env.NODE_ENV !== 'production'
           ? 'http://localhost:8084/login'
-          : 'https://saigar-ctf-demo.herokuapp.com/login',
-      clientID: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
+          : `${process.env.AUTH0_RETURN_TO}`,
+      clientID: `${process.env.AUTH0_CLIENT_ID}`,
     })
 
     // this.setState({
