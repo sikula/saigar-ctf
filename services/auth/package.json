@@ -12,6 +12,7 @@
     "@sendgrid/mail": "^6.3.1",
     "auth0": "^2.16.0",
     "body-parser": "^1.18.3",
+    "dotenv": "^8.0.0",
     "express": "^4.16.4",
     "uuid": "^3.3.2"
   }

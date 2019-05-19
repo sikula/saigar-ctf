@@ -5,18 +5,20 @@ const uuid = require('uuid/v4')
 const { ManagementClient, AuthenticationClient } = require('auth0')
 const sgMailer = require('@sendgrid/mail')
 
+require('dotenv').config()
+
 const auth0 = new ManagementClient({
-  domain: 'sikulatest.auth0.com',
-  clientId: 'uB0gs971j8jWcYicr9b5Dfy5aSN24Bss',
-  clientSecret: '7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L',
-  audience: 'https://sikulatest.auth0.com/api/v2/',
+  domain: `${process.env.AUTH0_DOMAIN}`,
+  clientId: `${process.env.AUTH0_MANAGEMENT_CLIENT_ID}`,
+  clientSecret: `${process.env.AUTH0_MANAGEMENT_CLIENT_SECRET}`,
+  audience: `${process.env.AUTH0_AUDIENCE}`,
 })
 
 const auth0A = new AuthenticationClient({
-  domain: 'sikulatest.auth0.com',
-  clientId: 'Unt2d28190M3PXdvEUCLp1oR3p0s4nhA',
-  clientSecret: 'tPI1zZm3m7LMMbA5bOWv-gm381ltkgOCNwhrxrHSbCa5ZxcbEooQEXdXLXfAaPQ0',
-  audience: 'https://sikulatest.auth0.com/api/v2/',
+  domain: `${process.env.AUTH0_DOMAIN}`,
+  clientId: `${process.env.AUTH0_AUTH_CLIENT_ID}`,
+  clientSecret: `${process.env.AUTH0_AUTH_CLIENT_SECRET}`,
+  audience: `${process.env.AUTH0_AUDIENCE}`,
 })
 
 sgMailer.setApiKey('SENDGRID_API_KEY')
@@ -81,7 +83,7 @@ app.post('/', async (req, res) => {
   }
 })
 
-app.listen(process.env.PORT || 5000, () => {
+app.listen(process.env.PORT || 3000, () => {
   // eslint-disable-next-line no-console
   console.log('SERVER IS RUNNING')
 })
