@@ -1,0 +1,38 @@
+version: '3.6'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+    - db_data:/var/lib/postgresql/data
+  graphql-engine:
+    image: hasura/graphql-engine:v1.0.0-beta.1
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## uncomment next line to set an admin secret
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: public # role for public pages like scoreboard/rules/etc
+      # HASURA_GRAPHQL_JWT_SECRET: SOMETHING_HERE # secret from the Auth0 config
+      HASURA_GRAPHQL_ENABLE_TELEMETRY: "false"
+  saigar-ui:
+    image: saigar-ctf:latest
+    ports:
+    - "5000:5000"
+    depends_on:
+    - "graphql-engine"
+    restart: always
+    build: .
+  saigar-auth:
+    image: saigar-auth:latest
+    ports:
+    - "3000:3000"
+    restart: always
+    build: services/auth
+volumes:
+  db_data:

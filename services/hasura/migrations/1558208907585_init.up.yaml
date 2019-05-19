@@ -1,0 +1,746 @@
+- args:
+    functions: []
+    query_templates: []
+    remote_schemas: []
+    tables:
+    - array_relationships:
+      - comment: null
+        name: user_team
+        using:
+          foreign_key_constraint_on:
+            column: team_id
+            table: user_team
+      - comment: null
+        name: submissionsByteamId
+        using:
+          foreign_key_constraint_on:
+            column: team_id
+            table: submission
+      delete_permissions:
+      - comment: null
+        permission:
+          filter: {}
+        role: ctf_admin
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - name
+          set: {}
+        role: ctf_admin
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - uuid
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - uuid
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - uuid
+          filter: {}
+        role: public
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - team_id
+          - uuid
+          filter: {}
+        role: ctf_admin
+      table: team
+      update_permissions:
+      - comment: null
+        permission:
+          columns: []
+          filter: {}
+        role: ctf_admin
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - event_id
+          - team_id
+          set: {}
+        role: ctf_admin
+      object_relationships:
+      - comment: null
+        name: event
+        using:
+          foreign_key_constraint_on: event_id
+      - comment: null
+        name: team
+        using:
+          foreign_key_constraint_on: team_id
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - event_id
+          - team_id
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - event_id
+          - team_id
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - event_id
+          - team_id
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - event_id
+          - team_id
+          filter: {}
+        role: public
+      table: team_event
+      update_permissions: []
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions: []
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - name
+          - points
+          - submitted_at
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - name
+          - points
+          - submitted_at
+          filter: {}
+        role: public
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - name
+          - points
+          - submitted_at
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - points
+          - submitted_at
+          filter: {}
+        role: contestant
+      table: score_graph
+      update_permissions: []
+    - array_relationships:
+      - comment: null
+        name: eventCasesByeventId
+        using:
+          foreign_key_constraint_on:
+            column: event_id
+            table: event_case
+      - comment: null
+        name: submissions
+        using:
+          foreign_key_constraint_on:
+            column: event_id
+            table: submission
+      - comment: null
+        name: team_events
+        using:
+          foreign_key_constraint_on:
+            column: event_id
+            table: team_event
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - event_id
+          - uuid
+          - name
+          - start_time
+          - end_time
+          set: {}
+        role: ctf_admin
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - event_id
+          - uuid
+          - name
+          - start_time
+          - end_time
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - end_time
+          - event_id
+          - name
+          - start_time
+          - uuid
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - end_time
+          - event_id
+          - name
+          - start_time
+          - uuid
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - start_time
+          filter: {}
+        role: public
+      table: event
+      update_permissions:
+      - comment: null
+        permission:
+          columns:
+          - event_id
+          - uuid
+          - name
+          - start_time
+          - end_time
+          filter: {}
+          set: {}
+        role: ctf_admin
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions: []
+      object_relationships: []
+      select_permissions: []
+      table: submission_decisions
+      update_permissions: []
+    - array_relationships:
+      - comment: null
+        name: submissions
+        using:
+          foreign_key_constraint_on:
+            column: case_id
+            table: submission
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - age
+          - characteristics
+          - disappearance_details
+          - dob
+          - height
+          - missing_from
+          - missing_since
+          - name
+          - other_notes
+          - source_url
+          - weight
+          set: {}
+        role: ctf_admin
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - age
+          - characteristics
+          - disappearance_details
+          - dob
+          - height
+          - missing_from
+          - missing_since
+          - name
+          - other_notes
+          - uuid
+          - weight
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - age
+          - characteristics
+          - disappearance_details
+          - dob
+          - height
+          - missing_from
+          - missing_since
+          - name
+          - other_notes
+          - source_url
+          - uuid
+          - weight
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - age
+          - characteristics
+          - disappearance_details
+          - dob
+          - height
+          - missing_from
+          - missing_since
+          - name
+          - other_notes
+          - source_url
+          - uuid
+          - weight
+          filter: {}
+        role: ctf_admin
+      table: case
+      update_permissions:
+      - comment: null
+        permission:
+          columns:
+          - age
+          - characteristics
+          - disappearance_details
+          - dob
+          - height
+          - missing_from
+          - missing_since
+          - name
+          - other_notes
+          - source_url
+          - uuid
+          - weight
+          filter: {}
+          set: {}
+        role: ctf_admin
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions: []
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - submission_count
+          - total_points
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - submission_count
+          - total_points
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - name
+          - submission_count
+          - total_points
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - name
+          - submission_count
+          - total_points
+          filter: {}
+        role: public
+      table: scoreboard
+      update_permissions: []
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - event_id
+          set: {}
+        role: ctf_admin
+      object_relationships:
+      - comment: null
+        name: case
+        using:
+          foreign_key_constraint_on: case_id
+      - comment: null
+        name: event
+        using:
+          foreign_key_constraint_on: event_id
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - case_id
+          - event_id
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - case_id
+          - event_id
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - case_id
+          - event_id
+          filter: {}
+        role: contestant
+      table: event_case
+      update_permissions:
+      - comment: null
+        permission:
+          columns:
+          - event_id
+          - case_id
+          filter: {}
+          set: {}
+        role: ctf_admin
+    - array_relationships:
+      - comment: null
+        name: submission
+        using:
+          foreign_key_constraint_on:
+            column: config_id
+            table: submission
+      delete_permissions:
+      - comment: null
+        permission:
+          filter: {}
+        role: ctf_admin
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns: []
+          set: {}
+        role: ctf_admin
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - category
+          - points
+          - uuid
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - category
+          - config_id
+          - points
+          - uuid
+          filter: {}
+        role: judge
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - category
+          - config_id
+          - points
+          - uuid
+          filter: {}
+        role: ctf_admin
+      table: submission_configuration
+      update_permissions:
+      - comment: null
+        permission:
+          columns: []
+          filter: {}
+        role: ctf_admin
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - case_id
+          - config_id
+          - content
+          - event_id
+          - explanation
+          - team_id
+          set: {}
+        role: contestant
+      object_relationships:
+      - comment: null
+        name: case
+        using:
+          foreign_key_constraint_on: case_id
+      - comment: null
+        name: event
+        using:
+          foreign_key_constraint_on: event_id
+      - comment: null
+        name: submissionConfigurationByconfigId
+        using:
+          foreign_key_constraint_on: config_id
+      - comment: null
+        name: teamByteamId
+        using:
+          foreign_key_constraint_on: team_id
+      - comment: null
+        name: submissionDecisionsByprocessed
+        using:
+          foreign_key_constraint_on: processed
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - content
+          - explanation
+          - processed
+          - uuid
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - case_id
+          - config_id
+          - content
+          - event_id
+          - explanation
+          - processed
+          - processed_at
+          - submission_id
+          - submitted_at
+          - team_id
+          - uuid
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - case_id
+          - config_id
+          - content
+          - event_id
+          - explanation
+          - processed
+          - processed_at
+          - submission_id
+          - submitted_at
+          - team_id
+          - uuid
+          filter: {}
+        role: judge
+      table: submission
+      update_permissions:
+      - comment: null
+        permission:
+          columns:
+          - case_id
+          - config_id
+          - processed
+          - processed_at
+          - uuid
+          filter: {}
+          set: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          columns:
+          - config_id
+          - processed
+          - processed_at
+          filter: {}
+          set: {}
+        role: judge
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - team_id
+          - user_id
+          set: {}
+        role: ctf_admin
+      object_relationships:
+      - comment: null
+        name: team
+        using:
+          foreign_key_constraint_on: team_id
+      - comment: null
+        name: user
+        using:
+          foreign_key_constraint_on: user_id
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: true
+          columns:
+          - team_id
+          - user_id
+          filter: {}
+        role: contestant
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - team_id
+          filter: {}
+        role: ctf_admin
+      table: user_team
+      update_permissions: []
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers:
+      - definition:
+          insert:
+            columns: '*'
+        headers: []
+        name: register_users
+        retry_conf:
+          interval_sec: 10
+          num_retries: 0
+          timeout_sec: 60
+        webhook: https://saigar-ctf-auth.herokuapp.com/
+      insert_permissions:
+      - comment: null
+        permission:
+          check: {}
+          columns:
+          - avatar
+          - email
+          - nickname
+          - username
+          set: {}
+        role: ctf_admin
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - email
+          - nickname
+          - uuid
+          filter: {}
+        role: ctf_admin
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - acceptedTos
+          - auth0id
+          filter: {}
+        role: contestant
+      table: user
+      update_permissions:
+      - comment: null
+        permission:
+          columns:
+          - acceptedTos
+          filter: {}
+          set: {}
+        role: contestant
+    - array_relationships: []
+      delete_permissions: []
+      event_triggers: []
+      insert_permissions: []
+      object_relationships: []
+      select_permissions:
+      - comment: null
+        permission:
+          allow_aggregations: false
+          columns:
+          - case_name
+          - category
+          - content
+          - event_name
+          - explanation
+          - missing_from
+          - uuid
+          filter: {}
+        role: ctf_admin
+      table: event_export
+      update_permissions: []
+  type: replace_metadata
