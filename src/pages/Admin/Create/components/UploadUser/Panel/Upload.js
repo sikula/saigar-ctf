@@ -112,6 +112,12 @@ const TeamSelect = ({ values, handleChange, eventId }) => (
     {({ data, loading }) => {
       if (loading) return null
 
+      if (!Array.isArray(data.event) || !data.event.length) {
+        return (
+          <div>No Events Created Yet</div>
+        )
+      }
+      
       return (
         <HTMLSelect
           name="eventID"

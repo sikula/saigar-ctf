@@ -24,6 +24,12 @@ const ChallengesPage = () => (
               if (loading) return null
               if (error) return <div>{error.message}</div>
 
+              if (!Array.isArray(data.event) || !data.event.length) {
+                return (
+                  <div>No Events Created Yet</div>
+                )
+              }
+              
               const cases = data.event[0].eventCasesByeventId
               const duser = data.user[0]
               const team = data.team[0]
