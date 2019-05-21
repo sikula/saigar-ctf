@@ -215,12 +215,12 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
           if (error) return null
 
           const canCreateSubmission = isWithinRange(
-            new Date(data.event.start_time),
             new Date(),
-            new Date(data.event.end_time),
+            new Date(data.event[0].start_time),
+            new Date(data.event[0].end_time),
           )
 
-          return !canCreateSubmission ? (
+          return canCreateSubmission ? (
             <form id="newSubmissionForm" onSubmit={handleSubmit}>
               <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
                 <HTMLSelect

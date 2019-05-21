@@ -6,6 +6,8 @@ const CASE_LIST = gql`
       acceptedTos
     }
     event(order_by: { start_time: desc }, limit: 1) {
+      start_time
+      end_time
       eventCasesByeventId {
         case {
           uuid
@@ -47,17 +49,6 @@ const ACCEPT_TERMS = gql`
     }
   }
 `
-
-// query {
-// user_team {
-//   team {
-//     uuid
-//   }
-// }
-//   event(order_by:{start_time: desc}, limit:1) {
-//     uuid
-//   }
-// }
 
 const NEW_SUBMISSION_MUTATION = gql`
   mutation insertSubmission(

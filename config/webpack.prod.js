@@ -36,6 +36,7 @@ const plugins = [
       collapseWhitespace: true,
     },
     chunksSortMode: 'auto',
+    favicon: './src/assets/favicon.png',
   }),
   new Dotenv({ safe: true, path: '.env.prod' }),
 ]

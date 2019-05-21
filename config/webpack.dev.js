@@ -38,6 +38,7 @@ const plugins = [
     inject: 'body',
     minify: false,
     chunkSortMode: 'auto',
+    favicon: './src/assets/favicon.png',
   }),
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoEmitOnErrorsPlugin(),
