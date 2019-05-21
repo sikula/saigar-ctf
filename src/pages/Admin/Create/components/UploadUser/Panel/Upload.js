@@ -99,7 +99,7 @@ const TEAMS_QUERY = gql`
   }
 `
 
-const TeamSelect = ({ values, handleChange, eventId }) => (
+const TeamSelect = ({ values, handleChange, teamId, eventId }) => (
   <Query query={TEAMS_QUERY} variables={{ eventId }} skip={!eventId}>
     {({ data, loading }) => {
       if (!data) return null
@@ -112,7 +112,7 @@ const TeamSelect = ({ values, handleChange, eventId }) => (
       return (
         <HTMLSelect
           name="eventID"
-          value="8728c3e1-2c92-4c77-be7e-81f0e0231766"
+          value={teamId}
           onChange={handleChange}
           fill
           large
@@ -149,7 +149,7 @@ class ManageUserTab extends React.Component {
   render() {
     return (
       <div>
-        <TeamSelect eventId={this.props.eventId} handleChange={this.handleSelect} />
+        <TeamSelect eventId={this.props.eventId} teamId={this.state.teamId} handleChange={this.handleSelect} />
         <Query query={USER_LIST} variables={{ teamId: this.state.teamId }}>
           {({ data, loading, error }) => {
             if (!data) return null

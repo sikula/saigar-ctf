@@ -17,6 +17,7 @@ import EditCase from './components/EditCase'
 import CreateEvent from './components/CreateEvent'
 import EditEvent from './components/EditEvent'
 import UploadUser from './components/UploadUser'
+import AddAdmin from './components/AddAdmins'
 
 import { EVENTS_QUERY, CASES_QUERY } from './graphql/graphQueries'
 
@@ -300,7 +301,7 @@ const CasesPanel = () => (
               color: '#FFFFFF',
               display: 'flex',
             }}
-            onClick={() => openSlider(CreateCase, { agency_id: 1 })}
+            onClick={() => openSlider(CreateCase)}
             icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
           >
             Create Case
@@ -347,6 +348,32 @@ const CasesPanel = () => (
   </React.Fragment>
 )
 
+const UsersPanel = () => (
+  <div>
+    <div style={{ paddingBottom: 30 }}>
+      <SlidingPanelConsumer>
+        {({ openSlider }) => (
+          <Button
+            id="createbutton"
+            style={{
+              width: '148px',
+              height: '40px',
+              background: '#1F4B99',
+              color: '#FFFFFF',
+              display: 'flex',
+            }}
+            onClick={() => openSlider(AddAdmin)}
+            icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
+          >
+            Create User
+          </Button>
+        )}
+      </SlidingPanelConsumer>
+    </div>
+  </div>
+)
+
+
 const CreatePage = () => (
   <Can
     allowedRole="ctf_admin"
@@ -365,6 +392,11 @@ const CreatePage = () => (
                 id="casesTab"
                 title={<div style={{ fontSize: '1.5em' }}>Cases</div>}
                 panel={<CasesPanel />}
+              />
+              <Tab
+                id="userTab"
+                title={<div style={{ fontSize: '1.5em' }}>Admins & Judges</div>}
+                panel={<UsersPanel />}
               />
             </Tabs>
           </div>
