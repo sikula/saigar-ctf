@@ -115,3 +115,114 @@ export {
   EDIT_CASE_MUTATION,
   CREATE_CASE_MUTATION,
 }
+
+
+// ADD ARRAY OF USERS TO A TEAM, including bridge table
+// mutation {
+// 	insert_team(objects: [{
+//     name:"Saigar Team 1",
+//     user_team: {data:[{
+//       user: {data:{
+//         nickname:"Peter"
+//         avatar:"hi"
+//         auth0id:"test1auth0"
+//         email:"test1@test1.com"
+//       }}
+//     }
+//     {
+//       user: {data:{
+//         nickname:"Sikula"
+//         avatar:"hi"
+//         auth0id:"test2auth0"
+//         email:"test2@test2.com"
+//       }}
+//     }
+//     ]}
+//   }]) {
+//     affected_rows
+//   }
+// }
+
+
+// ADD Team to Event, Users to Teams including bridge tables
+// mutation {
+//   insert_team_event(objects:[{
+//     event_id:"3d16fcce-4e6a-47b8-a76b-dd0712e1e771"
+//     team: {data:{
+//       name: "Saigar Team 1",
+//       user_team: {data:[{
+//         user: {data:{
+//           nickname:"Peter"
+//           avatar:"hi"
+//           auth0id:"test1auth0"
+//           email:"test1@test1.com"
+//         }}
+//       }
+//       {
+//         user: {data:{
+//           nickname:"Sikula"
+//           avatar:"hi"
+//           auth0id:"test2auth0"
+//           email:"test2@test2.com"
+//         }}
+//       }
+//       ]}
+//     }}
+//   }]) {
+//     affected_rows
+//   }
+// }
+
+
+// Add multiple teams + multiple users to teams including bride tables 
+// mutation {
+//   insert_team_event(objects:[{
+//     event_id:"3d16fcce-4e6a-47b8-a76b-dd0712e1e771"
+//     team: {data:{
+//       name: "Saigar Team 1",
+//       user_team: {data:[{
+//         user: {data:{
+//           nickname:"Peter"
+//           avatar:"hi"
+//           auth0id:"test1auth0"
+//           email:"test1@test1.com"
+//         }}
+//       }
+//       {
+//         user: {data:{
+//           nickname:"Sikula"
+//           avatar:"hi"
+//           auth0id:"test2auth0"
+//           email:"test2@test2.com"
+//         }}
+//       }
+//       ]}
+//     }}
+//   }
+//   {
+//     event_id:"3d16fcce-4e6a-47b8-a76b-dd0712e1e771"
+//     team: {data:{
+//       name: "Saigar Team 2",
+//       user_team: {data:[{
+//         user: {data:{
+//           nickname:"Peter1"
+//           avatar:"hi"
+//           auth0id:"test3auth0"
+//           email:"test3@test3.com"
+//         }}
+//       }
+//       {
+//         user: {data:{
+//           nickname:"Sikula1"
+//           avatar:"hi"
+//           auth0id:"test4auth0"
+//           email:"test4@test4.com"
+//         }}
+//       }
+//       ]}
+//     }}
+//   }
+//   ]) {
+//     affected_rows
+//   }
+// }

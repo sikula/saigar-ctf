@@ -1,0 +1,51 @@
+config:
+  target: https://saigar-ctf-heroku.herokuapp.com
+  phases:
+    - duration: 30
+      arrivalRate: 1 
+  defaults:
+    headers:
+      Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6VTNRMEZETVVWQk9EazJRa0kyTXprMVJESTVNelJDUTBOQlJURkVRVFJGTURkR05UUTFNZyJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLWRlZmF1bHQtcm9sZSI6ImNvbnRlc3RhbnQiLCJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbImN0Zl9hZG1pbiIsImp1ZGdlIiwiY29udGVzdGFudCJdLCJ4LWhhc3VyYS11c2VyLWlkIjoiYXV0aDB8NWM3MzFjMTY1NDJjYzEzYWVjMjAwZjMzIn0sImh0dHBzOi8vY3RmLnNhaWdhci5pby9yb2xlcyI6eyJncm91cHMiOlsiY29udGVzdGFudCJdLCJyb2xlcyI6W10sInBlcm1pc3Npb25zIjpbXX0sIm5pY2tuYW1lIjoiY29udGVzdGFudDEiLCJuYW1lIjoiY29udGVzdGFudEBzYWlnYXIuaW8iLCJwaWN0dXJlIjoiaHR0cHM6Ly9zLmdyYXZhdGFyLmNvbS9hdmF0YXIvMGJmZjJkMjY2MWU5YWVjZDEzYzRmNjE4MjhlYjE3M2U_cz00ODAmcj1wZyZkPWh0dHBzJTNBJTJGJTJGY2RuLmF1dGgwLmNvbSUyRmF2YXRhcnMlMkZjby5wbmciLCJ1cGRhdGVkX2F0IjoiMjAxOS0wNS0yMVQwMzo0MjowOC4wNjVaIiwiZW1haWwiOiJjb250ZXN0YW50QHNhaWdhci5pbyIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9zaWt1bGF0ZXN0LmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1YzczMWMxNjU0MmNjMTNhZWMyMDBmMzMiLCJhdWQiOiJVbnQyZDI4MTkwTTNQWGR2RVVDTHAxb1IzcDBzNG5oQSIsImlhdCI6MTU1ODQxMDEyOCwiZXhwIjoxNTU4NDQ2MTI4LCJhdF9oYXNoIjoib0FvSFpsb0pHcUJhOWxEeDRUTnNSQSIsIm5vbmNlIjoiemRLN2hfZEtZbHFFMzZUTE91RkhpcTBHTUxrZk5EaXUifQ.AAibYBy81JLBOT9pig638PF_BwFwwF9H9XcCoHAHrbaKmlSn4p-dRBjVlHW-HYre45je7p2Bl5Llkvt9c2UzY1w1jfxRzfviS0AAHyWgTYOiYd4Oom_6Cd2t2va-509Io49msLoCWKtqPJ3i_hQiIgvTfuNn7JCOcZMWp0IsHlPhTIAjY3C9CMzi0oAlu5OcKYSkJoHhd_4Hk3FKL9mM8SPnUmmRqcieOHYy6K71wRl_x1FJo7tvSpj7ErhRYWLv0SHs12J4gG6ocgqze5PkRj_A-sFVtF2c8QkEq7T8UcrNC6zRgGDIGEdHZMKI02JXoND1zKzGhN_Oj1dtEOsaUA
+  plugins:
+    faker: {}
+  processor: './stress.js'
+  variables:
+    submission: >-
+      mutation insertSubmission(
+        $content: String!
+        $explanation: String!
+        $teamId: uuid!
+        $eventId: uuid!
+        $caseId: uuid!
+        $configId: uuid!
+      ) {
+        insert_submission(
+          objects: {
+            content: $content
+            explanation: $explanation
+            team_id: $teamId
+            event_id: $eventId
+            case_id: $caseId
+            config_id: $configId
+          }
+        ) {
+          affected_rows
+        }
+      }
+    content: '$faker.internet.url'
+    proof: '$faker.lorem.sentence'
+scenarios:
+  - flow:
+      - function: "generateRandomData"
+      # - log: "New Virtual User: {{ url }}, {{ explanation }}, {{ category }}"
+      - post:
+          url: "/v1alpha1/graphql"
+          json:
+            query: "{{ submission }}"
+            variables:
+                content: "{{ content }}"
+                explanation: "{{ proof }}"
+                teamId: "19751088-b432-41f2-bbc2-91df032c16d8"
+                eventId: "3d16fcce-4e6a-47b8-a76b-dd0712e1e771"
+                caseId: "92f25242-b06d-4c7c-ba93-1466f8ab277c"
+                configId: "{{ category }}"
