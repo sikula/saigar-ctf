@@ -8,18 +8,18 @@ import { IconNames } from '@blueprintjs/icons'
 import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 
 class UserControl extends React.Component {
-    state = { users: [] }
+  state = { users: [] }
 
-    render() {
-        return (
-            <div>
-                <HTMLSelect fill large>
-                    <option value="judge">Judge</option>
-                    <option value="admin">Admin</option>
-                </HTMLSelect>
-            </div>
-        )
-    }
+  render() {
+    return (
+      <div>
+        <HTMLSelect fill large>
+          <option value="judge">Judge</option>
+          <option value="admin">Admin</option>
+        </HTMLSelect>
+      </div>
+    )
+  }
 }
 
 const AddAdmin = ({ isOpen, onRequestClose }) => (
