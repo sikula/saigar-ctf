@@ -110,6 +110,7 @@ class DownloadCsvButton extends React.Component {
 
           return (
             <Button
+              className="case-card__actions"
               minimal
               icon={<Icon icon={IconNames.DOWNLOAD} style={{ color: '#394B59' }} iconSize={20} />}
               onClick={() => {
@@ -172,10 +173,11 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
         </span>
       </div>
     </Card>
-    <div className="case-card__actions">
+    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED'}}>
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
+            className="case-card__actions"
             minimal
             icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(EditEvent, { eventID, eventName: name, startTime, endTime })}
@@ -185,6 +187,7 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
+            className="case-card__actions"
             minimal
             icon={<Icon icon={IconNames.PEOPLE} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
@@ -219,16 +222,28 @@ const CaseCard = ({ id, name, missingSince }) => (
         {new Date(missingSince).toDateString()}
       </p>
     </Card>
-    <div className="case-card__actions">
+    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
+            className="case-card__actions"
             minimal
             icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(EditCase, { caseID: id })}
           />
         )}
       </SlidingPanelConsumer>
+      {/* <SlidingPanelConsumer>
+        {({ openSlider }) => (
+          <Button
+            className="case-card__actions"
+            style={{ background: '#F55656', borderRadius: 0 }}
+            minimal
+            icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
+            onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
+          />
+        )}
+      </SlidingPanelConsumer> */}
     </div>
   </div>
 )
