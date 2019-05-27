@@ -43,7 +43,7 @@ const handler = async event => {
 
     // #1 Create User
     const createUserOpts = {
-      connection: 'ctfuser',
+      connection: `${process.env.AUTH0_CONNECTION}`,
       email: event.data.new.email,
       username: event.data.new.username,
       password: `${uuid()}`,

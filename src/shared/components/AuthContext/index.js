@@ -60,7 +60,7 @@ class Auth extends React.Component {
 
   initiateLogin = () => {
     auth.authorize({
-      connection: 'ctfuser',
+      connection: `${process.env.AUTH0_CONNECTION}`,
     })
   }
 
