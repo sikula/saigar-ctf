@@ -17,7 +17,6 @@ import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/comp
 
 import './Upload.scss'
 
-
 const NEW_UPLOAD_USERS = gql`
   mutation uploadUsers($userData: [team_event_insert_input!]!) {
     insert_team_event(objects: $userData) {
@@ -110,13 +109,7 @@ const TeamSelect = ({ values, handleChange, teamId, eventId }) => (
       }
 
       return (
-        <HTMLSelect
-          name="eventID"
-          value={teamId}
-          onChange={handleChange}
-          fill
-          large
-        >
+        <HTMLSelect name="eventID" value={teamId} onChange={handleChange} fill large>
           <React.Fragment>
             <option value="" defaultValue="" hidden>
               Chose a team
@@ -149,7 +142,11 @@ class ManageUserTab extends React.Component {
   render() {
     return (
       <div>
-        <TeamSelect eventId={this.props.eventId} teamId={this.state.teamId} handleChange={this.handleSelect} />
+        <TeamSelect
+          eventId={this.props.eventId}
+          teamId={this.state.teamId}
+          handleChange={this.handleSelect}
+        />
         <Query query={USER_LIST} variables={{ teamId: this.state.teamId }}>
           {({ data, loading, error }) => {
             if (!data) return null
@@ -174,7 +171,6 @@ class ManageUserTab extends React.Component {
                 </div>
                 <div className="container">
                   <hr className="hr-text" data-content="NEW TEAM" />
-                  
                 </div>
               </div>
             )
@@ -197,33 +193,37 @@ class UploadUser extends React.Component {
       return objectsByKeyValue
     }, {})
 
-
-  transformData = () =>  {
+  transformData = () => {
     const groupByCase = this.groupBy('Team Name')
 
     return Object.entries(groupByCase(this.state.data)).map(([key, value]) => {
-      return ({
+      return {
         event_id: this.props.eventID,
-        team: {data: {
-          name: key,
-          user_team: {data: value.map(user => ({
-            user: {data: {
-              nickname: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
-              username: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
-              avatar: "",
-              email: user['Team Member Email']
-            }}
-          }))}
-        }}
-      })
+        team: {
+          data: {
+            name: key,
+            user_team: {
+              data: value.map(user => ({
+                user: {
+                  data: {
+                    nickname: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+                    username: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+                    avatar: '',
+                    email: user['Team Member Email'],
+                    role: 'CONTESTANT',
+                  },
+                },
+              })),
+            },
+          },
+        },
+      }
     })
   }
-  
 
   render() {
     const { isOpen, onRequestClose, eventID } = this.props
 
-  
     return (
       <SlidingPane
         isOpen={isOpen}
@@ -294,17 +294,19 @@ class UploadUser extends React.Component {
                 <SlidingPane.Actions
                   form="uploadUserForm"
                   // eslint-disable-next-line no-console
-                  onClick={() => insert_team_event({
-                    variables: {
-                      userData: this.transformData()
-                    },
-                    // refetchQueries: [{
-                    //   query: TEAMS_QUERY,
-                    //   variables: {
-                    //     eventId:  eventID
-                    //   }
-                    // }]
-                  }).then(() => closeSlider())}
+                  onClick={() =>
+                    insert_team_event({
+                      variables: {
+                        userData: this.transformData(),
+                      },
+                      // refetchQueries: [{
+                      //   query: TEAMS_QUERY,
+                      //   variables: {
+                      //     eventId:  eventID
+                      //   }
+                      // }]
+                    }).then(() => closeSlider())
+                  }
                 >
                   SAVE
                 </SlidingPane.Actions>

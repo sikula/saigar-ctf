@@ -4,10 +4,12 @@ const RulesPage = () => (
   <div style={{ padding: 25, width: '85%', margin: '0 auto' }}>
     <p>
       Rules for this CTF Most update to date rules are here:
-      https://www.tracelabs.org/getinvolved/ctf/ctf-rules/ Since the Trace Labs CTF involves real
-      people, we must be very strict with our rules. Most of these rules are designed to ensure
-      there is no criminal activity by contestants but also to ensure we are respectful to missing
-      person and their family.
+      <a href="https://www.tracelabs.org/getinvolved/ctf/ctf-rules/">
+        https://www.tracelabs.org/getinvolved/ctf/ctf-rules/
+      </a>{' '}
+      Since the Trace Labs CTF involves real people, we must be very strict with our rules. Most of
+      these rules are designed to ensure there is no criminal activity by contestants but also to
+      ensure we are respectful to missing person and their family.
     </p>
 
     <p>
@@ -82,7 +84,9 @@ const RulesPage = () => (
 
     <p>
       Get access to our Slack channel by signing up here:
-      https://www.tracelabs.org/accounts/register/
+      <a href="https://www.tracelabs.org/accounts/register/">
+        https://www.tracelabs.org/accounts/register/
+      </a>
     </p>
 
     <p>
@@ -93,10 +97,14 @@ const RulesPage = () => (
     <p>
       Trace Labs is a nonprofit organization staffed with volunteers. We currently don't have any
       government funding and operate from individual donations. If you enjoy this CTF, please
-      consider supporting us: Support us: https://PayPal.Me/tracelabs
+      consider supporting us: Support us:{' '}
+      <a href="https://PayPal.Me/tracelabs">https://PayPal.Me/tracelabs</a>
     </p>
 
-    <p>If you like the brand and want some swag: https://www.tracelabs.org/shop</p>
+    <p>
+      If you like the brand and want some swag:{' '}
+      <a href="https://www.tracelabs.org/shop">https://www.tracelabs.org/shop</a>
+    </p>
 
     <p>Thank you for being part of Trace Labs </p>
   </div>

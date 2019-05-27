@@ -30,6 +30,17 @@ const handler = async event => {
     // eslint-disable-next-line no-console
     console.log(event)
 
+    let userRole
+    if (event.data.new.role === 'CONTESTANT') {
+      userRole = 'contestant'
+    } else if (event.data.new.role === 'JUDGE') {
+      userRole = 'judge'
+    } else if (event.data.new.role === 'ADMIN') {
+      userRole = 'ctf_admin'
+    } else {
+      console.log('[ERROR]: INCORRECT ROLE')
+    }
+
     // #1 Create User
     const createUserOpts = {
       connection: 'ctfuser',
@@ -38,7 +49,7 @@ const handler = async event => {
       password: `${uuid()}`,
       app_metadata: {
         authorization: {
-          groups: ['contestant'],
+          groups: [userRole],
         },
       },
     }
@@ -54,7 +65,7 @@ const handler = async event => {
     await auth0A
       .requestChangePasswordEmail({
         email: event.data.new.email,
-        connection: 'ctfuser',
+        connection: `${process.env.AUTH0_CONNECTION}`,
       })
       .catch(err => console.log(err))
 

@@ -4,7 +4,19 @@ import { Query, ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Toaster, Position, Card, Button, Tabs, Tab, Icon, H5, H4, H3 } from '@blueprintjs/core'
+import {
+  Toaster,
+  Position,
+  Card,
+  Button,
+  Tabs,
+  Tag,
+  Tab,
+  Icon,
+  H5,
+  H4,
+  H3,
+} from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import { Parser } from 'json2csv'
@@ -97,7 +109,7 @@ class DownloadCsvButton extends React.Component {
     zip.generateAsync({ type: 'blob' }).then(content => {
       saveAs(
         content,
-        `${results.event_export[0].event_name.replace(/\s/g, '')}__${new Date().getTime()}`,
+        `${results.event_export[0].event_name.replace(/\s/g, '')}__${new Date().getTime()}.zip`,
       )
     })
   }
@@ -173,7 +185,7 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
         </span>
       </div>
     </Card>
-    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED'}}>
+    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
@@ -363,6 +375,29 @@ const CasesPanel = () => (
   </React.Fragment>
 )
 
+const ADMIN_USERS_QUERY = gql`
+  query {
+    user(where: { role: { _in: ["JUDGE", "ADMIN"] } }) {
+      uuid
+      email
+      role
+      nickname
+    }
+  }
+`
+
+const UserCard = ({ id, name, email, role }) => (
+  <div className="case-card__wrapper">
+    <Card id="case-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <H5 className="case-card__header">{`${name} / (${email})`}</H5>
+        <Tag round>{role}</Tag>
+      </div>
+      {/* <p>{`missing for: ${differenceInDays(new Date(), caseData.missing_since)} days`}</p> */}
+    </Card>
+  </div>
+)
+
 const UsersPanel = () => (
   <div>
     <div style={{ paddingBottom: 30 }}>
@@ -385,9 +420,34 @@ const UsersPanel = () => (
         )}
       </SlidingPanelConsumer>
     </div>
+    <Query query={ADMIN_USERS_QUERY}>
+      {({ data, loading, error }) => {
+        if (loading) return <div>Loading....</div>
+        if (error) return <div>`${error.message}`</div>
+
+        if (!Array.isArray(data.user) || !data.user.length) {
+          return <H5>No Admin/Judge users. Click "Create User" to create one.</H5>
+        }
+
+        return (
+          <div>
+            <div className="case-card__grid" style={{ padding: 0 }}>
+              {data.user.map(user => (
+                <UserCard
+                  key={user.uuid}
+                  id={user.uuid}
+                  name={user.nickname}
+                  email={user.email}
+                  role={user.role}
+                />
+              ))}
+            </div>
+          </div>
+        )
+      }}
+    </Query>
   </div>
 )
-
 
 const CreatePage = () => (
   <Can
