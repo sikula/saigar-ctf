@@ -32,14 +32,18 @@ const AsyncTermsPage = React.lazy(() =>
   import(/* webpackChunkName: "TermsPage" */ './Public/TermsOfService'),
 )
 const AsyncRulesPage = React.lazy(() =>
-  import(/* webpackChunkName: "TermsPage" */ './Public/Rules'),
+  import(/* webpackChunkName: "RulesPage" */ './Public/Rules'),
 )
 const AsyncResourcesPage = React.lazy(() =>
-  import(/* webpackChunkName: "TermsPage" */ './Public/Resources'),
+  import(/* webpackChunkName: "ResourcesPage" */ './Public/Resources'),
 )
 const AsyncTeamsPage = React.lazy(() =>
   import(/* webpackChunkName: "TeamsPage" */ './Public/Teams'),
 )
+const AsyncCategoriesPage = React.lazy(() =>
+  import(/* webpackChunkName: "CategoriesPage" */ './Public/Categories'),
+)
+
 const CtfRoutes = ({ match }) => (
   <Switch>
     <Redirect exact from="/" to="/login" />
@@ -110,6 +114,12 @@ const CtfRoutes = ({ match }) => (
       path={`${match.url}teams`}
       layout={ScoreboardLayout}
       component={AsyncTeamsPage}
+    />
+    <PublicRoute
+      exact
+      path={`${match.url}categories`}
+      layout={ScoreboardLayout}
+      component={AsyncCategoriesPage}
     />
   </Switch>
 )

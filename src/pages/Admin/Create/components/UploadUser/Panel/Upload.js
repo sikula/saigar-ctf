@@ -17,25 +17,33 @@ import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/comp
 
 import './Upload.scss'
 
-const ADD_USERS_TO_TEAM = gql`
-  mutation addUserToTeam($objects: [user_team_insert_input!]!) {
-    insert_user_team(objects: $objects) {
-      returning {
-        team_id
-      }
+const NEW_UPLOAD_USERS = gql`
+  mutation uploadUsers($userData: [team_event_insert_input!]!) {
+    insert_team_event(objects: $userData) {
+      affected_rows
     }
   }
 `
 
-const ADD_TEAM_TO_EVENT = gql`
-  mutation addTeamToEvent($objects: [team_event_insert_input!]!) {
-    insert_team_event(objects: $objects) {
-      returning {
-        team_id
-      }
-    }
-  }
-`
+// const ADD_USERS_TO_TEAM = gql`
+//   mutation addUserToTeam($objects: [user_team_insert_input!]!) {
+//     insert_user_team(objects: $objects) {
+//       returning {
+//         team_id
+//       }
+//     }
+//   }
+// `
+
+// const ADD_TEAM_TO_EVENT = gql`
+//   mutation addTeamToEvent($objects: [team_event_insert_input!]!) {
+//     insert_team_event(objects: $objects) {
+//       returning {
+//         team_id
+//       }
+//     }
+//   }
+// `
 
 const USER_LIST = gql`
   query userList($teamId: uuid!) {
@@ -48,23 +56,6 @@ const USER_LIST = gql`
     }
   }
 `
-
-const addUsersToTeam = ({ render }) => (
-  <Mutation mutation={ADD_USERS_TO_TEAM}>
-    {(mutation, result) => render({ mutation, result })}
-  </Mutation>
-)
-
-const addTeamToEvent = ({ render }) => (
-  <Mutation mutation={ADD_TEAM_TO_EVENT}>
-    {(mutation, result) => render({ mutation, result })}
-  </Mutation>
-)
-
-const UserManager = adopt({
-  addUsersToTeam,
-  addTeamToEvent,
-})
 
 class FileUpload extends React.PureComponent {
   state = { fileName: null }
@@ -107,19 +98,18 @@ const TEAMS_QUERY = gql`
   }
 `
 
-const TeamSelect = ({ values, handleChange, eventId }) => (
-  <Query query={TEAMS_QUERY} variables={{ eventId }}>
+const TeamSelect = ({ values, handleChange, teamId, eventId }) => (
+  <Query query={TEAMS_QUERY} variables={{ eventId }} skip={!eventId}>
     {({ data, loading }) => {
+      if (!data) return null
       if (loading) return null
 
+      if (!Array.isArray(data.event) || !data.event.length) {
+        return <div>No Events Created Yet</div>
+      }
+
       return (
-        <HTMLSelect
-          name="eventID"
-          value="8728c3e1-2c92-4c77-be7e-81f0e0231766"
-          onChange={handleChange}
-          fill
-          large
-        >
+        <HTMLSelect name="eventID" value={teamId} onChange={handleChange} fill large>
           <React.Fragment>
             <option value="" defaultValue="" hidden>
               Chose a team
@@ -152,7 +142,11 @@ class ManageUserTab extends React.Component {
   render() {
     return (
       <div>
-        <TeamSelect eventId={this.props.eventId} handleChange={this.handleSelect} />
+        <TeamSelect
+          eventId={this.props.eventId}
+          teamId={this.state.teamId}
+          handleChange={this.handleSelect}
+        />
         <Query query={USER_LIST} variables={{ teamId: this.state.teamId }}>
           {({ data, loading, error }) => {
             if (!data) return null
@@ -164,15 +158,20 @@ class ManageUserTab extends React.Component {
             }
 
             return (
-              <div style={{ marginTop: 10 }}>
-                {data.user_team.map(({ user }) => (
-                  <div
-                    key={user.uuid}
-                    style={{ width: '100%', padding: 15, background: 'rgb(255, 242, 242)' }}
-                  >
-                    {user.nickname} | {user.email}
-                  </div>
-                ))}
+              <div>
+                <div style={{ marginTop: 10 }}>
+                  {data.user_team.map(({ user }) => (
+                    <div
+                      key={user.uuid}
+                      style={{ width: '100%', padding: 15, background: 'rgb(255, 242, 242)' }}
+                    >
+                      {user.nickname} | {user.email}
+                    </div>
+                  ))}
+                </div>
+                <div className="container">
+                  <hr className="hr-text" data-content="NEW TEAM" />
+                </div>
               </div>
             )
           }}
@@ -187,33 +186,39 @@ class UploadUser extends React.Component {
     data: null,
   }
 
-  transformUsers = () => {
-    const { data } = this.state
+  groupBy = key => array =>
+    array.reduce((objectsByKeyValue, obj) => {
+      const value = obj[key]
+      objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj)
+      return objectsByKeyValue
+    }, {})
 
-    return data.map(user => ({
-      user: {
-        data: {
-          nickname: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
-          email: user['Team Member Email'],
-          username: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
-          avatar: '',
+  transformData = () => {
+    const groupByCase = this.groupBy('Team Name')
+
+    return Object.entries(groupByCase(this.state.data)).map(([key, value]) => {
+      return {
+        event_id: this.props.eventID,
+        team: {
+          data: {
+            name: key,
+            user_team: {
+              data: value.map(user => ({
+                user: {
+                  data: {
+                    nickname: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+                    username: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+                    avatar: '',
+                    email: user['Team Member Email'],
+                    role: 'CONTESTANT',
+                  },
+                },
+              })),
+            },
+          },
         },
-      },
-      team: {
-        data: {
-          name: user['Team Name'],
-        },
-      },
-    }))
-  }
-
-  transformTeams = (teams, eventId) => {
-    const { data } = this.state
-
-    return teams.map(team => ({
-      team_id: team.team_id,
-      event_id: eventId,
-    }))
+      }
+    })
   }
 
   render() {
@@ -224,6 +229,7 @@ class UploadUser extends React.Component {
         isOpen={isOpen}
         onRequestClose={onRequestClose}
         closeIcon={<Icon icon={IconNames.MENU_CLOSED} iconSize={20} />}
+        width={525}
       >
         <SlidingPane.Header>
           <SlidingPane.Header.Title title="Manage Users" subtitle="View and manage users" />
@@ -235,15 +241,21 @@ class UploadUser extends React.Component {
         <SlidingPane.Content>
           {/* NOTE(Peter): not sure about the negative padding here, but seems ok for now, does the job */}
           <div style={{ marginTop: '-30px', width: '100%' }}>
-            <Tabs large animate className="eventsTabs">
+            <Tabs large animate className="usersTabs">
               <Tab
-                id="eventsTab"
-                title={<div style={{ fontSize: '1em' }}>Manage</div>}
+                id="manageTeams"
+                title={<div style={{ fontSize: '1em' }}>Teams</div>}
                 panel={<ManageUserTab eventId={eventID} />}
                 style={{ width: '100%' }}
               />
               <Tab
-                id="casesTab"
+                id="manageUsers"
+                title={<div style={{ fontSize: '1em' }}>Users</div>}
+                panel={<ManageUserTab eventId={eventID} />}
+                style={{ width: '100%' }}
+              />
+              <Tab
+                id="bulkImport"
                 title={<div style={{ fontSize: '1em' }}>Import</div>}
                 panel={
                   <CsvParse
@@ -275,41 +287,31 @@ class UploadUser extends React.Component {
           </div>
         </SlidingPane.Content>
 
-        <Mutation mutation={ADD_USERS_TO_TEAM}>
-          {(insert_user_team, { data }) => (
-            <Mutation mutation={ADD_TEAM_TO_EVENT}>
-              {insert_team_event => {
-                const addUsers = async () => {
-                  const data = await insert_user_team({
-                    variables: {
-                      objects: this.transformUsers(),
-                    },
-                  })
-                  const { returning } = data.data.insert_user_team
-
-                  const teamData = this.transformTeams(returning, eventID)
-                  const dataResult = await insert_team_event({
-                    variables: {
-                      objects: teamData,
-                    },
-                  })
-                }
-
-                return (
-                  <SlidingPanelConsumer>
-                    {({ closeSlider }) => (
-                      <SlidingPane.Actions
-                        form="uploadUserForm"
-                        // eslint-disable-next-line no-console
-                        onClick={() => addUsers().then(() => closeSlider())}
-                      >
-                        SAVE
-                      </SlidingPane.Actions>
-                    )}
-                  </SlidingPanelConsumer>
-                )
-              }}
-            </Mutation>
+        <Mutation mutation={NEW_UPLOAD_USERS}>
+          {insert_team_event => (
+            <SlidingPanelConsumer>
+              {({ closeSlider }) => (
+                <SlidingPane.Actions
+                  form="uploadUserForm"
+                  // eslint-disable-next-line no-console
+                  onClick={() =>
+                    insert_team_event({
+                      variables: {
+                        userData: this.transformData(),
+                      },
+                      // refetchQueries: [{
+                      //   query: TEAMS_QUERY,
+                      //   variables: {
+                      //     eventId:  eventID
+                      //   }
+                      // }]
+                    }).then(() => closeSlider())
+                  }
+                >
+                  SAVE
+                </SlidingPane.Actions>
+              )}
+            </SlidingPanelConsumer>
           )}
         </Mutation>
       </SlidingPane>

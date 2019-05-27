@@ -4,7 +4,19 @@ import { Query, ApolloConsumer } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Toaster, Position, Card, Button, Tabs, Tab, Icon, H5, H4, H3 } from '@blueprintjs/core'
+import {
+  Toaster,
+  Position,
+  Card,
+  Button,
+  Tabs,
+  Tag,
+  Tab,
+  Icon,
+  H5,
+  H4,
+  H3,
+} from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import { Parser } from 'json2csv'
@@ -17,6 +29,7 @@ import EditCase from './components/EditCase'
 import CreateEvent from './components/CreateEvent'
 import EditEvent from './components/EditEvent'
 import UploadUser from './components/UploadUser'
+import AddAdmin from './components/AddAdmins'
 
 import { EVENTS_QUERY, CASES_QUERY } from './graphql/graphQueries'
 
@@ -96,7 +109,7 @@ class DownloadCsvButton extends React.Component {
     zip.generateAsync({ type: 'blob' }).then(content => {
       saveAs(
         content,
-        `${results.event_export[0].event_name.replace(/\s/g, '')}__${new Date().getTime()}`,
+        `${results.event_export[0].event_name.replace(/\s/g, '')}__${new Date().getTime()}.zip`,
       )
     })
   }
@@ -109,6 +122,7 @@ class DownloadCsvButton extends React.Component {
 
           return (
             <Button
+              className="case-card__actions"
               minimal
               icon={<Icon icon={IconNames.DOWNLOAD} style={{ color: '#394B59' }} iconSize={20} />}
               onClick={() => {
@@ -171,10 +185,11 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
         </span>
       </div>
     </Card>
-    <div className="case-card__actions">
+    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
+            className="case-card__actions"
             minimal
             icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(EditEvent, { eventID, eventName: name, startTime, endTime })}
@@ -184,6 +199,7 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
+            className="case-card__actions"
             minimal
             icon={<Icon icon={IconNames.PEOPLE} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
@@ -218,16 +234,28 @@ const CaseCard = ({ id, name, missingSince }) => (
         {new Date(missingSince).toDateString()}
       </p>
     </Card>
-    <div className="case-card__actions">
+    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
+            className="case-card__actions"
             minimal
             icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
             onClick={() => openSlider(EditCase, { caseID: id })}
           />
         )}
       </SlidingPanelConsumer>
+      {/* <SlidingPanelConsumer>
+        {({ openSlider }) => (
+          <Button
+            className="case-card__actions"
+            style={{ background: '#F55656', borderRadius: 0 }}
+            minimal
+            icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
+            onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
+          />
+        )}
+      </SlidingPanelConsumer> */}
     </div>
   </div>
 )
@@ -300,7 +328,7 @@ const CasesPanel = () => (
               color: '#FFFFFF',
               display: 'flex',
             }}
-            onClick={() => openSlider(CreateCase, { agency_id: 1 })}
+            onClick={() => openSlider(CreateCase)}
             icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
           >
             Create Case
@@ -347,6 +375,80 @@ const CasesPanel = () => (
   </React.Fragment>
 )
 
+const ADMIN_USERS_QUERY = gql`
+  query {
+    user(where: { role: { _in: ["JUDGE", "ADMIN"] } }) {
+      uuid
+      email
+      role
+      nickname
+    }
+  }
+`
+
+const UserCard = ({ id, name, email, role }) => (
+  <div className="case-card__wrapper">
+    <Card id="case-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <H5 className="case-card__header">{`${name} / (${email})`}</H5>
+        <Tag round>{role}</Tag>
+      </div>
+      {/* <p>{`missing for: ${differenceInDays(new Date(), caseData.missing_since)} days`}</p> */}
+    </Card>
+  </div>
+)
+
+const UsersPanel = () => (
+  <div>
+    <div style={{ paddingBottom: 30 }}>
+      <SlidingPanelConsumer>
+        {({ openSlider }) => (
+          <Button
+            id="createbutton"
+            style={{
+              width: '148px',
+              height: '40px',
+              background: '#1F4B99',
+              color: '#FFFFFF',
+              display: 'flex',
+            }}
+            onClick={() => openSlider(AddAdmin)}
+            icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
+          >
+            Create User
+          </Button>
+        )}
+      </SlidingPanelConsumer>
+    </div>
+    <Query query={ADMIN_USERS_QUERY}>
+      {({ data, loading, error }) => {
+        if (loading) return <div>Loading....</div>
+        if (error) return <div>`${error.message}`</div>
+
+        if (!Array.isArray(data.user) || !data.user.length) {
+          return <H5>No Admin/Judge users. Click "Create User" to create one.</H5>
+        }
+
+        return (
+          <div>
+            <div className="case-card__grid" style={{ padding: 0 }}>
+              {data.user.map(user => (
+                <UserCard
+                  key={user.uuid}
+                  id={user.uuid}
+                  name={user.nickname}
+                  email={user.email}
+                  role={user.role}
+                />
+              ))}
+            </div>
+          </div>
+        )
+      }}
+    </Query>
+  </div>
+)
+
 const CreatePage = () => (
   <Can
     allowedRole="ctf_admin"
@@ -365,6 +467,11 @@ const CreatePage = () => (
                 id="casesTab"
                 title={<div style={{ fontSize: '1.5em' }}>Cases</div>}
                 panel={<CasesPanel />}
+              />
+              <Tab
+                id="userTab"
+                title={<div style={{ fontSize: '1.5em' }}>Admins & Judges</div>}
+                panel={<UsersPanel />}
               />
             </Tabs>
           </div>
