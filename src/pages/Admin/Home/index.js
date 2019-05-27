@@ -361,6 +361,12 @@ class HistoryData extends React.Component {
             if (loading) return null
             if (error) return null
 
+            if (!Array.isArray(data.event) || !data.event.length) {
+              return (
+                <div> No Events Created Yet </div>
+              )
+            }
+
             return (
               <div style={{ display: 'inline-flex', width: '100%', marginBottom: '20px' }}>
                 <div style={{ width: '100%', marginRight: '20px' }}>
@@ -447,6 +453,12 @@ const HomePageData = () => (
       if (loading) return <div>Loading...</div>
       if (error) return <div>Error: `${error.message}`</div>
 
+      if (!Array.isArray(data.event) || !data.event.length) {
+        return (
+          <div>No Created Events</div>
+        )
+      }
+      
       const eventName = data.event[0].name
       const startTime = new Date(data.event[0].start_time)
 

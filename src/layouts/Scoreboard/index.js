@@ -30,6 +30,9 @@ const ScoreboardLayout = ({ children }) => (
             <li>
               <Link to="/teams">Teams</Link>
             </li>
+            <li>
+              <Link to="/categories">Categories</Link>
+            </li>
           </ul>
         </div>
         <div style={{ float: 'right' }}>

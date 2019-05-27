@@ -1,9 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Query } from 'react-apollo'
+import { isWithinRange } from 'date-fns'
 
 // Styles
-import { Card, H2 } from '@blueprintjs/core'
+import { Card, H2, H4 } from '@blueprintjs/core'
 
 // Custom Components
 import { AuthConsumer } from '@shared/components/AuthContext/context'
@@ -23,6 +24,34 @@ const ChallengesPage = () => (
             {({ data, loading, error }) => {
               if (loading) return null
               if (error) return <div>{error.message}</div>
+
+              const eventStarted = isWithinRange(
+                new Date(), // date
+                new Date(data.event[0].start_time), // start
+                new Date(data.event[0].end_time), // end
+              )
+
+              if (!Array.isArray(data.event) || !data.event.length) {
+                return <div>No Events Created Yet</div>
+              }
+
+              if (!eventStarted) {
+                return (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                    }}
+                  >
+                    <div style={{ maxWidth: '50%' }}>
+                      <H2 style={{ textAlign: 'center' }}>Event Hasn't Started Yet</H2>
+                      <H4>Refresh the page once the event has officially begun</H4>
+                    </div>
+                  </div>
+                )
+              }
 
               const cases = data.event[0].eventCasesByeventId
               const duser = data.user[0]

@@ -147,6 +147,10 @@ const SubscriptionData = ({ subscription, teams }) => (
       }
       if (error) return <div>`${error.message}`</div>
 
+      if (!Array.isArray(data.event) || !data.event.length) {
+        return <div />
+      }
+
       const { submissions } = data.event[0]
 
       if (!Array.isArray(submissions) || !submissions.length) {

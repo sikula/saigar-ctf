@@ -2,12 +2,6 @@ import React from 'react'
 
 const TermsOfServicePage = () => (
   <div style={{ padding: 25, width: '85%', margin: '0 auto' }}>
-    <p>Welcome to the Trace Labs Missing CTF, powered by {`Saigar's`} Saigar-CTF platform.</p>
-
-    <p>
-      Please review and accept the below Terms of Service to complete your account registration.
-    </p>
-
     <p>TERMS OF SERVICE</p>
 
     <p>----</p>
@@ -15,13 +9,13 @@ const TermsOfServicePage = () => (
     <p>OVERVIEW</p>
 
     <p>
-      The Trace Labs Missing CTF platform is powered by {`Saigar's`} Saigar-CTF technology.
-      Throughout these terms of service, the terms &ldquo;we&rdquo;, &ldquo;us&rdquo; and
-      &ldquo;our&rdquo; refer to Trace Labs Organization (&quot;Trace Labs&quot;), a federally
-      incorporated not for profit organization registered in British Columbia, Canada. Trace Labs
-      offers the use of this platform, including all information, tools and services available from
-      this platform to you, the user, conditioned upon your acceptance of all terms, conditions,
-      policies and notices stated here.
+      The Trace Labs Missing CTF platform is powered by Saigar CE (Community Edition). Throughout
+      these terms of service, the terms &ldquo;we&rdquo;, &ldquo;us&rdquo; and &ldquo;our&rdquo;
+      refer to Trace Labs Organization (&quot;Trace Labs&quot;), a federally incorporated not for
+      profit organization registered in British Columbia, Canada. Trace Labs offers the use of this
+      platform, including all information, tools and services available from this platform to you,
+      the user, conditioned upon your acceptance of all terms, conditions, policies and notices
+      stated here.
     </p>
 
     <p>
@@ -42,10 +36,10 @@ const TermsOfServicePage = () => (
     <p>
       Any new features or tools which are added to this platform shall also be subject to these
       Terms of Service. You can review the most current version of the Terms of Service at any time
-      at: [SAIGAR-CTF TOS URL HERE]. We reserve the right to update, change or replace any part of
-      these Terms of Service by posting updates and/or changes to our platform. It is your
-      responsibility to check this page periodically for changes. Your continued use of or access to
-      the platform following the posting of any changes constitutes acceptance of those changes.
+      on this page. We reserve the right to update, change or replace any part of these Terms of
+      Service by posting updates and/or changes to our platform. It is your responsibility to check
+      this page periodically for changes. Your continued use of or access to the platform following
+      the posting of any changes constitutes acceptance of those changes.
     </p>
 
     <p>
@@ -126,11 +120,6 @@ const TermsOfServicePage = () => (
       3.2 Any sensitive or disturbing content you encounter on the internet outside of our platform
       is done so at your own risk. This includes but is not limited to content viewed on the dark
       web, illegal websites, and social media websites.
-    </p>
-
-    <p>
-      3.3 Trace Labs is not responsible for any damages incurred in connection with viewing of such
-      content.
     </p>
 
     <p>
