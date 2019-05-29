@@ -20,7 +20,7 @@ const ChallengesPage = () => (
     yes={() => (
       <AuthConsumer>
         {({ user }) => (
-          <Query query={CASE_LIST} pollInterval={120} variables={{ auth0id: user.id }}>
+          <Query query={CASE_LIST} pollInterval={120000} variables={{ auth0id: user.id }}>
             {({ data, loading, error }) => {
               if (loading) return null
               if (error) return <div>{error.message}</div>
