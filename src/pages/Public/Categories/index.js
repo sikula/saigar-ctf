@@ -109,7 +109,7 @@ const Categories = () => (
     <ul>
       <li>pictures of subject on day last seen ( e.g. CCTV)</li>
       <li>details of subject on day last seen (mood, altercations, conversations, etc)</li>
-      <li>peron last seen with</li>
+      <li>person last seen with</li>
       <li>intent to meet with someone</li>
       <li>direction of travel</li>
       <li>other details that relate to the day last seen</li>
@@ -121,7 +121,7 @@ const Categories = () => (
       to:
     </p>
     <ul>
-      <li>pciture or details of subject on sites such as backstage</li>
+      <li>picture or details of subject on sites such as backpage</li>
       <li>discussion regarding subject on dark web sites</li>
       <li>the sales of goods by the subject on the dark web</li>
       <li>any activity or post by the subject on the dark web</li>

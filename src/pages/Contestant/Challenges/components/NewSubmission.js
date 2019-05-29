@@ -44,7 +44,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
     closeIcon={<Icon icon={IconNames.MENU_CLOSED} iconSize={20} />}
   >
     <SlidingPane.Header>
-      <SlidingPane.Header.Title title="New Submission" subtitle="Fill out the form and save" />
+      <SlidingPane.Header.Title title={`${otherProps.caseName}`} subtitle="Fill out the form and save" />
       <SlidingPane.Header.Actions onActionClick={onRequestClose}>
         <a>Cancel</a>
       </SlidingPane.Header.Actions>

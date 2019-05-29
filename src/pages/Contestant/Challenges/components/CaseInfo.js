@@ -70,7 +70,7 @@ const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
               </p>
               <p>
                 <strong>Disappearance Details: </strong>
-                {_case.disappreance_details}
+                {_case.disappearance_details}
               </p>
               <p>
                 <strong>Characteristics: </strong>
