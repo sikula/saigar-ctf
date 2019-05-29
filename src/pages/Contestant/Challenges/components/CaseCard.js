@@ -14,14 +14,14 @@ import CaseInfo from './CaseInfo'
 // styles
 import '../index.scss'
 
-const NewSubmissionButton = ({ id }) => (
+const NewSubmissionButton = ({ id, name }) => (
   <SlidingPanelConsumer>
     {({ openSlider }) => (
       <Button
         className="case-card__actions"
         minimal
         icon={<Icon icon={IconNames.ADD} style={{ color: '#394B59' }} iconSize={20} />}
-        onClick={() => openSlider(NewSubmission, { caseID: id })}
+        onClick={() => openSlider(NewSubmission, { caseID: id, caseName: name })}
       />
     )}
   </SlidingPanelConsumer>
@@ -58,7 +58,7 @@ const CaseCard = ({ caseData }) => (
     </Card>
     <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <CaseInfoButton id={caseData.uuid} />
-      <NewSubmissionButton id={caseData.uuid} />
+      <NewSubmissionButton id={caseData.uuid} name={caseData.name} />
     </div>
   </div>
 )
