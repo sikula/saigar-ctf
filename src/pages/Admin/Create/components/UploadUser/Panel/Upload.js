@@ -181,7 +181,15 @@ const ADD_USER_TO_TEAM = gql`
       objects: [
         {
           team_id: $teamId
-          user: { data: { avatar: "", email: $email, username: $username, role: "CONTESTANT" } }
+          user: {
+            data: {
+              avatar: ""
+              email: $email
+              username: $username
+              nickname: ""
+              role: "CONTESTANT"
+            }
+          }
         }
       ]
     ) {
@@ -223,7 +231,7 @@ class ManageUserTab extends React.Component {
 
             if (!Array.isArray(data.user_team) || !data.user_team.length) {
               return (
-                <table style={{ width: '100%', marginTop: 10  }}>
+                <table style={{ width: '100%', marginTop: 10 }}>
                   <thead>
                     <td>Username</td>
                     <td>Email</td>
