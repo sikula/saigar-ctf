@@ -78,8 +78,9 @@ const TEAMS_QUERY = gql`
   }
 `
 
+// NOTE(Peter): There seems to be a bug where sometimes the cache isn't being updated, so we force a network-only fetchPolicy here"
 const TeamSelect = ({ values, handleChange, teamId, eventId }) => (
-  <Query query={TEAMS_QUERY} variables={{ eventId }} skip={!eventId}>
+  <Query query={TEAMS_QUERY} fetchPolicy="network-only" variables={{ eventId }} skip={!eventId}>
     {({ data, loading }) => {
       if (!data) return null
       if (loading) return null
