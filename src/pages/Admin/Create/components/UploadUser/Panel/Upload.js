@@ -150,7 +150,7 @@ class ManageTeamsTab extends React.Component {
               <td>
                 <Mutation
                   mutation={ADD_USER_TO_EVENT}
-                  refetchQuries={[
+                  refetchQueries={[
                     {
                       query: TEAMS_QUERY,
                       variables: { eventId: this.props.eventId },
