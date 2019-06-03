@@ -8,9 +8,10 @@ const ResourcesPage = () => (
 
     <ul>
       <li>
-        <a href="https://inteltechniques.com/menu.html https://osintframework.com/">
-          https://inteltechniques.com/menu.html https://osintframework.com/
-        </a>
+        <a href="https://inteltechniques.com/menu.html">https://inteltechniques.com/menu.html</a>
+      </li>
+      <li>
+        <a href="https://osintframework.com/">https://osintframework.com/</a>
       </li>
       <li>
         <a href="https://www.i-intelligence.eu/wp-content/uploads/2018/06/OSINT_Handbook_June-2018_Final.pdf">
