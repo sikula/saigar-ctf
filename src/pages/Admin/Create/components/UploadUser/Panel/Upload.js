@@ -150,7 +150,7 @@ class ManageTeamsTab extends React.Component {
               <td>
                 <Mutation
                   mutation={ADD_USER_TO_EVENT}
-                  refetchQuries={[
+                  refetchQueries={[
                     {
                       query: TEAMS_QUERY,
                       variables: { eventId: this.props.eventId },
@@ -374,7 +374,7 @@ class UploadUser extends React.Component {
     }, {})
 
   transformData = () => {
-    const groupByCase = this.groupBy('Team Name')
+    const groupByCase = this.groupBy('Team')
 
     return Object.entries(groupByCase(this.state.data)).map(([key, value]) => {
       return {
@@ -386,10 +386,10 @@ class UploadUser extends React.Component {
               data: value.map(user => ({
                 user: {
                   data: {
-                    nickname: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
-                    username: `${user['Team Member First Name']}.${user['Team Member Last Name']}`,
+                    nickname: `${user.Username}}`,
+                    username: `${user.Username}`,
                     avatar: '',
-                    email: user['Team Member Email'],
+                    email: user.Email,
                     role: 'CONTESTANT',
                   },
                 },
@@ -439,23 +439,7 @@ class UploadUser extends React.Component {
                 title={<div style={{ fontSize: '1em' }}>Import Users</div>}
                 panel={
                   <CsvParse
-                    keys={[
-                      'Team Name',
-                      'Attendee ID',
-                      'Number of Registered Members',
-                      'Team Member Last Name',
-                      'Team Member First Name',
-                      'Ticket Type',
-                      'Joined Date',
-                      'Team Member Email',
-                      'Currency',
-                      'Team Captain Last Name',
-                      'Team Captain First Name',
-                      'Team Captain Email',
-                      'Password',
-                      'Created Date',
-                      'Preferred Start Time',
-                    ]}
+                    keys={['Email', 'Team', 'Username']}
                     onDataUploaded={data => this.setState({ data })}
                     // eslint-disable-next-line no-console
                     onError={error => console.log(error)}
