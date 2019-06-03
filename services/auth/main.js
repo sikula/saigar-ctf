@@ -54,7 +54,7 @@ const handler = async event => {
       },
     }
 
-    const { email } = await auth0.createUser(createUserOpts).catch(err => console.log(err))
+    await auth0.createUser(createUserOpts).catch(err => console.log(err))
 
     // #2 Create Reset Ticket
     // const createResetOpts = {
