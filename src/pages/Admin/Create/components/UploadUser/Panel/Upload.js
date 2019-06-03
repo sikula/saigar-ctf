@@ -438,46 +438,59 @@ class UploadUser extends React.Component {
                 id="bulkImport"
                 title={<div style={{ fontSize: '1em' }}>Import Users</div>}
                 panel={
-                  <CsvParse
-                    keys={['Email', 'Team', 'Username']}
-                    onDataUploaded={data => this.setState({ data })}
-                    // eslint-disable-next-line no-console
-                    onError={error => console.log(error)}
-                    render={onChange => <FileUpload onChange={onChange} />}
-                  />
+                  <React.Fragment>
+                    <CsvParse
+                      keys={['Email', 'Team', 'Username']}
+                      onDataUploaded={data => this.setState({ data })}
+                      // eslint-disable-next-line no-console
+                      onError={error => console.log(error)}
+                      render={onChange => <FileUpload onChange={onChange} />}
+                    />
+                    <Mutation mutation={NEW_UPLOAD_USERS}>
+                      {insert_team_event => (
+                        <SlidingPanelConsumer>
+                          {({ closeSlider }) => (
+                            <Button
+                              intent="primary"
+                              large
+                              // eslint-disable-next-line no-console
+                              onClick={() =>
+                                insert_team_event({
+                                  variables: {
+                                    userData: this.transformData(),
+                                  },
+                                  // refetchQueries: [{
+                                  //   query: TEAMS_QUERY,
+                                  //   variables: {
+                                  //     eventId:  eventID
+                                  //   }
+                                  // }]
+                                }).then(() => closeSlider())
+                              }
+                            >
+                              UPLOAD
+                            </Button>
+                          )}
+                        </SlidingPanelConsumer>
+                      )}
+                    </Mutation>
+                  </React.Fragment>
                 }
               />
             </Tabs>
           </div>
         </SlidingPane.Content>
 
-        <Mutation mutation={NEW_UPLOAD_USERS}>
-          {insert_team_event => (
-            <SlidingPanelConsumer>
-              {({ closeSlider }) => (
-                <SlidingPane.Actions
-                  form="uploadUserForm"
-                  // eslint-disable-next-line no-console
-                  onClick={() =>
-                    insert_team_event({
-                      variables: {
-                        userData: this.transformData(),
-                      },
-                      // refetchQueries: [{
-                      //   query: TEAMS_QUERY,
-                      //   variables: {
-                      //     eventId:  eventID
-                      //   }
-                      // }]
-                    }).then(() => closeSlider())
-                  }
-                >
-                  SAVE
-                </SlidingPane.Actions>
-              )}
-            </SlidingPanelConsumer>
+        <SlidingPanelConsumer>
+          {({ closeSlider }) => (
+            <SlidingPane.Actions
+              // eslint-disable-next-line no-console
+              onClick={() => closeSlider()}
+            >
+              SAVE
+            </SlidingPane.Actions>
           )}
-        </Mutation>
+        </SlidingPanelConsumer>
       </SlidingPane>
     )
   }
