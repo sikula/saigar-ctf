@@ -456,7 +456,7 @@ const CreatePage = () => (
       <div className="row">
         <div className="col-xs-12">
           <div style={{ padding: '1rem', display: 'inline-flex', marginTop: 65, width: '100%' }}>
-            <Tabs large animate className="eventsTabs">
+            <Tabs large animate renderActiveTabPanelOnly className="eventsTabs">
               <Tab
                 id="eventsTab"
                 title={<div style={{ fontSize: '1.5em' }}>Events</div>}
