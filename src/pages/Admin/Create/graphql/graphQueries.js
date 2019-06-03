@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 const EVENTS_QUERY = gql`
   query getEvents {
-    event(order_by: { start_time: desc }, limit: 1) {
+    event(order_by: { start_time: desc }) {
       uuid
       name
       start_time
