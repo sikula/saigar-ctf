@@ -9,7 +9,7 @@ import { adopt } from 'react-adopt'
 import CsvParse from '@vtex/react-csv-parse'
 
 // Styles
-import { Button, Icon, Tabs, InputGroup, Tab, H4, HTMLSelect } from '@blueprintjs/core'
+import { Checkbox, Button, Icon, Tabs, InputGroup, Tab, H4, HTMLSelect } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
@@ -199,8 +199,20 @@ const ADD_USER_TO_TEAM = gql`
   }
 `
 
+const TRANSFER_USER_TO_TEAM = gql`
+  mutation transferUserToTeam($teamId: uuid!, $users: [uuid!]!) {
+    update_user_team(_set:{
+      team_id: $teamId
+    }, where:{
+      user_id:{_in: $users}
+    }) {
+      affected_rows
+    }
+  }
+`
+
 class ManageUserTab extends React.Component {
-  state = { teamId: null, username: null, email: null }
+  state = { teamId: null, username: null, email: null, checkedItems: new Map(), transferId: null }
 
   handleSelect = e => {
     this.setState({ teamId: e.target.value })
@@ -209,6 +221,19 @@ class ManageUserTab extends React.Component {
   handleInputChange = e => {
     this.setState({
       [e.target.name]: e.target.value,
+    })
+  }
+
+  handleCheckBox = e => {
+    const { name, checked } = e.target
+    this.setState(prevState => ({
+      checkedItems: prevState.checkedItems.set(name, checked)
+    }))
+  }
+
+  handleTransferSelect = e => {
+    this.setState({
+      transferId: e.target.value
     })
   }
 
@@ -302,7 +327,9 @@ class ManageUserTab extends React.Component {
                       <tr key={user.uuid}>
                         <td>{user.username}</td>
                         <td>{user.email}</td>
-                        <td />
+                        <td>
+                          <Checkbox name={user.uuid} checked={this.state.checkedItems.get(user.uuid)} onChange={this.handleCheckBox} large style={{ width: '100%' }} />
+                        </td>
                       </tr>
                     ))}
                     <tr>
@@ -352,6 +379,30 @@ class ManageUserTab extends React.Component {
                     </tr>
                   </tbody>
                 </table>
+                <div className="container">
+                  <hr className="hr-text" data-content="TRANSFER USER" />
+                  <TeamSelect
+                      eventId={this.props.eventId}
+                      teamId={this.state.transferId}
+                      handleChange={this.handleTransferSelect}
+                    />
+                    <Mutation mutation={TRANSFER_USER_TO_TEAM} refetchQueries={[{ query: USER_LIST, variables: { teamId: this.state.transferId }}, { query: USER_LIST, variables: { teamId: this.state.teamId }}]}>
+                              {update_user_team => (
+                                <Button intent="primary" large style={{ marginTop: 10 }} onClick={() => {
+                                  update_user_team({
+                                    variables: {
+                                      teamId: this.state.transferId,
+                                      users: [...this.state.checkedItems.keys()]
+                                    }
+                                  }).then(() => this.setState(prevState => ({ checkedItems: new Map(), transferId: null })))
+
+                                }}>
+                                  Confirm
+                                </Button>
+                              )}
+                    </Mutation>
+                    
+                </div>
               </div>
             )
           }}
