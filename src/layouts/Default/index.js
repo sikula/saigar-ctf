@@ -10,7 +10,9 @@ import { AuthConsumer } from '../../shared/components/AuthContext/context'
 import Can from '../../shared/components/AuthContext/Can'
 
 import './index.scss'
+import logoWhite from './logo-white.png'
 
+console.log("LOGO: ", logoWhite)
 /*
   For tomorrow, get the IO side up and running with Auth0 login, and figure out
   how best to subscribe to an intel agencies cases (subscribe to one agency and
@@ -25,10 +27,8 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
       {/* Note from Stephanie; putting items in a div is easier to manage than FlexGrow/Shrink */}
       <div>
         <UL>
-          <li>
-            <a href="#">
-              <Icon icon={IconNames.MENU} iconSize={20} />
-            </a>
+          <li id="logo">
+            <Icon icon={IconNames.MENU} iconSize={20} style={{ color: "#FFF" }} />
           </li>
         </UL>
         <Can

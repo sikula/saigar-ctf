@@ -96,11 +96,11 @@ const rules = [
       },
     ],
   },
-  {
-    test: /\.png$/,
-    exclude: /node_modules/,
-    loader: 'file-loader?name=assets/[name].[ext]',
-  },
+  // {
+  //   test: /\.png$/,
+  //   exclude: /node_modules/,
+  //   loader: 'url-loader?name=assets/[name].[ext]',
+  // },
   {
     test: /\.css$/,
     use: ['style-loader', 'css-loader'],
