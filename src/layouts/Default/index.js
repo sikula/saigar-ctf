@@ -28,7 +28,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
       <div>
         <UL>
           <li id="logo">
-            <img height="60%" width="60%" src={logoWhite} />
+            <Icon icon={IconNames.MENU} iconSize={20} />
           </li>
         </UL>
         <Can
