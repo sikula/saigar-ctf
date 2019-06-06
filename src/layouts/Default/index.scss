@@ -40,14 +40,14 @@
             }
         }
 
-        li:hover {
+        li:not(#logo):hover {
             background: lighten($color-medium2, 5%);
             border-left: 6px solid $color-primary2;
             cursor: pointer;
             margin-left: 8px;
         }
 
-        li.active {
+        li:not(#logo).active {
             border-left: 6px solid $color-primary2;
             margin-left: 8px;
             background: $color-white;
