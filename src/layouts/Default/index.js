@@ -28,7 +28,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
       <div>
         <UL>
           <li id="logo">
-            <Icon icon={IconNames.MENU} iconSize={20} />
+            <Icon icon={IconNames.MENU} iconSize={20} style={{ color: "#FFF" }} />
           </li>
         </UL>
         <Can
