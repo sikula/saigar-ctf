@@ -68,15 +68,15 @@ const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
                 <strong>Age: </strong>
                 {_case.age}
               </p>
-              <p>
+              <p style={{ whiteSpace: 'pre-wrap' }}>
                 <strong>Disappearance Details: </strong>
                 {_case.disappearance_details}
               </p>
-              <p>
+              <p style={{ whiteSpace: 'pre-wrap' }}>
                 <strong>Characteristics: </strong>
                 {_case.characteristics}
               </p>
-              <p>
+              <p style={{ whiteSpace: 'pre-wrap' }}>
                 <strong>Other Notes: </strong>
                 {_case.other_notes}
               </p>
