@@ -85,7 +85,7 @@ const SettingTable = class extends React.Component {
           fill
           intent="primary"
           large
-          style={{ marginTop: 10 }}
+          style={{ marginTop: 10, marginBottom: 10 }}
           onClick={() => this.executeFilter()}
         >
           Save
@@ -110,7 +110,7 @@ const SettingsPanel = () => (
     {({ hidePanel }) => (
       <div
         style={{
-          position: 'absolute',
+          position: 'fixed',
           width: '500px',
           right: '365px',
           background: '#F5F8FA',
@@ -120,6 +120,7 @@ const SettingsPanel = () => (
           zIndex: 9999,
           borderRight: '1px solid #e6dddd',
           boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0,0.08)',
+          overflowY: 'scroll'
         }}
       >
         <Icon icon={IconNames.CROSS} iconSize={32} onClick={hidePanel} />
