@@ -82,10 +82,9 @@ class Auth extends React.Component {
 
     const cookieOpts = {
       path: '/',
-      httpOnly: true,
-      secure: true
+      secure: true,
     }
-    cookie.save('saigar:id_token', idToken, process.env.NODE_ENV === 'production' ? cookieOpts : { path: '/',  })
+    cookie.save('saigar:id_token', idToken, cookieOpts)
 
     /*
       Note(peter): There is an issue with the way the subscriptions work that causes the websocket
