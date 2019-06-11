@@ -98,17 +98,6 @@ class Auth extends React.Component {
     wsClient.close(true)
   }
 
-  // renewSession() {
-  //   auth0.checkSession({}, (err, authResult) => {
-  //     if (authResult && authResult.accessToken && authResult.idToken) {
-  //       this.setSession(authResult)
-  //     } else if (err){
-  //       // this.logout()
-  //       console.log(err)
-  //     }
-  //   })
-  // }
-
   render() {
     const authProviderValue = {
       ...this.state,
