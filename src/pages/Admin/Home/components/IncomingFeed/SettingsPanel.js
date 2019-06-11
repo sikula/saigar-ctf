@@ -25,61 +25,59 @@ function mapDispatchToProps(dispatch) {
 }
 
 const SettingTable = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      items: [],
-    }
-  }
+  state = { selectedTeams: this.props.teamFilter }
 
   handleCheck = event => {
     const { id, checked } = event.currentTarget
 
-    // TODO(peter):
-    //  Integrate Apollo-Client into this (eventually will swap out for Redux, but AC is simpler)
-    //  this can be simplified using Maps, see the TosDialog component for an example
     if (!checked) {
       this.setState(prevState => ({
-        items: prevState.items.filter(item => item !== id),
+        selectedTeams: prevState.selectedTeams.filter(item => item !== id),
       }))
     } else {
       this.setState(prevState => ({
-        items: prevState.items.concat(id),
+        selectedTeams: prevState.selectedTeams.concat(id),
       }))
     }
   }
 
   executeFilter = async () => {
-    const { items } = this.state
+    const { selectedTeams } = this.state
     const { updateFilter } = this.props
-    updateFilter(items)
+    updateFilter(selectedTeams)
   }
 
   render() {
     const { data } = this.props
-    const { items } = this.state
+    const { selectedTeams } = this.state
 
     return (
       <React.Fragment>
         <table style={{ width: '100%' }}>
-          <th>Tracked</th>
-          <th>Pending</th>
-          <th>Team</th>
-          {data.team_event.map(({ team }) => (
-            <tr key={team.uuid}>
-              <td style={{ textAlign: 'center' }}>
-                <Switch
-                  id={team.uuid}
-                  checked={items.indexOf(team.uuid) !== -1}
-                  onChange={this.handleCheck}
-                />
-              </td>
-              <td style={{ textAlign: 'center' }}>
-                {team.submissionByTeamAggregate.aggregate.count}
-              </td>
-              <td style={{ textAlign: 'center' }}>{team.name}</td>
+          <thead>
+            <tr>
+              <th>Tracked</th>
+              <th>Pending</th>
+              <th>Team</th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {data.team_event.map(({ team }) => (
+              <tr key={team.uuid}>
+                <td style={{ textAlign: 'center' }}>
+                  <Switch
+                    id={team.uuid}
+                    checked={selectedTeams.indexOf(team.uuid) !== -1}
+                    onChange={this.handleCheck}
+                  />
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  {team.submissionByTeamAggregate.aggregate.count}
+                </td>
+                <td style={{ textAlign: 'center' }}>{team.name}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
         <Button
           fill
@@ -120,7 +118,7 @@ const SettingsPanel = () => (
           zIndex: 9999,
           borderRight: '1px solid #e6dddd',
           boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0,0.08)',
-          overflowY: 'scroll'
+          overflowY: 'scroll',
         }}
       >
         <Icon icon={IconNames.CROSS} iconSize={32} onClick={hidePanel} />
