@@ -445,6 +445,7 @@ class HistoryData extends React.Component {
                     large
                   >
                     <option value="">Any Status</option>
+                    <option value="STARRED">Starred</option>
                     <option value="ACCEPTED">Accepted</option>
                     <option value="REJECTED">Rejected</option>
                   </HTMLSelect>

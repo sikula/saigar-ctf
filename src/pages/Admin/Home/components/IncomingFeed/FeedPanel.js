@@ -6,13 +6,14 @@ import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Icon, Button, Toaster, Position, HTMLSelect, Popover } from '@blueprintjs/core'
+import { Icon, Button, Toaster, Position, HTMLSelect, ButtonGroup } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
 import { PROCESS_SUBMISSION } from '../../graphql/adminQueries'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
 
+const ActionButtons = () => <ButtonGroup />
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
   position: Position.TOP_LEFT,
@@ -135,50 +136,72 @@ class PanelContent extends React.Component {
             marginBottom: '30px',
           }}
         >
-          <ShareButton uuid={uuid} />
-          <Mutation mutation={PROCESS_SUBMISSION}>
-            {updateSubmission => (
-              <Button
-                text="Approve"
-                intent="success"
-                large
-                fill
-                icon={IconNames.TICK}
-                style={{ marginRight: 10, marginLeft: 10 }}
-                onClick={() =>
-                  updateSubmission({
-                    variables: {
-                      submissionID: uuid,
-                      value: 'ACCEPTED',
-                      processedAt: new Date(),
-                      category,
-                    },
-                  }).then(() => hidePanel())
-                }
-              />
-            )}
-          </Mutation>
-          <Mutation mutation={PROCESS_SUBMISSION}>
-            {updateSubmission => (
-              <Button
-                text="Reject"
-                intent="danger"
-                large
-                fill
-                icon={IconNames.CROSS}
-                onClick={() =>
-                  updateSubmission({
-                    variables: {
-                      submissionID: uuid,
-                      value: 'REJECTED',
-                      processedAt: new Date(),
-                      category,
-                    },
-                  }).then(() => hidePanel())
-                }
-              />
-            )}
-          </Mutation>
+          <ButtonGroup fill>
+            <ShareButton uuid={uuid} />
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
+                  text="Star"
+                  intent="warning"
+                  large
+                  fill
+                  icon={IconNames.STAR}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'STARRED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    }).then(() => hidePanel())
+                  }
+                />
+              )}
+            </Mutation>
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
+                  text="Approve"
+                  intent="success"
+                  large
+                  fill
+                  icon={IconNames.TICK}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'ACCEPTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    }).then(() => hidePanel())
+                  }
+                />
+              )}
+            </Mutation>
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
+                  text="Reject"
+                  intent="danger"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    }).then(() => hidePanel())
+                  }
+                />
+              )}
+            </Mutation>
+          </ButtonGroup>
         </div>
       </React.Fragment>
     )
