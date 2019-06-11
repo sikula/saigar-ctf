@@ -290,6 +290,28 @@ class SubmissionItem extends React.Component {
                 <Button
                   intent="success"
                   large
+                  icon={IconNames.STAR}
+                  style={{ marginRight: 10 }}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: submission.uuid,
+                        value: 'STARRED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                  }
+                >
+                  Approve
+                </Button>
+              )}
+            </Mutation>
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
+                  intent="success"
+                  large
                   icon={IconNames.TICK}
                   style={{ marginRight: 10 }}
                   onClick={() =>
