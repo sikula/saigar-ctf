@@ -69,7 +69,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => (
                             proof: '',
                             explanation: '',
                           }}
-                          // validationSchema={NewSubmissionSchema}
+                          validationSchema={NewSubmissionSchema}
                           onSubmit={values =>
                             insert_submission({
                               variables: {
