@@ -288,7 +288,7 @@ class SubmissionItem extends React.Component {
             <Mutation mutation={PROCESS_SUBMISSION}>
               {updateSubmission => (
                 <Button
-                  intent="success"
+                  intent="warning"
                   large
                   icon={IconNames.STAR}
                   style={{ marginRight: 10 }}
@@ -303,7 +303,7 @@ class SubmissionItem extends React.Component {
                     })
                   }
                 >
-                  Approve
+                  Star
                 </Button>
               )}
             </Mutation>
