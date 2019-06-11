@@ -4,6 +4,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import auth0 from 'auth0-js'
+import cookie from 'react-cookies'
 
 import { AuthProvider } from './context'
 
@@ -28,8 +29,7 @@ class Auth extends React.Component {
   }
 
   logout = () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('id_token')
+    cookie.remove('saigar:id_token', { path: '/', httpOnly: true, secure: true })
     localStorage.removeItem('expires_at')
     sessionStorage.removeItem('redirectBackTo')
 
@@ -78,10 +78,14 @@ class Auth extends React.Component {
     })
 
     const expiresAt = JSON.stringify(expiresIn * 1000 + new Date().getTime())
-
-    localStorage.setItem('access_token', accessToken)
-    localStorage.setItem('id_token', idToken)
     localStorage.setItem('expires_at', expiresAt)
+
+    const cookieOpts = {
+      path: '/',
+      httpOnly: true,
+      secure: true
+    }
+    cookie.save('saigar:id_token', idToken, process.env.NODE_ENV === 'production' ? cookieOpts : { path: '/',  })
 
     /*
       Note(peter): There is an issue with the way the subscriptions work that causes the websocket
@@ -94,6 +98,17 @@ class Auth extends React.Component {
     */
     wsClient.close(true)
   }
+
+  // renewSession() {
+  //   auth0.checkSession({}, (err, authResult) => {
+  //     if (authResult && authResult.accessToken && authResult.idToken) {
+  //       this.setSession(authResult)
+  //     } else if (err){
+  //       // this.logout()
+  //       console.log(err)
+  //     }
+  //   })
+  // }
 
   render() {
     const authProviderValue = {

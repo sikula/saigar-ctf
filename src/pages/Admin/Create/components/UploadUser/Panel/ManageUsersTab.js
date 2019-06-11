@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Query, Mutation } from 'graphql'
+import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { H4, InputGroup, Button, Checkbox, HTMLSelect, IconNames } from '@blueprintjs/core'
+import { H4, InputGroup, Button, Checkbox } from '@blueprintjs/core'
+import { IconNames } from '@blueprintjs/icons'
 
 const TEAMS_QUERY = gql`
   query teamList($eventId: uuid!) {
@@ -97,7 +98,7 @@ TeamSelect.propTypes = {
   handleChange: PropTypes.func.isRequired,
 }
 
-export default class ManageUserTab extends React.Component {
+export default class ManageUsersTab extends React.Component {
   state = { teamId: null, username: null, email: null, checkedItems: new Map(), transferId: null }
 
   handleSelect = e => {
