@@ -11,6 +11,8 @@ import { IconNames } from '@blueprintjs/icons'
 import { LIVE_FEED, LIVE_FEED_FILTERED, PROCESS_SUBMISSION } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
+import SafeURL from '../../../../../shared/components/SafeUrl'
+
 
 const SUBMISSION_TYPES = {
   DARK_WEB: 'Dark Web',
@@ -55,9 +57,7 @@ const SubmissionItem = ({ data }) => (
           </span>
 
           <span className="long-text" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
-            <a target="_blank" rel="noopener noreferrer" href={data.content}>
-              {data.content}
-            </a>
+            <SafeURL dangerousURL={data.content} text={data.content} />
           </span>
           <span className="long-text">{data.explanation}</span>
           <div
