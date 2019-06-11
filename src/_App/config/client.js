@@ -1,7 +1,6 @@
 import { ApolloClient } from 'apollo-client'
 import { WebSocketLink } from 'apollo-link-ws'
 import { HttpLink } from 'apollo-link-http'
-// import { withClientState } from 'apollo-link-state'
 import { SubscriptionClient } from 'subscriptions-transport-ws'
 
 import { ApolloLink, split } from 'apollo-link'
@@ -9,11 +8,7 @@ import { getMainDefinition } from 'apollo-utilities'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { setContext } from 'apollo-link-context'
 
-// import {
-//   updateVisibilityFilter,
-//   toggleFeedPanel,
-//   toggleSettingsPanel,
-// } from '@pages/Home/graphql/Resolvers/visibilityFilter'
+import cookie from 'react-cookies'
 
 const cache = new InMemoryCache({
   addTypename: false,
@@ -32,8 +27,8 @@ export const wsClient = new SubscriptionClient(WEBSOCKET_ENDPOINT, {
   connectionParams: () => {
     return {
       headers: {
-        ...(localStorage.getItem('id_token') && {
-          Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+        ...(cookie.load('saigar:id_token') && {
+          Authorization: `Bearer ${cookie.load('saigar:id_token')}`,
         }),
       },
     }
@@ -45,8 +40,8 @@ const wsLink = new WebSocketLink(wsClient)
 const authLink = setContext((_, { headers }) => ({
   headers: {
     ...headers,
-    ...(localStorage.getItem('id_token') && {
-      Authorization: `Bearer ${localStorage.getItem('id_token')}`,
+    ...(cookie.load('saigar:id_token') && {
+      Authorization: `Bearer ${cookie.load('saigar:id_token')}`,
     }),
   },
 }))

@@ -6,7 +6,7 @@ import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Icon, Button, Toaster, Position, HTMLSelect } from '@blueprintjs/core'
+import { Icon, Button, Toaster, Position, HTMLSelect, Popover } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
@@ -40,6 +40,7 @@ const ShareButton = class extends React.PureComponent {
         >
           Share
         </Button>
+
         <textarea
           ref={textArea => (this.textArea = textArea)}
           readOnly

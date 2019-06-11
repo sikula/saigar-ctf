@@ -3,7 +3,8 @@ import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Button, InputGroup, IconNames } from '@blueprintjs/core'
+import { Button, InputGroup } from '@blueprintjs/core'
+import { IconNames } from '@blueprintjs/icons'
 
 const ADD_USER_TO_EVENT = gql`
   mutation addUserToEvent($eventId: uuid!, $teamName: String!) {

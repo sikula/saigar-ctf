@@ -5,7 +5,7 @@ import { Mutation, Subscription } from 'react-apollo'
 import { connect } from 'react-redux'
 
 import { Motion, spring } from 'react-motion'
-import { Icon, Tag, H3 } from '@blueprintjs/core'
+import { Icon, Tag, H3, Divider } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import { LIVE_FEED, LIVE_FEED_FILTERED, PROCESS_SUBMISSION } from '../../graphql/adminQueries'
@@ -37,6 +37,9 @@ const SubmissionItem = ({ data }) => (
     {value => (
       <div style={animation.render(value)} className="case-data__item__wrapper">
         <div className="case-data__item">
+          <div style={{ padding: '5px 0px 5px 0px', display: 'flex', justifyContent: 'center' }}>
+            <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
+          </div>
           <span
             style={{
               padding: '5px 0px 5px 0px',
@@ -46,11 +49,15 @@ const SubmissionItem = ({ data }) => (
               justifyContent: 'space-between',
             }}
           >
-            <Tag>{SUBMISSION_TYPES[data.submissionConfigurationByconfigId.category] || ''}</Tag>
-            <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
+            <Tag large>
+              {SUBMISSION_TYPES[data.submissionConfigurationByconfigId.category] || ''}
+            </Tag>
           </span>
+
           <span className="long-text" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
-            <a href={data.content}>{data.content}</a>
+            <a target="_blank" rel="noopener noreferrer" href={data.content}>
+              {data.content}
+            </a>
           </span>
           <span className="long-text">{data.explanation}</span>
           <div
