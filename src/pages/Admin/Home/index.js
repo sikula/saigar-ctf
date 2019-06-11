@@ -341,7 +341,7 @@ SubmissionItem.propTypes = {
 }
 
 class HistoryData extends React.Component {
-  state = { teams: null, cases: null, status: ['ACCEPTED', 'REJECTED'] }
+  state = { teams: null, cases: null, category: null, status: ['ACCEPTED', 'REJECTED'] }
 
   handleSelect = e => {
     this.setState({
@@ -435,6 +435,25 @@ class HistoryData extends React.Component {
                     ))}
                   </HTMLSelect>
                 </div>
+                <div style={{ width: '100%', marginRight: '20px' }}>
+                  <Query query={SUBMISSION_DETAILS} fetchPolicy="cache-first">
+                    {({ error, loading, data }) => {
+                      if (loading) return null
+                      if (error) return <div>{`${error.message}`}</div>
+
+                      return (
+                        <HTMLSelect name="category" value={this.state.category} onChange={this.handleSelect} label="Filter Category" fill large >
+                          <option value="">Any Category</option>
+                          {data.submission_configuration.map(config => (
+                            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+                              config.category
+                            } (${config.points} pts.)`}</option>
+                          ))}
+                        </HTMLSelect>
+                      )
+                    }}
+                  </Query>
+                </div>
                 <div style={{ width: '100%' }}>
                   <HTMLSelect
                     name="status"
@@ -456,7 +475,7 @@ class HistoryData extends React.Component {
         </Query>
         <Subscription
           subscription={SUBMISSION_HISTORY}
-          variables={{ team: this.state.teams, case: this.state.cases, status: this.state.status }}
+          variables={{ team: this.state.teams, case: this.state.cases, category: this.state.category, status: this.state.status }}
         >
           {({ data, loading, error }) => {
             if (loading) return <div> Loading... </div>
