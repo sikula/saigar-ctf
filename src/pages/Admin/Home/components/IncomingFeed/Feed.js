@@ -39,7 +39,7 @@ const SubmissionItem = ({ data }) => (
     {value => (
       <div style={animation.render(value)} className="case-data__item__wrapper">
         <div className="case-data__item">
-          <div style={{ padding: '5px 0px 5px 0px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ padding: '5px 0px 5px 0px', display: 'flex' }}>
             <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
           </div>
           <span

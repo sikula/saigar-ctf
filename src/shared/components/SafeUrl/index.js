@@ -1,7 +1,7 @@
 import React from 'react'
 import URL from 'url-parse'
 
-const SafeURL = ({ dangerousURL, text }) => {
+const SafeURL = ({ dangerousURL, text, ...rest }) => {
   const isSafe = dangerousURL => {
     const url = URL(dangerousURL, {})
     if (url.protocol === 'http:') return true
@@ -12,7 +12,7 @@ const SafeURL = ({ dangerousURL, text }) => {
 
   const safeURL = isSafe(dangerousURL) ? dangerousURL : null
   return (
-    <a target="_blank" rel="noopener noreferrer" href={safeURL}>
+    <a target="_blank" rel="noopener noreferrer" href={safeURL} {...rest}>
       {text}
     </a>
   )

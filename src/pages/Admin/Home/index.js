@@ -363,7 +363,7 @@ SubmissionItem.propTypes = {
 }
 
 class HistoryData extends React.Component {
-  state = { teams: null, cases: null, category: null, status: ['ACCEPTED', 'REJECTED'] }
+  state = { teams: null, cases: null, category: null, status: ['ACCEPTED', 'REJECTED', 'STARRED'] }
 
   handleSelect = e => {
     this.setState({
@@ -373,7 +373,7 @@ class HistoryData extends React.Component {
 
   handleStatusSelect = e => {
     this.setState({
-      status: e.currentTarget.value === '' ? ['ACCEPTED', 'REJECTED'] : [e.currentTarget.value],
+      status: e.currentTarget.value === '' ? ['ACCEPTED', 'REJECTED', 'STARRED'] : [e.currentTarget.value],
     })
   }
 

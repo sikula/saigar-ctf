@@ -82,7 +82,7 @@ class Auth extends React.Component {
 
     const cookieOpts = {
       path: '/',
-      secure: true,
+      // secure: true,
     }
     cookie.save('saigar:id_token', idToken, cookieOpts)
 
