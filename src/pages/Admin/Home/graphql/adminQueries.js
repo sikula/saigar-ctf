@@ -68,6 +68,7 @@ const LIVE_FEED = gql`
         content
         explanation
         case {
+          uuid
           name
         }
         submissionConfigurationByconfigId {
@@ -91,6 +92,7 @@ const LIVE_FEED_FILTERED = gql`
         content
         explanation
         case {
+          uuid
           name
         }
         submissionConfigurationByconfigId {
