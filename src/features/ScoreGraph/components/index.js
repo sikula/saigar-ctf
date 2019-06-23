@@ -2,7 +2,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { H5 } from '@blueprintjs/core'
-import { Subscription } from 'react-apollo'
+import { Query, Subscription } from 'react-apollo'
+import gql from 'graphql-tag'
+
 import Chart from 'react-apexcharts'
 
 import { GET_SCOREGRAPH } from '../graphql/queries'
@@ -92,9 +94,20 @@ const createChartOptions = theme => ({
   },
 })
 
+
+const EVENT_QUERY = gql`
+  query eventQuery {
+    event(order_by: { start_time: desc }, limit: 1) {
+      uuid
+    }
+  }
+`
+
 const ScoreGraph = ({ dark }) => (
-  <Subscription subscription={GET_SCOREGRAPH}>
+  <Query query={EVENT_QUERY}>
+    {({ loading, error, data: eventData }) => !loading ? <Subscription subscription={GET_SCOREGRAPH} variables={{ eventID: eventData.event[0].uuid }}>
     {({ data, loading, error }) => {
+      console.log(error)
       if (!data) return null
       if (loading) {
         return <div>Loading...</div>
@@ -122,7 +135,8 @@ const ScoreGraph = ({ dark }) => (
         </div>
       )
     }}
-  </Subscription>
+  </Subscription> : null}
+  </Query>
 )
 
 ScoreGraph.propTypes = {
