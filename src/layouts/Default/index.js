@@ -12,7 +12,6 @@ import Can from '../../shared/components/AuthContext/Can'
 import './index.scss'
 import logoWhite from './logo-white.png'
 
-console.log("LOGO: ", logoWhite)
 /*
   For tomorrow, get the IO side up and running with Auth0 login, and figure out
   how best to subscribe to an intel agencies cases (subscribe to one agency and
