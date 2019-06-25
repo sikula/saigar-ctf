@@ -6,12 +6,24 @@ import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Icon, Button, Toaster, Position, HTMLSelect } from '@blueprintjs/core'
+import {
+  Tabs,
+  Tab,
+  H3,
+  Icon,
+  Button,
+  Toaster,
+  Position,
+  HTMLSelect,
+  ButtonGroup,
+} from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
+import SafeURL from '@shared/components/SafeUrl'
 import { PROCESS_SUBMISSION } from '../../graphql/adminQueries'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
+import CaseInfoData from '@features/CaseInfo/components'
 
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
@@ -40,6 +52,7 @@ const ShareButton = class extends React.PureComponent {
         >
           Share
         </Button>
+
         <textarea
           ref={textArea => (this.textArea = textArea)}
           readOnly
@@ -88,6 +101,100 @@ CategoryList.propTypes = {
   handleChange: PropTypes.func.isRequired,
 }
 
+const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePanel, category, handleChange }) => (
+  <React.Fragment>
+    <div>
+      <CategoryList currentCategory={category} handleChange={handleChange} />
+    </div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        marginTop: 10,
+        alignItems: 'center',
+      }}
+    >
+      <ButtonGroup fill>
+        <ShareButton uuid={uuid} />
+        <Mutation mutation={PROCESS_SUBMISSION}>
+          {updateSubmission => (
+            <Button
+              text="Star"
+              intent="warning"
+              large
+              fill
+              icon={IconNames.STAR}
+              onClick={() =>
+                updateSubmission({
+                  variables: {
+                    submissionID: uuid,
+                    value: 'STARRED',
+                    processedAt: new Date(),
+                    category,
+                  },
+                }).then(() => hidePanel())
+              }
+            />
+          )}
+        </Mutation>
+        <Mutation mutation={PROCESS_SUBMISSION}>
+          {updateSubmission => (
+            <Button
+              text="Approve"
+              intent="success"
+              large
+              fill
+              icon={IconNames.TICK}
+              onClick={() =>
+                updateSubmission({
+                  variables: {
+                    submissionID: uuid,
+                    value: 'ACCEPTED',
+                    processedAt: new Date(),
+                    category,
+                  },
+                }).then(() => hidePanel())
+              }
+            />
+          )}
+        </Mutation>
+        <Mutation mutation={PROCESS_SUBMISSION}>
+          {updateSubmission => (
+            <Button
+              text="Reject"
+              intent="danger"
+              large
+              fill
+              icon={IconNames.CROSS}
+              onClick={() =>
+                updateSubmission({
+                  variables: {
+                    submissionID: uuid,
+                    value: 'REJECTED',
+                    processedAt: new Date(),
+                    category,
+                  },
+                }).then(() => hidePanel())
+              }
+            />
+          )}
+        </Mutation>
+      </ButtonGroup>
+    </div>
+    <div>
+      <div style={{ paddingTop: 10, textAlign: 'center' }}>
+        <H3 style={{ background: '#E1E8ED', padding: 10 }}>{teamName}</H3>
+      </div>
+      <div style={{ paddingTop: 10 }}>
+        <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
+      </div>
+      <div style={{ paddingTop: 10 }}>
+        <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
+      </div>
+    </div>
+  </React.Fragment>
+)
+
 class PanelContent extends React.Component {
   state = {
     // eslint-disable-next-line react/destructuring-assignment
@@ -101,84 +208,29 @@ class PanelContent extends React.Component {
   }
 
   render() {
-    const { uuid, teamName, explanation, content, hidePanel } = this.props
+    const { uuid, caseID, teamName, explanation, content, hidePanel } = this.props
     const { category } = this.state
 
     return (
       <React.Fragment>
-        <div>
-          <CategoryList currentCategory={category} handleChange={this.handleChange} />
-        </div>
-        <div style={{ padding: 10 }}>
-          <strong>Team Name:</strong>
-          <span>{teamName}</span>
-        </div>
-        <div style={{ padding: 10 }}>
-          <strong>Submission</strong>
-          <div>
-            <p style={{ wordWrap: 'break-word' }}>{content}</p>
-          </div>
-        </div>
-        <div style={{ padding: 10 }}>
-          <strong>Explanation</strong>
-          <div>
-            <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
-          </div>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            marginTop: 10,
-            alignItems: 'center',
-            marginBottom: '30px',
-          }}
-        >
-          <ShareButton uuid={uuid} />
-          <Mutation mutation={PROCESS_SUBMISSION}>
-            {updateSubmission => (
-              <Button
-                text="Approve"
-                intent="success"
-                large
-                fill
-                icon={IconNames.TICK}
-                style={{ marginRight: 10, marginLeft: 10 }}
-                onClick={() =>
-                  updateSubmission({
-                    variables: {
-                      submissionID: uuid,
-                      value: 'ACCEPTED',
-                      processedAt: new Date(),
-                      category,
-                    },
-                  }).then(() => hidePanel())
-                }
+        <Tabs id="detailsTab" selectedTabIndex="submissionDetails" renderActiveTabPanelOnly>
+          <Tab
+            id="submissionDetails"
+            title="Submission Details"
+            panel={
+              <SubmissionDetailsPanel
+                uuid={uuid}
+                teamName={teamName}
+                explanation={explanation}
+                content={content}
+                hidePanel={hidePanel}
+                category={category}
+                handleChange={this.handleChange}
               />
-            )}
-          </Mutation>
-          <Mutation mutation={PROCESS_SUBMISSION}>
-            {updateSubmission => (
-              <Button
-                text="Reject"
-                intent="danger"
-                large
-                fill
-                icon={IconNames.CROSS}
-                onClick={() =>
-                  updateSubmission({
-                    variables: {
-                      submissionID: uuid,
-                      value: 'REJECTED',
-                      processedAt: new Date(),
-                      category,
-                    },
-                  }).then(() => hidePanel())
-                }
-              />
-            )}
-          </Mutation>
-        </div>
+            }
+          />
+          <Tab id="caseDetails" title="Case Details" panel={<CaseInfoData caseID={caseID} />} />
+        </Tabs>
       </React.Fragment>
     )
   }
@@ -206,6 +258,7 @@ const FeedPanel = ({
   explanation,
   content,
   submissionConfigurationByconfigId,
+  case: { uuid: caseID }
 }) => (
   <PanelConsumer>
     {({ hidePanel }) => (
@@ -232,6 +285,7 @@ const FeedPanel = ({
           content={content}
           submissionConfiguration={submissionConfigurationByconfigId}
           hidePanel={hidePanel}
+          caseID={caseID}
           key={uuid}
         />
       </div>

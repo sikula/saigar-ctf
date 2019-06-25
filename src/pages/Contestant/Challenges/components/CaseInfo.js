@@ -9,23 +9,8 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane, SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
-
-const CASE_INFO = gql`
-  query caseInfo($caseID: uuid!) {
-    case(where: { uuid: { _eq: $caseID } }) {
-      uuid
-      name
-      missing_from
-      missing_since
-      age
-      disappearance_details
-      other_notes
-      characteristics
-      source_url
-    }
-  }
-`
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
+import CaseInfoData from '@features/CaseInfo/components'
 
 const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
@@ -41,49 +26,7 @@ const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content>
-      <Query query={CASE_INFO} variables={{ caseID: otherProps.caseID }}>
-        {({ data, loading, error }) => {
-          if (error) return <div>error</div>
-          if (loading) return <div>Loading...</div>
-
-          return data.case.map(_case => (
-            <React.Fragment>
-              <p>
-                <strong>Source URL: </strong>
-                <a href={_case.source_url}>{_case.source_url}</a>
-              </p>
-              <p>
-                <strong>Name: </strong>
-                {_case.name}
-              </p>
-              <p>
-                <strong>Missing From: </strong>
-                {_case.missing_from}
-              </p>
-              <p>
-                <strong>Missing Since: </strong>
-                {_case.missing_since}
-              </p>
-              <p>
-                <strong>Age: </strong>
-                {_case.age}
-              </p>
-              <p style={{ whiteSpace: 'pre-wrap' }}>
-                <strong>Disappearance Details: </strong>
-                {_case.disappearance_details}
-              </p>
-              <p style={{ whiteSpace: 'pre-wrap' }}>
-                <strong>Characteristics: </strong>
-                {_case.characteristics}
-              </p>
-              <p style={{ whiteSpace: 'pre-wrap' }}>
-                <strong>Other Notes: </strong>
-                {_case.other_notes}
-              </p>
-            </React.Fragment>
-          ))
-        }}
-      </Query>
+      <CaseInfoData caseID={otherProps.caseID} />
     </SlidingPane.Content>
   </SlidingPane>
 )

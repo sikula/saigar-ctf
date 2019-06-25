@@ -9,14 +9,14 @@ import { adopt } from 'react-adopt'
 import CsvParse from '@vtex/react-csv-parse'
 
 // Styles
-import { Checkbox, Button, Icon, Tabs, InputGroup, Tab, H4, HTMLSelect } from '@blueprintjs/core'
+import { Button, Icon, Tabs, Tab, H4 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
 import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/components/SlidingPane'
 
 import ManageTeamsTab from './ManageTeamsTab'
-import ManagerUsersTab from './ManagerUsersTab'
+import ManageUsersTab from './ManageUsersTab'
 import './Upload.scss'
 
 const NEW_UPLOAD_USERS = gql`
@@ -125,7 +125,7 @@ class UploadUser extends React.Component {
               <Tab
                 id="manageUsers"
                 title={<div style={{ fontSize: '1em' }}>View Team</div>}
-                panel={<ManagerUsersTab eventId={eventID} />}
+                panel={<ManageUsersTab eventId={eventID} />}
                 style={{ width: '100%' }}
               />
               <Tab

@@ -29,13 +29,14 @@ const SUBMISSION_FILTERS = gql`
 `
 
 const SUBMISSION_HISTORY = gql`
-  subscription submissionHistory($team: uuid, $case: uuid, $status: [String]) {
+  subscription submissionHistory($team: uuid, $case: uuid, $category: uuid, $status: [String]) {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: {
           processed: { _in: $status }
           case_id: { _eq: $case }
           team_id: { _eq: $team }
+          config_id: { _eq: $category }
         }
         order_by: { processed_at: desc }
       ) {
@@ -67,6 +68,7 @@ const LIVE_FEED = gql`
         content
         explanation
         case {
+          uuid
           name
         }
         submissionConfigurationByconfigId {
@@ -90,6 +92,7 @@ const LIVE_FEED_FILTERED = gql`
         content
         explanation
         case {
+          uuid
           name
         }
         submissionConfigurationByconfigId {

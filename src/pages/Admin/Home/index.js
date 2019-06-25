@@ -15,8 +15,10 @@ import {
   Position,
   H5,
   HTMLSelect,
+  MenuItem
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
+import { ItemRenderer, MultiSelect } from '@blueprintjs/select'
 
 import gql from 'graphql-tag'
 
@@ -286,6 +288,28 @@ class SubmissionItem extends React.Component {
             <Mutation mutation={PROCESS_SUBMISSION}>
               {updateSubmission => (
                 <Button
+                  intent="warning"
+                  large
+                  icon={IconNames.STAR}
+                  style={{ marginRight: 10 }}
+                  onClick={() =>
+                    updateSubmission({
+                      variables: {
+                        submissionID: submission.uuid,
+                        value: 'STARRED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                  }
+                >
+                  Star
+                </Button>
+              )}
+            </Mutation>
+            <Mutation mutation={PROCESS_SUBMISSION}>
+              {updateSubmission => (
+                <Button
                   intent="success"
                   large
                   icon={IconNames.TICK}
@@ -339,7 +363,7 @@ SubmissionItem.propTypes = {
 }
 
 class HistoryData extends React.Component {
-  state = { teams: null, cases: null, status: ["ACCEPTED", "REJECTED"] }
+  state = { teams: null, cases: null, category: null, status: ['ACCEPTED', 'REJECTED', 'STARRED'] }
 
   handleSelect = e => {
     this.setState({
@@ -349,7 +373,7 @@ class HistoryData extends React.Component {
 
   handleStatusSelect = e => {
     this.setState({
-      status: e.currentTarget.value === '' ? ["ACCEPTED", "REJECTED"] : [e.currentTarget.value]
+      status: e.currentTarget.value === '' ? ['ACCEPTED', 'REJECTED', 'STARRED'] : [e.currentTarget.value],
     })
   }
 
@@ -362,14 +386,45 @@ class HistoryData extends React.Component {
             if (error) return null
 
             if (!Array.isArray(data.event) || !data.event.length) {
-              return (
-                <div> No Events Created Yet </div>
-              )
+              return <div> No Events Created Yet </div>
             }
 
             return (
               <div style={{ display: 'inline-flex', width: '100%', marginBottom: '20px' }}>
                 <div style={{ width: '100%', marginRight: '20px' }}>
+                  {/* <MultiSelect
+                    itemPredicate={(query, team, _index, exactMatch) => {
+                      const normalizedTeams = team.name.toLowerCase()
+                      const normalizedQuery = query.toLowerCase()
+
+                      if (exactMatch) {
+                        return normalizedTeams === normalizedQuery
+                      } else {
+                        return `${team.name}`.indexOf(normalizedQuery) >= 0;
+                      }
+                    }}
+                    itemRenderer={(team, { handleClick, modifiers, query }) => {
+                      if (!modifiers.matchesPredicate) {
+                        return null
+                      }
+                      const text = `${team.name}`
+                      return (
+                        <MenuItem active={modifiers.active} disabled={modifiers.disabled} label={team.name.toString()} key={team.uuid} onClick={() => console.log("HELLO WORLD")} text={text} />
+                      )
+                    }}
+                    tagRenderer={team => team.name}
+                    items={[
+                      {
+                        uuid: "1",
+                        name: "Yo"
+                      },
+                      {
+                        uuid: '2',
+                        name: "Sherlock"
+                      }
+                    ]}
+                    tagInputProps={{ large: true }}
+                  /> */}
                   <HTMLSelect
                     name="teams"
                     onChange={this.handleSelect}
@@ -402,6 +457,25 @@ class HistoryData extends React.Component {
                     ))}
                   </HTMLSelect>
                 </div>
+                <div style={{ width: '100%', marginRight: '20px' }}>
+                  <Query query={SUBMISSION_DETAILS} fetchPolicy="cache-first">
+                    {({ error, loading, data }) => {
+                      if (loading) return null
+                      if (error) return <div>{`${error.message}`}</div>
+
+                      return (
+                        <HTMLSelect name="category" value={this.state.category} onChange={this.handleSelect} label="Filter Category" fill large >
+                          <option value="">Any Category</option>
+                          {data.submission_configuration.map(config => (
+                            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+                              config.category
+                            } (${config.points} pts.)`}</option>
+                          ))}
+                        </HTMLSelect>
+                      )
+                    }}
+                  </Query>
+                </div>
                 <div style={{ width: '100%' }}>
                   <HTMLSelect
                     name="status"
@@ -412,19 +486,19 @@ class HistoryData extends React.Component {
                     large
                   >
                     <option value="">Any Status</option>
-                    <option value="ACCEPTED">
-                        Accepted
-                    </option>
-                    <option value="REJECTED">
-                        Rejected
-                    </option>
+                    <option value="STARRED">Starred</option>
+                    <option value="ACCEPTED">Accepted</option>
+                    <option value="REJECTED">Rejected</option>
                   </HTMLSelect>
                 </div>
               </div>
             )
           }}
         </Query>
-        <Subscription subscription={SUBMISSION_HISTORY} variables={{ team: this.state.teams, case: this.state.cases, status: this.state.status }}>
+        <Subscription
+          subscription={SUBMISSION_HISTORY}
+          variables={{ team: this.state.teams, case: this.state.cases, category: this.state.category, status: this.state.status }}
+        >
           {({ data, loading, error }) => {
             if (loading) return <div> Loading... </div>
             if (error) return <div>Error: `${error.message}`</div>
@@ -447,6 +521,7 @@ class HistoryData extends React.Component {
     )
   }
 }
+
 const HomePageData = () => (
   <Query query={HOME_QUERY}>
     {({ data, loading, error }) => {
@@ -454,11 +529,9 @@ const HomePageData = () => (
       if (error) return <div>Error: `${error.message}`</div>
 
       if (!Array.isArray(data.event) || !data.event.length) {
-        return (
-          <div>No Created Events</div>
-        )
+        return <div>No Created Events</div>
       }
-      
+
       const eventName = data.event[0].name
       const startTime = new Date(data.event[0].start_time)
 
