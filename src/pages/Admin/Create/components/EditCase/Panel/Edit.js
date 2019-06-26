@@ -93,7 +93,9 @@ const EditCase = ({ isOpen, onRequestClose, ...otherProps }) => (
                   {({ updateCase, updateEventCase }) => {
                     const saveCase = async values => {
                       const { eventID, ..._case } = values
-                      await updateEventCase.mutation({ variables: { eventID } })
+                      await updateEventCase.mutation({
+                        variables: { eventID, caseID: otherProps.caseID },
+                      })
                       await updateCase.mutation({
                         variables: { caseID: otherProps.caseID, input: { ..._case } },
                       })
