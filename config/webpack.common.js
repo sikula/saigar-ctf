@@ -88,9 +88,9 @@ const rules = [
     test: /\.(png|jpg|gif)$/i,
     use: [
       {
-        loader: 'url-loader',
+        loader: 'file-loader',
         options: {
-          limit: 100000,
+          name: '[hash].[ext]',
         },
       },
     ],
