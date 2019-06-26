@@ -4,6 +4,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Query, Mutation, Subscription } from 'react-apollo'
+import gql from 'graphql-tag'
+
+import { differenceInDays } from 'date-fns'
+
+// Styles
 import {
   Tabs,
   Tab,
@@ -15,13 +20,14 @@ import {
   Position,
   H5,
   HTMLSelect,
-  MenuItem
+  Icon,
+  MenuItem,
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 import { ItemRenderer, MultiSelect } from '@blueprintjs/select'
 
-import gql from 'graphql-tag'
-
+// Custom Components
+import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import ScoreGraph from '../../../features/ScoreGraph'
 import {
   HOME_QUERY,
@@ -31,6 +37,9 @@ import {
 } from './graphql/adminQueries'
 import Can from '../../../shared/components/AuthContext/Can'
 import { AuthConsumer } from '../../../shared/components/AuthContext/context'
+import CaseInfoData from '@features/CaseInfo/components'
+
+
 
 import './index.scss'
 
@@ -373,7 +382,10 @@ class HistoryData extends React.Component {
 
   handleStatusSelect = e => {
     this.setState({
-      status: e.currentTarget.value === '' ? ['ACCEPTED', 'REJECTED', 'STARRED'] : [e.currentTarget.value],
+      status:
+        e.currentTarget.value === ''
+          ? ['ACCEPTED', 'REJECTED', 'STARRED']
+          : [e.currentTarget.value],
     })
   }
 
@@ -464,7 +476,14 @@ class HistoryData extends React.Component {
                       if (error) return <div>{`${error.message}`}</div>
 
                       return (
-                        <HTMLSelect name="category" value={this.state.category} onChange={this.handleSelect} label="Filter Category" fill large >
+                        <HTMLSelect
+                          name="category"
+                          value={this.state.category}
+                          onChange={this.handleSelect}
+                          label="Filter Category"
+                          fill
+                          large
+                        >
                           <option value="">Any Category</option>
                           {data.submission_configuration.map(config => (
                             <option key={config.uuid} id={config.category} value={config.uuid}>{`${
@@ -497,7 +516,12 @@ class HistoryData extends React.Component {
         </Query>
         <Subscription
           subscription={SUBMISSION_HISTORY}
-          variables={{ team: this.state.teams, case: this.state.cases, category: this.state.category, status: this.state.status }}
+          variables={{
+            team: this.state.teams,
+            case: this.state.cases,
+            category: this.state.category,
+            status: this.state.status,
+          }}
         >
           {({ data, loading, error }) => {
             if (loading) return <div> Loading... </div>
@@ -521,6 +545,92 @@ class HistoryData extends React.Component {
     )
   }
 }
+
+// TODO(peter): This entire file needs to be cleaned up and split up into its own components.
+// Its fine for now, but it is getting a little bit out of control.
+const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
+  <SlidingPane
+    isOpen={isOpen}
+    onRequestClose={onRequestClose}
+    closeIcon={<Icon icon={IconNames.MENU_CLOSED} iconSize={20} />}
+  >
+    <SlidingPane.Header>
+      <SlidingPane.Header.Title title="Case Info" subtitle="Details on the case" />
+      <SlidingPane.Header.Actions onActionClick={onRequestClose}>
+        <a>Cancel</a>
+      </SlidingPane.Header.Actions>
+    </SlidingPane.Header>
+
+    <SlidingPane.Content>
+      <CaseInfoData caseID={otherProps.caseID} />
+    </SlidingPane.Content>
+  </SlidingPane>
+)
+
+const CaseInfoButton = ({ id }) => (
+  <SlidingPanelConsumer>
+    {({ openSlider }) => (
+      <Button
+        className="case-card__actions"
+        minimal
+        icon={<Icon icon={IconNames.INFO_SIGN} style={{ color: '#394B59' }} iconSize={20} />}
+        onClick={() => openSlider(CaseInfo, { caseID: id })}
+      />
+    )}
+  </SlidingPanelConsumer>
+)
+CaseInfoButton.propTypes = {
+  id: PropTypes.string.isRequired,
+}
+
+const CaseCard = ({ caseData }) => (
+  <div className="case-card__wrapper">
+    <Card id="case-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <H5 className="case-card__header">{caseData.name}</H5>
+        <Tag round>{caseData.missing_from}</Tag>
+      </div>
+      <p>{`missing for: ${differenceInDays(new Date(), caseData.missing_since)} days`}</p>
+    </Card>
+    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
+      <CaseInfoButton id={caseData.uuid} />
+    </div>
+  </div>
+)
+
+const CASES_QUERY = gql`
+  query getCases {
+    event(order_by: { start_time: desc }, limit: 1) {
+      eventCasesByeventId {
+        case {
+          uuid
+          name
+          missing_since
+          missing_from
+        }
+      }
+    }
+  }
+`
+
+const CaseGrid = () => (
+  <Query query={CASES_QUERY}>
+    {({ loading, error, data }) => {
+      if (loading) return null
+      if (error) return null
+
+      const cases = data.event[0].eventCasesByeventId
+
+      return (
+        <div className="case-card__grid">
+          {cases.map(({ case: _case }) => (
+            <CaseCard key={_case.uuid} caseData={_case} />
+          ))}
+        </div>
+      )
+    }}
+  </Query>
+)
 
 const HomePageData = () => (
   <Query query={HOME_QUERY}>
@@ -580,6 +690,7 @@ const HomePageData = () => (
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
+                  <Tab id="cases" title="Cases" panel={<CaseGrid />} />
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
                   <Tab id="history" title="History" panel={<HistoryData />} />
                 </Tabs>

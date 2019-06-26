@@ -1,1 +1,2 @@
-* text eol=lf
+* text eol=auto
+*.png binary
