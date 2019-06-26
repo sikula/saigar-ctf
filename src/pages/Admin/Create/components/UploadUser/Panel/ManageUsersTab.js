@@ -4,7 +4,7 @@ import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { H4, InputGroup, Button, Checkbox } from '@blueprintjs/core'
+import { H4, InputGroup, Button, Checkbox, HTMLSelect } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 const TEAMS_QUERY = gql`
