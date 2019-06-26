@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { NavLink, Link} from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { Layout, Flex, Fixed } from 'react-layout-pane'
 import { Icon, UL } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
@@ -27,7 +27,8 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
       <div>
         <UL>
           <li id="logo">
-            <Icon icon={IconNames.MENU} iconSize={20} style={{ color: "#FFF" }} />
+            {/* <Icon icon={IconNames.MENU} iconSize={20} style={{ color: "#FFF" }} /> */}
+            <img src={logoWhite} width="60%" height="60%" />
           </li>
         </UL>
         <Can
@@ -123,7 +124,11 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           {children}
         </Flex>
         <Fixed className="footer">
-          Powered by <a href="https://saigar.io">saigar.io</a> |{' '}
+          Powered by{' '}
+          <a href="https://saigar.io" target="_blank">
+            saigar.io
+          </a>{' '}
+          |{' '}
           <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
             Terms of Service
           </Link>
