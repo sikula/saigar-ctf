@@ -85,13 +85,24 @@ const rules = [
     },
   },
   {
-    test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
+    test: /\.(png|jpg|gif)$/i,
+    use: [
+      {
+        loader: 'url-loader',
+        options: {
+          limit: 8192,
+        },
+      },
+    ],
+  },
+  {
+    test: /\.(eot|woff|woff2|ttf|svg)(\?\S*)?$/,
     use: [
       {
         loader: 'url-loader',
         options: {
           limit: 100000,
-          name: '[name].[ext]',
+          // name: '[name].[ext]',
         },
       },
     ],
