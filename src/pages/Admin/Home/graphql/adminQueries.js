@@ -124,8 +124,8 @@ const PROCESS_SUBMISSION = gql`
 `
 
 const GET_TEAMS = gql`
-  query getTeams {
-    team_event(order_by: { event: { start_time: desc } }) {
+  query getTeams($eventId: uuid!) {
+    team_event(order_by: { event: { start_time: desc } }, where: { event_id: { _eq: $eventId } }) {
       team {
         uuid
         name
