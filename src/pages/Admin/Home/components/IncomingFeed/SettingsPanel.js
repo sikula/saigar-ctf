@@ -5,6 +5,8 @@ import { Query } from 'react-apollo'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
+import gql from 'graphql-tag'
+
 // Styles
 import { Button, Icon, Switch, H5 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
@@ -103,6 +105,16 @@ const ApolloSettingTable = connect(
   mapDispatchToProps,
 )(SettingTable)
 
+// TODO(peter): this needs to be cleaned up a bit, we might want to rethink the
+// event system and how we requery by event
+const EVENT_QUERY = gql`
+  query eventQuery {
+    event(order_by: { start_time: desc }, limit: 1) {
+      uuid
+    }
+  }
+`
+
 const SettingsPanel = () => (
   <PanelConsumer>
     {({ hidePanel }) => (
@@ -123,16 +135,22 @@ const SettingsPanel = () => (
       >
         <Icon icon={IconNames.CROSS} iconSize={32} onClick={hidePanel} />
         <div className="teamList">
-          <Query query={GET_TEAMS}>
-            {({ data, loading, error }) => {
-              if (loading) return <div>Loading...</div>
-              if (error) return <div>{error.message}</div>
+          <Query query={EVENT_QUERY}>
+            {({ loading, data: eventData }) =>
+              !loading ? (
+                <Query query={GET_TEAMS} variables={{ eventId: eventData.event[0].uuid }}>
+                  {({ data, loading, error }) => {
+                    if (loading) return <div>Loading...</div>
+                    if (error) return <div>{error.message}</div>
 
-              if (!Array.isArray(data.team_event) || !data.team_event.length) {
-                return <H5>No teams are registered for this event</H5>
-              }
-              return <ApolloSettingTable data={data} />
-            }}
+                    if (!Array.isArray(data.team_event) || !data.team_event.length) {
+                      return <H5>No teams are registered for this event</H5>
+                    }
+                    return <ApolloSettingTable data={data} />
+                  }}
+                </Query>
+              ) : null
+            }
           </Query>
         </div>
       </div>
