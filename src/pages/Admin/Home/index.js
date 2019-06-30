@@ -28,6 +28,7 @@ import { ItemRenderer, MultiSelect } from '@blueprintjs/select'
 
 // Custom Components
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
+import CaseInfoData from '@features/CaseInfo/components'
 import ScoreGraph from '../../../features/ScoreGraph'
 import {
   HOME_QUERY,
@@ -37,9 +38,6 @@ import {
 } from './graphql/adminQueries'
 import Can from '../../../shared/components/AuthContext/Can'
 import { AuthConsumer } from '../../../shared/components/AuthContext/context'
-import CaseInfoData from '@features/CaseInfo/components'
-
-
 
 import './index.scss'
 
@@ -623,9 +621,11 @@ const CaseGrid = () => (
 
       return (
         <div className="case-card__grid">
-          {cases.map(({ case: _case }) => (
-            <CaseCard key={_case.uuid} caseData={_case} />
-          ))}
+          <div className="case-card__row">
+            {cases.map(({ case: _case }) => (
+              <CaseCard key={_case.uuid} caseData={_case} />
+            ))}
+          </div>
         </div>
       )
     }}
