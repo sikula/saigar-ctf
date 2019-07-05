@@ -16,14 +16,17 @@ import {
   Position,
   HTMLSelect,
   ButtonGroup,
+  TextArea
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
 import SafeURL from '@shared/components/SafeUrl'
-import { PROCESS_SUBMISSION } from '../../graphql/adminQueries'
+import { PROCESS_SUBMISSION, INSERT_SUBMISSION_HISTORY } from '../../graphql/adminQueries'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
 import CaseInfoData from '@features/CaseInfo/components'
+import { AuthConsumer } from '@shared/components/AuthContext/context'
+
 
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
@@ -101,6 +104,67 @@ CategoryList.propTypes = {
   handleChange: PropTypes.func.isRequired,
 }
 
+
+class RejectSubmissionControls extends React.Component {
+
+  state = { rejectedReason: null }
+
+  handleChange = e => {
+    this.setState({ rejectedReason: e.target.value })
+  }
+
+  clearField = () => {
+    this.setState({ rejectedReason: null })
+  }
+
+  render() {
+    const { uuid, category, hidePanel } = this.props
+
+    return (
+      <React.Fragment>
+        <TextArea fill placeHolder="reason for rejecting the submission" value={this.state.rejectedReason} onChange={this.handleChange} />
+        <Mutation mutation={PROCESS_SUBMISSION}>
+          {updateSubmission => (
+            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
+              {insertSubmissionHistory => (
+                <AuthConsumer>
+                  {({ user }) => (
+                    <Button
+                      text="Reject"
+                      intent="danger"
+                      large
+                      disabled={!this.state.rejectedReason}
+                      icon={IconNames.CROSS}
+                      style={{ marginTop: 10 }}
+                      onClick={() => {
+                        updateSubmission({
+                          variables: {
+                            submissionID: uuid,
+                            value: 'REJECTED',
+                            processedAt: new Date(),
+                            category,
+                          },
+                        }).then(() => hidePanel())
+                        insertSubmissionHistory({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason: this.state.rejectedReason
+                          }
+                        })
+                      }}
+                    />
+                  )}
+                </AuthConsumer>
+              )}
+            </Mutation>
+          )}
+        </Mutation>
+      </React.Fragment>
+    )
+  }
+}
 const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePanel, category, handleChange }) => (
   <React.Fragment>
     <div>
@@ -118,65 +182,74 @@ const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePane
         <ShareButton uuid={uuid} />
         <Mutation mutation={PROCESS_SUBMISSION}>
           {updateSubmission => (
-            <Button
-              text="Star"
-              intent="warning"
-              large
-              fill
-              icon={IconNames.STAR}
-              onClick={() =>
-                updateSubmission({
-                  variables: {
-                    submissionID: uuid,
-                    value: 'STARRED',
-                    processedAt: new Date(),
-                    category,
-                  },
-                }).then(() => hidePanel())
-              }
-            />
+            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
+              {insertSubmissionHistory => (
+                <AuthConsumer>
+                  {({ user }) => (
+                    <Button
+                      text="Star"
+                      intent="warning"
+                      large
+                      fill
+                      icon={IconNames.STAR}
+                      onClick={() => {
+                        updateSubmission({
+                          variables: {
+                            submissionID: uuid,
+                            value: 'STARRED',
+                            processedAt: new Date(),
+                            category,
+                          },
+                        }).then(() => hidePanel())
+                        insertSubmissionHistory({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'STARRED',
+                            processedBy: user.id
+                          }
+                        })
+                      }}
+                    />
+                  )}
+                </AuthConsumer>
+              )}
+            </Mutation>
           )}
         </Mutation>
         <Mutation mutation={PROCESS_SUBMISSION}>
           {updateSubmission => (
-            <Button
-              text="Approve"
-              intent="success"
-              large
-              fill
-              icon={IconNames.TICK}
-              onClick={() =>
-                updateSubmission({
-                  variables: {
-                    submissionID: uuid,
-                    value: 'ACCEPTED',
-                    processedAt: new Date(),
-                    category,
-                  },
-                }).then(() => hidePanel())
-              }
-            />
-          )}
-        </Mutation>
-        <Mutation mutation={PROCESS_SUBMISSION}>
-          {updateSubmission => (
-            <Button
-              text="Reject"
-              intent="danger"
-              large
-              fill
-              icon={IconNames.CROSS}
-              onClick={() =>
-                updateSubmission({
-                  variables: {
-                    submissionID: uuid,
-                    value: 'REJECTED',
-                    processedAt: new Date(),
-                    category,
-                  },
-                }).then(() => hidePanel())
-              }
-            />
+            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
+              {insertSubmissionHistory => (
+                <AuthConsumer>
+                  {({ user }) => (
+                    <Button
+                      text="Approve"
+                      intent="success"
+                      large
+                      fill
+                      icon={IconNames.TICK}
+                      onClick={() => {
+                        updateSubmission({
+                          variables: {
+                            submissionID: uuid,
+                            value: 'ACCEPTED',
+                            processedAt: new Date(),
+                            category,
+                          },
+                        }).then(() => hidePanel())
+                        insertSubmissionHistory({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'ACCEPTED',
+                            processedBy: user.id
+                          }
+                        })
+                      }}
+                    />
+                  )}
+                </AuthConsumer>
+              )}
+            </Mutation>
           )}
         </Mutation>
       </ButtonGroup>
@@ -190,6 +263,9 @@ const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePane
       </div>
       <div style={{ paddingTop: 10 }}>
         <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
+        <RejectSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
       </div>
     </div>
   </React.Fragment>
