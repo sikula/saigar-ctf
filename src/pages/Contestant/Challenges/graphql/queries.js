@@ -14,9 +14,40 @@ const CASE_LIST = gql`
           name
           missing_since
           missing_from
+          pendingSubmissions: submissions_aggregate(
+            where: {
+              processed: { _eq: "PENDING" }
+              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          acceptedSubmissions: submissions_aggregate(
+            where: {
+              processed: { _eq: "ACCEPTED" }
+              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          rejectedSubmissions: submissions_aggregate(
+            where: {
+              processed: { _eq: "REJECTED" }
+              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
         }
       }
     }
+    # NOT NEEDED
     team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
       name
       pendingSubmissions: submissionsByteamId_aggregate(where: { processed: { _eq: "PENDING" } }) {

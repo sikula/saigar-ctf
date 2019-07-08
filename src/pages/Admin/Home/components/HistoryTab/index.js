@@ -32,7 +32,7 @@ import {
 import { AuthConsumer } from '@shared/components/AuthContext/context'
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 
-import SubmissionHistory from './SubmissionHistory'
+import ProcessingHistory from './ProcessingHistory'
 
 /* TODO(peter): This code is duplicated, should be extracted to a shared component */
 const FeedToaster = Toaster.create({
@@ -116,7 +116,7 @@ CategoryList.propTypes = {
 const HistoryButton = ({ uuid }) => (
   <SlidingPanelConsumer>
     {({ openSlider }) => (
-      <Button large icon={IconNames.HISTORY} style={{ marginRight: 10 }} onClick={() => openSlider(SubmissionHistory, { submissionID: uuid })}>History</Button>
+      <Button large icon={IconNames.HISTORY} style={{ marginRight: 10 }} onClick={() => openSlider(ProcessingHistory, { submissionID: uuid })}>History</Button>
     )}
   </SlidingPanelConsumer>
 )
