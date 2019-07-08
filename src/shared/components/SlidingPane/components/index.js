@@ -74,8 +74,8 @@ SlidingPaneHeader.Title = SlidingPaneHeaderTitle
 SlidingPaneHeader.Menu = SlidingPaneHeaderMenu
 SlidingPaneHeader.Actions = SlidingPaneHeaderActions
 
-const SlidingPaneContent = ({ children, className }) => (
-  <div className={className || 'slide-pane__content'}>{children}</div>
+const SlidingPaneContent = ({ children, className, ...rest }) => (
+  <div className={className || 'slide-pane__content'} {...rest}>{children}</div>
 )
 SlidingPaneContent.displayName = 'SlidingPaneContent'
 SlidingPaneContent.propTypes = {

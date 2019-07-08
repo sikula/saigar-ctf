@@ -4,7 +4,7 @@ import { Query } from 'react-apollo'
 import { isWithinRange } from 'date-fns'
 
 // Styles
-import { Card, H2, H4 } from '@blueprintjs/core'
+import { H2, H4 } from '@blueprintjs/core'
 
 // Custom Components
 import { AuthConsumer } from '@shared/components/AuthContext/context'
@@ -35,6 +35,7 @@ const ChallengesPage = () => (
                 return <div>No Events Created Yet</div>
               }
 
+              // ENABLE THIS
               if (!eventStarted) {
                 return (
                   <div
@@ -78,7 +79,7 @@ const ChallengesPage = () => (
                       </div>
                     </div>
                   </div>
-                  <div className="row">
+                  {/* <div className="row">
                     <div className="col-xs">
                       <div style={{ margin: 15, textAlign: 'center' }}>
                         <Card elevation={2}>
@@ -109,7 +110,7 @@ const ChallengesPage = () => (
                         </Card>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="row">
                     <div className="col-xs">
                       {duser.acceptedTos === false && <TosDialog />}

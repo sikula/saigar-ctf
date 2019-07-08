@@ -298,16 +298,20 @@ const EventsPanel = () => (
             return <H5>No events currently. Click the 'Add Event' button to create an event</H5>
           }
 
-          return data.event.map(event => (
-            <EventCard
-              key={event.uuid}
-              eventID={event.uuid}
-              name={event.name}
-              startTime={event.start_time}
-              endTime={event.end_time}
-              totalSubmissions={event.totalSubmissions}
-            />
-          ))
+          return (
+            <div className="case-card__row">
+              {data.event.map(event => (
+                <EventCard
+                  key={event.uuid}
+                  eventID={event.uuid}
+                  name={event.name}
+                  startTime={event.start_time}
+                  endTime={event.end_time}
+                  totalSubmissions={event.totalSubmissions}
+                />
+              ))}
+            </div>
+          )
         }}
       </Query>
     </div>
@@ -358,14 +362,16 @@ const CasesPanel = () => (
                   <H5>No cases currently. Click on the 'Create Case' button to create one.</H5>
                 </div>
               ) : (
-                event.eventCasesByeventId.map(_case => (
-                  <CaseCard
-                    key={_case.case.uuid}
-                    id={_case.case.uuid}
-                    name={_case.case.name}
-                    missingSince={_case.case.missing_since}
-                  />
-                ))
+                <div className="case-card__row">
+                  {event.eventCasesByeventId.map(_case => (
+                    <CaseCard
+                      key={_case.case.uuid}
+                      id={_case.case.uuid}
+                      name={_case.case.name}
+                      missingSince={_case.case.missing_since}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -432,15 +438,17 @@ const UsersPanel = () => (
         return (
           <div>
             <div className="case-card__grid" style={{ padding: 0 }}>
-              {data.user.map(user => (
-                <UserCard
-                  key={user.uuid}
-                  id={user.uuid}
-                  name={user.nickname}
-                  email={user.email}
-                  role={user.role}
-                />
-              ))}
+              <div className="case-card__row">
+                {data.user.map(user => (
+                  <UserCard
+                    key={user.uuid}
+                    id={user.uuid}
+                    name={user.nickname}
+                    email={user.email}
+                    role={user.role}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )
