@@ -8474,6 +8474,13 @@ react-dom@^16.8.3:
     prop-types "^15.6.2"
     scheduler "^0.13.3"
 
+react-event-timeline@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/react-event-timeline/-/react-event-timeline-1.6.3.tgz#1be465a06f751e7814f3e3fb3173e09b6264b33e"
+  integrity sha512-hMGhC9/Xx3sPF/TSlMCA13hZm/2c5CvBxbkDM7bQ4yq6VJ6AmhjqKPnU6/3nVmWUGpK3YqhHb95OiqulxVD3Eg==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"

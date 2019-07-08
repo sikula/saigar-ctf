@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
+import SafeURL from '@shared/components/SafeUrl'
+
 const CASE_INFO = gql`
   query caseInfo($caseID: uuid!) {
     case(where: { uuid: { _eq: $caseID } }) {
@@ -30,7 +32,7 @@ const CaseInfoData = ({ caseID }) => (
         <React.Fragment>
           <p>
             <strong>Source URL: </strong>
-            <a href={_case.source_url}>{_case.source_url}</a>
+            <SafeURL dangerousURL={_case.source_url} text={_case.source_url} />
           </p>
           <p>
             <strong>Name: </strong>

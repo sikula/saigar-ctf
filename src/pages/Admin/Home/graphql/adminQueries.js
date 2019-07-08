@@ -107,6 +107,43 @@ const LIVE_FEED_FILTERED = gql`
   }
 `
 
+const URL_SEEN_COUNT = gql`
+  query urlSeenCount($url: String!) {
+    urlCount: submission_aggregate(where:{
+        content:{ _eq: $url }
+      }) {
+      aggregate {
+        count
+      }
+    }
+  }
+`
+
+/*
+  Note(peter):
+    Hasura currently doesn't allow you to insert into relations in one
+    query (e.g. update submission, insert submission history), so we 
+    need to fire off 2 hasura calls: first to update the submission; second
+    to insert into the submission_history table
+*/
+const INSERT_SUBMISSION_HISTORY = gql`
+  mutation insertSubmissionHistory(
+    $submissionID: uuid!
+    $decision: String!
+    $processedBy: String!
+    $rejectedReason: String
+  ) {
+    insertSubmissionHistory: insert_submission_history(objects: {
+      submission_id: $submissionID,
+      decision: $decision,
+      processed_by: $processedBy,
+      rejected_reason: $rejectedReason
+    }) {
+      affected_rows
+    }
+  }
+`
+
 const PROCESS_SUBMISSION = gql`
   mutation approveSubmission(
     $submissionID: uuid!
@@ -145,8 +182,10 @@ export {
   HOME_QUERY,
   SUBMISSION_FILTERS,
   SUBMISSION_HISTORY,
+  INSERT_SUBMISSION_HISTORY,
   LIVE_FEED,
   LIVE_FEED_FILTERED,
+  URL_SEEN_COUNT,
   PROCESS_SUBMISSION,
   GET_TEAMS,
 }

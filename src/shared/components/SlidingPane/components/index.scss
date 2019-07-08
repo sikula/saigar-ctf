@@ -11,7 +11,7 @@ $pane-header-height: 80px;
     height: 100%;
     box-shadow: 0 8px 8px rgba(0, 0, 0, 0.5);
 
-    transition:  transform .3s;
+    transition:  transform .3s ease-in;
     will-change: transform;
 
     &:focus {
@@ -68,7 +68,7 @@ $pane-header-height: 80px;
     }
 
     &__overlay.ReactModal__Overlay--after-open {
-        background-color: rgba(16, 22, 26, 0.2);
+        background-color: rgba(16, 22, 26, 0.6);
         transition: background-color .3s;
     }
 
