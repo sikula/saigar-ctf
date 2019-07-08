@@ -4,7 +4,9 @@ import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
+import format from 'date-fns/format'
 import { Motion, spring } from 'react-motion'
+import { Timeline, TimelineEvent } from 'react-event-timeline'
 
 // Styles
 import { Icon, Tag, PanelStack } from '@blueprintjs/core'
@@ -13,8 +15,29 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom Components
 import { SlidingPane } from '@shared/components/SlidingPane'
 import SafeURL from '@shared/components/SafeUrl'
+import { AuthConsumer } from '@shared/components/AuthContext/context'
 
 import './SubmissionInfo.scss'
+
+const SUBMISSION_HISTORY = gql`
+  query submissionHistory($submissionID: uuid!) {
+    submission(where: { uuid: { _eq: $submissionID } }) {
+      submissionConfigurationByconfigId {
+        category
+        points
+      }
+      history(order_by: { processed_at: desc }) {
+        decision
+        processed_at
+        processedByUser {
+          role
+          username
+        }
+        rejected_reason
+      }
+    }
+  }
+`
 
 const SUBMISSION_TYPES = {
   DARK_WEB: 'Dark Web',
@@ -36,7 +59,7 @@ const animation = {
   render: value => ({ transform: `translateX(${value.translateX}px)` }),
 }
 
-const SubmissionItem = ({ data, openSubmissionHistory }) => (
+const SubmissionItem = ({ data, openSubmissionHistory, submissionType }) => (
   <Motion defaultStyle={animation.defaultStyle} style={animation.style}>
     {value => (
       <div style={animation.render(value)} className="case-data__item__wrapper">
@@ -66,21 +89,15 @@ const SubmissionItem = ({ data, openSubmissionHistory }) => (
             style={{
               textAlign: 'right',
               display: 'inline-flex',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
               marginTop: 8,
             }}
           >
-            <a type="button" onClick={openSubmissionHistory}>
-              Details
-            </a>
-            {/* <strong>{data.case.name}</strong> */}
-            {/* <PanelConsumer>
-              {({ showPanel }) => (
-                <a type="button" onClick={() => showPanel(FeedPanel, data)}>
-                  Details
-                </a>
-              )}
-            </PanelConsumer> */}
+            {submissionType === 'REJECTED' && (
+              <a type="button" onClick={openSubmissionHistory}>
+                Details
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -94,9 +111,12 @@ SubmissionItem.propTypes = {
 }
 
 const SUBMISSION_LIST = gql`
-  query submissionList($caseID: uuid!, $submissionType: String!) {
-    case(where: { uuid: { _eq: $caseID } }) {
-      submissions(where: { processed: { _eq: $submissionType } }) {
+  query submissionList($auth0id: String!, $caseID: uuid!, $submissionType: String!) {
+    team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
+      submissionsByteamId(
+        where: { processed: { _eq: $submissionType }, case_id: { _eq: $caseID } }
+        order_by: { processed_at: desc }
+      ) {
         uuid
         content
         explanation
@@ -108,25 +128,96 @@ const SUBMISSION_LIST = gql`
   }
 `
 
-const SUBMISSION_HISTORY = gql`
-  query submissionHistory($submissionID: uuid!) {
-    submission(where: { uuid: { _eq: $submissionID } }) {
-      history {
-        decision
-      }
-    }
-  }
-`
-
+/*
+  NOTE(Peter):
+    This code is duplicated (see HistoryTab in Admin/Home). For now its ok, but may
+    lead to bugs eventually.  Should refactor out when it becomes an issue.
+*/
 const SubmisionHistory = ({ submissionID }) => (
-  <Query query={SUBMISSION_HISTORY} variables={{ submissionID }}>
-    {({ data, loading, error }) => {
-      if (loading) return null
-      if (error) return null
+  <AuthConsumer>
+    {({ user }) => (
+      <Query
+        query={SUBMISSION_HISTORY}
+        variables={{ submissionID }}
+        fetchPolicy="network-only"
+        skip={!submissionID}
+      >
+        {({ data, loading, error }) => {
+          if (!data) return null
+          if (loading) return null
+          if (error) return `Error: ${error}`
 
-      return <div>{JSON.stringify(data)}</div>
-    }}
-  </Query>
+          const { submission } = data
+          const {
+            history: submissionHistory,
+            submissionConfigurationByconfigId: config,
+          } = submission[0]
+
+          return (
+            <div>
+              <Timeline>
+                {submissionHistory.map(submission => {
+                  let icon
+                  let color
+                  let title
+
+                  if (submission.decision === 'ACCEPTED') {
+                    icon = IconNames.TICK
+                    color = '#48AFF0'
+                    title = (
+                      <div>
+                        {submission.processedByUser.role.toLowerCase()}{' '}
+                        <strong>({submission.processedByUser.username})</strong>{' '}
+                        {submission.decision.toLowerCase()} the submission for +{config.points}{' '}
+                        points ({config.category.toLowerCase()})
+                      </div>
+                    )
+                  }
+
+                  if (submission.decision === 'REJECTED') {
+                    icon = IconNames.CROSS
+                    color = '#A82A2A'
+                    title = (
+                      <div>
+                        {submission.processedByUser.role.toLowerCase()}
+                        <strong>({submission.processedByUser.username})</strong>
+                        {submission.decision.toLowerCase()} the submission
+                      </div>
+                    )
+                  }
+
+                  if (submission.decision === 'STARRED') {
+                    icon = IconNames.STAR
+                    color = '#3DCC91'
+                    title = (
+                      <div>
+                        {submission.processedByUser.role.toLowerCase()}
+                        <strong>({submission.processedByUser.username})</strong>
+                        {submission.decision.toLowerCase()} the submission
+                      </div>
+                    )
+                  }
+
+                  return (
+                    <TimelineEvent
+                      title={title}
+                      createdAt={format(new Date(submission.processed_at), 'HH:mm')}
+                      icon={<Icon icon={icon} />}
+                      contentStyle={{ background: '#EBF1F5' }}
+                      iconColor="#FFF"
+                      bubbleStyle={{ background: color }}
+                    >
+                      {submission.rejected_reason}
+                    </TimelineEvent>
+                  )
+                })}
+              </Timeline>
+            </div>
+          )
+        }}
+      </Query>
+    )}
+  </AuthConsumer>
 )
 
 const SubmissionList = ({ openPanel, caseID, submissionType }) => {
@@ -139,26 +230,31 @@ const SubmissionList = ({ openPanel, caseID, submissionType }) => {
   }
 
   return (
-    <Query query={SUBMISSION_LIST} variables={{ caseID, submissionType }}>
-      {({ data, loading, error }) => {
-        if (loading) return null
-        if (error) return null
+    <AuthConsumer>
+      {({ user }) => (
+        <Query query={SUBMISSION_LIST} variables={{ auth0id: user.id, caseID, submissionType }}>
+          {({ data, loading, error }) => {
+            if (loading) return null
+            if (error) return null
 
-        console.log("SUB TYPE ", submissionType)
-        const submissionData = data.case[0].submissions
+            const submissionData = data.team[0].submissionsByteamId
 
-        return (
-          <div style={{ padding: 20 }}>
-            {submissionData.map(submission => (
-              <SubmissionItem
-                data={submission}
-                openSubmissionHistory={() => openHistoryPanel(submission.uuid)}
-              />
-            ))}
-          </div>
-        )
-      }}
-    </Query>
+            return (
+              <div>
+                {submissionData.map(submission => (
+                  <SubmissionItem
+                    key={submission.uuid}
+                    data={submission}
+                    openSubmissionHistory={() => openHistoryPanel(submission.uuid)}
+                    submissionType={submissionType}
+                  />
+                ))}
+              </div>
+            )
+          }}
+        </Query>
+      )}
+    </AuthConsumer>
   )
 }
 
