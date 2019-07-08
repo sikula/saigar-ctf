@@ -198,6 +198,18 @@ const SubmisionHistory = ({ submissionID }) => (
                     )
                   }
 
+                  if (submission.decision === 'UPDATED_POINTS') {
+                    icon = IconNames.CHANGES
+                    color = '#3DCC91'
+                    title = (
+                      <div>
+                        {submission.processedByUser.role.toLowerCase()}
+                        <strong>({submission.processedByUser.username})</strong>
+                        updated the points on this submission
+                      </div>
+                    )
+                  }
+
                   return (
                     <TimelineEvent
                       title={title}
