@@ -52,7 +52,7 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
       </SlidingPane.Header.Actions>
     </SlidingPane.Header>
 
-    <SlidingPane.Content>
+    <SlidingPane.Content style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 70 }}>
       <SlidingPanelConsumer>
         {({ closeSlider }) => (
           <AuthConsumer>
@@ -115,6 +115,18 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
                                 {submission.processedByUser.role.toLowerCase()}
                                 <strong>({submission.processedByUser.username})</strong>
                                 {submission.decision.toLowerCase()} the submission
+                              </div>
+                            )
+                          }
+
+                          if (submission.decision === 'UPDATED_POINTS') {
+                            icon = IconNames.CHANGES
+                            color = '#3DCC91'
+                            title = (
+                              <div>
+                                {submission.processedByUser.role.toLowerCase()}
+                                <strong>({submission.processedByUser.username})</strong>
+                                updated the points on this submission
                               </div>
                             )
                           }

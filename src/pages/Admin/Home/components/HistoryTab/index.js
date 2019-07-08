@@ -17,20 +17,20 @@ import {
   HTMLSelect,
   Icon,
   MenuItem,
-  TextArea
+  TextArea,
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
+
+import { AuthConsumer } from '@shared/components/AuthContext/context'
+import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import {
   SUBMISSION_HISTORY,
   SUBMISSION_FILTERS,
   INSERT_SUBMISSION_HISTORY,
-  PROCESS_SUBMISSION
+  PROCESS_SUBMISSION,
 } from '../../graphql/adminQueries'
-
-import { AuthConsumer } from '@shared/components/AuthContext/context'
-import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 
 import ProcessingHistory from './ProcessingHistory'
 
@@ -88,6 +88,24 @@ const SUBMISSION_DETAILS = gql`
   }
 `
 
+const UPDATE_CATEGORY = gql`
+  mutation updateCategory($category: uuid!, $submissionID: uuid!, $auth0id: String!) {
+    update_submission(_set: { config_id: $category }, where: { uuid: { _eq: $submissionID } }) {
+      affected_rows
+    }
+    insert_submission_history(
+      objects: {
+        submission_id: $submissionID
+        configuration: $category
+        processed_by: $auth0id
+        decision: "UPDATED_POINTS"
+      }
+    ) {
+      affected_rows
+    }
+  }
+`
+
 const CategoryList = ({ currentCategory, handleChange }) => (
   <Query query={SUBMISSION_DETAILS} fetchPolicy="cache-first">
     {({ error, loading, data }) => {
@@ -95,7 +113,7 @@ const CategoryList = ({ currentCategory, handleChange }) => (
       if (error) return <div>{`${error.message}`}</div>
 
       return (
-        <HTMLSelect name="category" value={currentCategory} onChange={handleChange} fill large>
+        <HTMLSelect name="category" value={currentCategory} onChange={handleChange} large fill>
           {data.submission_configuration.map(config => (
             <option key={config.uuid} id={config.category} value={config.uuid}>{`${
               config.category
@@ -111,12 +129,62 @@ CategoryList.propTypes = {
   currentCategory: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
 }
+
+/*
+  NOTE(Peter):
+    This is duplicated in ProcessHistory, should eventually extract this out to a shared folder
+    in case queires change, we have one source of truth
+*/
+const SUBMISSION_HISTORY_2 = gql`
+  query submissionHistory($submissionID: uuid!) {
+    submission(where: { uuid: { _eq: $submissionID } }) {
+      submissionConfigurationByconfigId {
+        category
+        points
+      }
+      history(order_by: { processed_at: desc }) {
+        decision
+        processed_at
+        processedByUser {
+          role
+          username
+        }
+        rejected_reason
+      }
+    }
+  }
+`
+
+const UpdateButton = ({ category, submissionID }) => (
+  <AuthConsumer>
+    {({ user }) => (
+      <Mutation
+        mutation={UPDATE_CATEGORY}
+        variables={{ category, submissionID, auth0id: user.id }}
+        refetchQueries={[{ query: SUBMISSION_HISTORY_2, variables: { submissionID } }]}
+      >
+        {updateCategory => (
+          <Button large style={{ marginLeft: 10, marginRight: 10 }} onClick={updateCategory}>
+            Update
+          </Button>
+        )}
+      </Mutation>
+    )}
+  </AuthConsumer>
+)
 /* -- END -- */
 
 const HistoryButton = ({ uuid }) => (
   <SlidingPanelConsumer>
     {({ openSlider }) => (
-      <Button large icon={IconNames.HISTORY} style={{ marginRight: 10 }} onClick={() => openSlider(ProcessingHistory, { submissionID: uuid })}>History</Button>
+      <Button
+        large
+        icon={IconNames.HISTORY}
+        style={{ marginRight: 10 }}
+        onClick={() => openSlider(ProcessingHistory, { submissionID: uuid })}
+      >
+        History
+      </Button>
     )}
   </SlidingPanelConsumer>
 )
@@ -125,13 +193,15 @@ class SubmissionItem extends React.Component {
   state = {
     // eslint-disable-next-line react/destructuring-assignment
     category: this.props.submission.submissionConfigurationByconfigId.uuid,
-    rejectedReason: null
+    rejectedReason: null,
   }
 
   handleChange = e => {
-    this.setState({
-      category: e.currentTarget.value,
-    })
+    const currentTarget = e.currentTarget.value
+    this.setState(prevState => ({
+      category: currentTarget,
+      swappedCategory: prevState.category !== currentTarget,
+    }))
   }
 
   handleReasonChange = e => {
@@ -152,8 +222,13 @@ class SubmissionItem extends React.Component {
           <div style={{ flexGrow: 1 }}>
             <H5>{submission.processed}</H5>
           </div>
-          <div>
-            <CategoryList currentCategory={category} handleChange={this.handleChange} />
+          <div style={{ display: 'inline-flex' }}>
+            <CategoryList
+              currentCategory={category}
+              submissionID={submission.uuid}
+              handleChange={this.handleChange}
+            />
+            <UpdateButton category={category} submissionID={submission.uuid} />
           </div>
         </div>
         <code style={{ background: '#cdcdcd' }}>
@@ -189,7 +264,7 @@ class SubmissionItem extends React.Component {
                           large
                           icon={IconNames.STAR}
                           style={{ marginRight: 10 }}
-                          disabled={submission.processed === 'STARRED'}
+                          disabled={submission.processed === "STARRED"}
                           onClick={() => {
                             updateSubmission({
                               variables: {
@@ -203,8 +278,8 @@ class SubmissionItem extends React.Component {
                               variables: {
                                 submissionID: submission.uuid,
                                 decision: 'STARRED',
-                                processedBy: user.id
-                              }
+                                processedBy: user.id,
+                              },
                             })
                           }}
                         >
@@ -242,7 +317,7 @@ class SubmissionItem extends React.Component {
                                 submissionID: submission.uuid,
                                 decision: 'ACCEPTED',
                                 processedBy: user.id,
-                              }
+                              },
                             })
                           }}
                         >
@@ -256,8 +331,24 @@ class SubmissionItem extends React.Component {
             </Mutation>
           </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end', marginTop: 10, marginRight: 10 }}>
-          <TextArea fill placeHolder={submission.processed === 'REJECTED' ? '' : "reason why the submission is rejected"} disabled={submission.processed === 'REJECTED'} value={rejectedReason} onChange={this.handleReasonChange} />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'end',
+            marginTop: 10,
+            marginRight: 10,
+          }}
+        >
+          <TextArea
+            fill
+            placeHolder={
+              submission.processed === 'REJECTED' ? '' : 'reason why the submission is rejected'
+            }
+            disabled={submission.processed === 'REJECTED'}
+            value={rejectedReason}
+            onChange={this.handleReasonChange}
+          />
           <Mutation mutation={PROCESS_SUBMISSION}>
             {updateSubmission => (
               <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
@@ -284,8 +375,8 @@ class SubmissionItem extends React.Component {
                               submissionID: submission.uuid,
                               decision: 'REJECTED',
                               processedBy: user.id,
-                              rejectedReason
-                            }
+                              rejectedReason,
+                            },
                           }).then(() => this.clearReasonField())
                         }}
                       >
