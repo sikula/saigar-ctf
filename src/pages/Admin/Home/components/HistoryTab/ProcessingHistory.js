@@ -16,12 +16,9 @@ import { Timeline, TimelineEvent } from 'react-event-timeline'
 import { SlidingPane, SlidingPanelConsumer } from '@shared/components/SlidingPane'
 import { AuthConsumer } from '@shared/components/AuthContext/context'
 
-
 const SUBMISSION_HISTORY = gql`
   query submissionHistory($submissionID: uuid!) {
-    submission(where: {
-      uuid: { _eq: $submissionID }
-    }) {
+    submission(where: { uuid: { _eq: $submissionID } }) {
       submissionConfigurationByconfigId {
         category
         points
@@ -39,7 +36,6 @@ const SUBMISSION_HISTORY = gql`
   }
 `
 
-
 const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
     isOpen={isOpen}
@@ -47,7 +43,10 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
     closeIcon={<Icon icon={IconNames.MENU_CLOSED} iconSize={20} />}
   >
     <SlidingPane.Header>
-      <SlidingPane.Header.Title title="Processing History" subtitle="Complete history of this submission" />
+      <SlidingPane.Header.Title
+        title="Processing History"
+        subtitle="Complete history of this submission"
+      />
       <SlidingPane.Header.Actions onActionClick={onRequestClose}>
         <a>Cancel</a>
       </SlidingPane.Header.Actions>
@@ -58,16 +57,23 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
         {({ closeSlider }) => (
           <AuthConsumer>
             {({ user }) => (
-              <Query query={SUBMISSION_HISTORY} variables={{ submissionID: otherProps.submissionID }} fetchPolicy="network-only" skip={!otherProps.submissionID}>
+              <Query
+                query={SUBMISSION_HISTORY}
+                variables={{ submissionID: otherProps.submissionID }}
+                fetchPolicy="network-only"
+                skip={!otherProps.submissionID}
+              >
                 {({ data, loading, error }) => {
                   if (!data) return null
                   if (loading) return null
                   if (error) return `Error: ${error}`
 
-                  const { submission  } = data
-                  const { history: submissionHistory, submissionConfigurationByconfigId: config } = submission[0]
-                  
-                  
+                  const { submission } = data
+                  const {
+                    history: submissionHistory,
+                    submissionConfigurationByconfigId: config,
+                  } = submission[0]
+
                   return (
                     <div>
                       <Timeline>
@@ -78,27 +84,24 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
 
                           if (submission.decision === 'ACCEPTED') {
                             icon = IconNames.TICK
-                            color = "#48AFF0"
+                            color = '#48AFF0'
                             title = (
                               <div>
                                 {submission.processedByUser.role.toLowerCase()}{' '}
-                                <strong>
-                                  ({submission.processedByUser.username})
-                                </strong>{' '}
-                                {submission.decision.toLowerCase()} the submission for +{config.points} points ({config.category.toLowerCase()})
+                                <strong>({submission.processedByUser.username})</strong>{' '}
+                                {submission.decision.toLowerCase()} the submission for +
+                                {config.points} points ({config.category.toLowerCase()})
                               </div>
                             )
                           }
 
                           if (submission.decision === 'REJECTED') {
                             icon = IconNames.CROSS
-                            color = "#A82A2A"
+                            color = '#A82A2A'
                             title = (
                               <div>
                                 {submission.processedByUser.role.toLowerCase()}
-                                <strong>
-                                  ({submission.processedByUser.username})
-                                </strong>
+                                <strong>({submission.processedByUser.username})</strong>
                                 {submission.decision.toLowerCase()} the submission
                               </div>
                             )
@@ -106,13 +109,11 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
 
                           if (submission.decision === 'STARRED') {
                             icon = IconNames.STAR
-                            color = "#3DCC91"
+                            color = '#3DCC91'
                             title = (
                               <div>
                                 {submission.processedByUser.role.toLowerCase()}
-                                <strong>
-                                  ({submission.processedByUser.username})
-                                </strong>
+                                <strong>({submission.processedByUser.username})</strong>
                                 {submission.decision.toLowerCase()} the submission
                               </div>
                             )
@@ -121,9 +122,10 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
                           return (
                             <TimelineEvent
                               title={title}
-                              createdAt={format(new Date(submission.processed_at), "HH:mm")} icon={<Icon icon={icon} />}
+                              createdAt={format(new Date(submission.processed_at), 'HH:mm')}
+                              icon={<Icon icon={icon} />}
                               contentStyle={{ background: '#EBF1F5' }}
-                              iconColor={"#FFF"}
+                              iconColor="#FFF"
                               bubbleStyle={{ background: color }}
                             >
                               {submission.rejected_reason}
