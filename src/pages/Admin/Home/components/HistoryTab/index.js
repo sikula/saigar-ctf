@@ -150,6 +150,10 @@ const SUBMISSION_HISTORY_2 = gql`
           username
         }
         rejected_reason
+        submission_configuration {
+          category
+          points
+        }
       }
     }
   }

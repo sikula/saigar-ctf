@@ -30,6 +30,10 @@ const SUBMISSION_HISTORY = gql`
           role
           username
         }
+        submission_configuration {
+          category
+          points
+        }
         rejected_reason
       }
     }
@@ -126,7 +130,8 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
                               <div>
                                 {submission.processedByUser.role.toLowerCase()}
                                 <strong>({submission.processedByUser.username})</strong>
-                                updated the points on this submission
+                                updated the points on this submission to
+                                ({submission.submission_configuration.category.toLowerCase()}) {submission.submission_configuration.points} points
                               </div>
                             )
                           }
