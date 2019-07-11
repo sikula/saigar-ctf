@@ -1,19 +1,17 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Query, Mutation, Subscription } from 'react-apollo'
+import { Query, Subscription } from 'react-apollo'
 import { connect } from 'react-redux'
 
 import { Motion, spring } from 'react-motion'
-import { Icon, Tag, H3, Divider } from '@blueprintjs/core'
+import { Icon, Tag, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
-import { LIVE_FEED, LIVE_FEED_FILTERED, PROCESS_SUBMISSION, INSERT_SUBMISSION_HISTORY, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
 import SafeURL from '../../../../../shared/components/SafeUrl'
-import { AuthConsumer } from '@shared/components/AuthContext/context'
-
 
 const SUBMISSION_TYPES = {
   DARK_WEB: 'Dark Web',
@@ -39,117 +37,62 @@ const SubmissionItem = ({ data }) => (
   <Motion defaultStyle={animation.defaultStyle} style={animation.style}>
     {value => (
       <div>
-      <div style={animation.render(value)} className="case-data__item__wrapper">
-        <div className="case-data__item">
-          <div style={{ padding: '5px 0px 5px 0px', display: 'flex' }}>
-            <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
-          </div>
-          <span
-            style={{
-              padding: '5px 0px 5px 0px',
-              fontWeight: 500,
-              color: '#5C7080',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Tag large>
-              {SUBMISSION_TYPES[data.submissionConfigurationByconfigId.category] || ''}
-            </Tag>
-          </span>
+        <div style={animation.render(value)} className="case-data__item__wrapper">
+          <div className="case-data__item">
+            <div style={{ padding: '5px 0px 5px 0px', display: 'flex' }}>
+              <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
+            </div>
+            <span
+              style={{
+                padding: '5px 0px 5px 0px',
+                fontWeight: 500,
+                color: '#5C7080',
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Tag large>
+                {SUBMISSION_TYPES[data.submissionConfigurationByconfigId.category] || ''}
+              </Tag>
+            </span>
 
-          <span className="long-text" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
-            <SafeURL dangerousURL={data.content} text={data.content} />
-          </span>
-          <span className="long-text">{data.explanation}</span>
-          <div
-            style={{
-              textAlign: 'right',
-              display: 'inline-flex',
-              justifyContent: 'space-between',
-              marginTop: 8,
-            }}
-          >
-            <strong>{data.case.name}</strong>
-            <PanelConsumer>
-              {({ showPanel }) => (
-                <a type="button" onClick={() => showPanel(FeedPanel, data)}>
-                  Details
-                </a>
-              )}
-            </PanelConsumer>
+            <span className="long-text" style={{ paddingTop: '8px', paddingBottom: '8px' }}>
+              <SafeURL dangerousURL={data.content} text={data.content} />
+            </span>
+            <span className="long-text">{data.explanation}</span>
+            <div
+              style={{
+                textAlign: 'right',
+                display: 'inline-flex',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}
+            >
+              <strong>{data.case.name}</strong>
+              <PanelConsumer>
+                {({ showPanel }) => (
+                  <a type="button" onClick={() => showPanel(FeedPanel, data)}>
+                    Details
+                  </a>
+                )}
+              </PanelConsumer>
+            </div>
           </div>
         </div>
-
-        {/* 
-          NOTE(peter):
-            These buttons are used multiple times (e.g. Feed, FeedPanel, History), they should be extracted into their own
-            components so as to avoid code duplication, and therfore minimize errors 
-        */}
-        <Mutation mutation={PROCESS_SUBMISSION}>
-          {updateSubmission => (
-            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-              {insertSubmissionHistory => (
-                <AuthConsumer>
-                  {({ user }) => (
-                    <div className="case-data__item__icons">
-                      <a
-                        type="button"
-                        onClick={() => {
-                          updateSubmission({
-                            variables: {
-                              submissionID: data.uuid,
-                              value: 'ACCEPTED', // processed = ACCEPTED
-                              processedAt: new Date(),
-                              category: data.submissionConfigurationByconfigId.uuid,
-                            },
-                          })
-                          insertSubmissionHistory({
-                            variables: {
-                              submissionID: data.uuid,
-                              decision: 'ACCEPTED',
-                              processedBy: user.id
-                            }
-                          })
-                        }}
-                      >
-                        <Icon intent="primary" icon={IconNames.TICK} iconSize={22} />
-                      </a>
-                      <a
-                        type="button"
-                        onClick={() => {
-                          updateSubmission({
-                            variables: {
-                              submissionID: data.uuid,
-                              value: 'REJECTED', // processed = REJECTED
-                              processedAt: new Date(),
-                              category: data.submissionConfigurationByconfigId.uuid,
-                            },
-                          })
-                          insertSubmissionHistory({
-                            variables: {
-                              submissionID: data.uuid,
-                              decision: 'REJECTED',
-                              processedBy: user.id
-                            }
-                          })
-                        }}
-                      >
-                        <Icon intent="primary" icon={IconNames.CROSS} iconSize={22} />
-                      </a>
-                    </div>
-                  )}
-                </AuthConsumer>
-              )}
-            </Mutation>
-          )}
-        </Mutation>
-      </div>
-      <div style={{ textAlign: 'center', ...animation.render(value) }}>
-        <Query query={URL_SEEN_COUNT} variables={{ url: data.content }}>
-          {({ data, loading }) => !loading ? <div style={{ color: '#394B59', fontSize: '0.85em', fontWeight: 600 }}><Icon icon={IconNames.EMPLOYMENT} />{data.urlCount.aggregate.count === 1 ? `${data.urlCount.aggregate.count} URL HIT` : `${data.urlCount.aggregate.count} URL HITS`}</div> : null}
-        </Query>
-      </div>
+        <div style={{ textAlign: 'center', ...animation.render(value) }}>
+          <Query query={URL_SEEN_COUNT} variables={{ url: data.content }}>
+            {({ data, loading }) =>
+              !loading ? (
+                <div style={{ color: '#394B59', fontSize: '0.85em', fontWeight: 600 }}>
+                  <Icon icon={IconNames.EMPLOYMENT} />
+                  {data.urlCount.aggregate.count === 1
+                    ? `${data.urlCount.aggregate.count} URL HIT`
+                    : `${data.urlCount.aggregate.count} URL HITS`}
+                </div>
+              ) : null
+            }
+          </Query>
+        </div>
       </div>
     )}
   </Motion>
