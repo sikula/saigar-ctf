@@ -109,9 +109,7 @@ const LIVE_FEED_FILTERED = gql`
 
 const URL_SEEN_COUNT = gql`
   query urlSeenCount($url: String!) {
-    urlCount: submission_aggregate(where:{
-        content:{ _eq: $url }
-      }) {
+    urlCount: submission_aggregate(where: { content: { _eq: $url } }) {
       aggregate {
         count
       }
@@ -133,12 +131,14 @@ const INSERT_SUBMISSION_HISTORY = gql`
     $processedBy: String!
     $rejectedReason: String
   ) {
-    insertSubmissionHistory: insert_submission_history(objects: {
-      submission_id: $submissionID,
-      decision: $decision,
-      processed_by: $processedBy,
-      rejected_reason: $rejectedReason
-    }) {
+    insertSubmissionHistory: insert_submission_history(
+      objects: {
+        submission_id: $submissionID
+        decision: $decision
+        processed_by: $processedBy
+        rejected_reason: $rejectedReason
+      }
+    ) {
       affected_rows
     }
   }
@@ -162,8 +162,11 @@ const PROCESS_SUBMISSION = gql`
 
 const GET_TEAMS = gql`
   query getTeams($eventId: uuid!) {
-    team_event(order_by: { event: { start_time: desc } }, where: { event_id: { _eq: $eventId } }) {
-      team {
+    team_event(
+      order_by: { event: { start_time: desc }, team: { name: asc } }
+      where: { event_id: { _eq: $eventId } }
+    ) {
+      team(order_by: { name: asc }) {
         uuid
         name
         submissionByTeamAggregate: submissionsByteamId_aggregate(

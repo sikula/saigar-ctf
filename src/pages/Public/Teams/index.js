@@ -8,8 +8,11 @@ import './index.scss'
 
 const TEAM_QUERY = gql`
   query getTeams($eventId: uuid!) {
-    team_event(order_by: { event: { start_time: desc } }, where: { event_id: { _eq: $eventId } }) {
-      team {
+    team_event(
+      order_by: { event: { start_time: desc }, team: { name: asc } }
+      where: { event_id: { _eq: $eventId } }
+    ) {
+      team(order_by: { name: asc }) {
         uuid
         name
       }
