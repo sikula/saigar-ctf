@@ -17,7 +17,7 @@ const ADD_USER_TO_EVENT = gql`
 const TEAMS_QUERY = gql`
   query teamList($eventId: uuid!) {
     event(where: { uuid: { _eq: $eventId } }) {
-      team_events {
+      team_events(order_by: { team: { name: asc } }) {
         team {
           uuid
           name
