@@ -12,7 +12,7 @@ const TEAM_QUERY = gql`
       order_by: { event: { start_time: desc }, team: { name: asc } }
       where: { event_id: { _eq: $eventId } }
     ) {
-      team(order_by: { name: asc }) {
+      team {
         uuid
         name
       }
