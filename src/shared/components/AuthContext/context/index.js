@@ -9,5 +9,6 @@ const authContext = createContext({
   logout: () => {},
 })
 
+export const AuthContext = authContext
 export const AuthProvider = authContext.Provider
 export const AuthConsumer = authContext.Consumer
