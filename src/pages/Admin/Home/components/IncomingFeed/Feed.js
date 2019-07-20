@@ -6,6 +6,7 @@ import { useSubscription } from '@apollo/react-hooks'
 
 import createPersistedState from 'use-persisted-state'
 import gql from 'graphql-tag'
+import { distanceInWordsToNow } from 'date-fns'
 
 // Styles
 import { Motion, spring } from 'react-motion'
@@ -47,8 +48,20 @@ const SubmissionItem = ({ data }) => (
       <div>
         <div style={animation.render(value)} className="case-data__item__wrapper">
           <div className="case-data__item">
-            <div style={{ padding: '5px 0px 5px 0px', display: 'flex' }}>
+            <div
+              style={{
+                padding: '5px 0px 5px 0px',
+                display: 'flex',
+                flex: 1,
+                justifyContent: 'space-between',
+              }}
+            >
               <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
+              <span
+                style={{ fontWeight: 300, fontSize: '0.8em', textTransform: 'uppercase' }}
+              >{`${distanceInWordsToNow(new Date(data.submitted_at), {
+                includeSeconds: true,
+              })} Ago`}</span>
             </div>
             <span
               style={{

@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Query, Mutation, Subscription } from 'react-apollo'
+
 import gql from 'graphql-tag'
+import { distanceInWordsToNow } from 'date-fns'
 
 // Styles
 import {
@@ -222,9 +224,13 @@ class SubmissionItem extends React.Component {
 
     return (
       <Card style={{ marginBottom: 20 }}>
-        <div style={{ width: '100%', display: 'inline-flex' }}>
-          <div style={{ flexGrow: 1 }}>
+        <div style={{ width: '100%', display: 'inline-flex', alignItems: 'baseline' }}>
+          <div style={{ flex: 1 }}>
             <H5>{submission.processed}</H5>
+          </div>
+          <div style={{ fontWeight: 450, marginRight: 10 }}>
+          <span>{`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} / </span>
+            <span>{`Processed: ${distanceInWordsToNow(new Date(submission.processed_at))} Ago`}</span>
           </div>
           <div style={{ display: 'inline-flex' }}>
             <CategoryList

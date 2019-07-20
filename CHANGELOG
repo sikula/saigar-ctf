@@ -1,14 +1,19 @@
 ## 2019 - 07 - 20
 ### Major
-- Only Admins can now assign judges to teams
+- Only dmins can now assign judges to teams
     - In earlier releases, judges could automatically assign teams to themselves, and the flow of information being slightly out of sync. This ensures there is one source of truth about aiggned teams
 - Removed incoming feed settings for Judges
     - No longer needed as the admins now assign judges to teams
 
 ### Minor
+- Added timestamps to submissions in all views
+    - Sometimes it is important to know when a submission was submitted (e.g. with hundreds of submissions coming in, some may have been left unprocessed for long periods of time)
+    - Incoming feed now has timestamp of submission
+    - History now has timestamp of submission on when it was processed
+    - Submission info in contestant view now has timestamp for pending/approved/rejected submissions
 - General UI/UX Improvements
     - Cleaning up the team filter flow for admins.
     - Filter states are now persisted across page refreshes
-    
+
 ### Bug Fixes
 
