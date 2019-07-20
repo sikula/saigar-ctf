@@ -2,12 +2,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Query, Subscription } from 'react-apollo'
-import { connect } from 'react-redux'
 
+import createPersistedState from 'use-persisted-state'
+
+// Styles
 import { Motion, spring } from 'react-motion'
 import { Icon, Tag, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
+// Custom components
 import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
@@ -103,12 +106,6 @@ SubmissionItem.propTypes = {
   data: PropTypes.any.isRequired,
 }
 
-function mapStateToProps(state) {
-  return {
-    teamFilter: state.filter.teamFilter,
-  }
-}
-
 // TODO(peter):
 //  This could probably be cleaner by just passing data
 //  as props and use the correct stuff in the component
@@ -138,7 +135,6 @@ const SubscriptionData = ({ subscription, teams }) => (
 
       const { submissions } = data.event[0]
 
-      // console.log("DATA: ", data)
       if (!Array.isArray(submissions) || !submissions.length) {
         return <H3 style={{ textAlign: 'center', padding: 20 }}>No Pending Submissions</H3>
       }
@@ -154,19 +150,15 @@ SubscriptionData.propTypes = {
   teams: PropTypes.arrayOf(PropTypes.array).isRequired,
 }
 
-const SubmissionList = ({ teamFilter }) => {
-  return teamFilter.length > 0 ? (
-    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={teamFilter} />
+const useTeamFilterState = createPersistedState('teams')
+const SubmissionList = () => {
+  const [selectedTeams, setSelectedTeams] = useTeamFilterState()
+
+  return selectedTeams.length > 0 ? (
+    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
   ) : (
-    <SubscriptionData subscription={LIVE_FEED} teams={teamFilter} />
+    <SubscriptionData subscription={LIVE_FEED} teams={selectedTeams} />
   )
 }
 
-SubmissionList.propTypes = {
-  teamFilter: PropTypes.arrayOf(PropTypes.array).isRequired,
-}
-
-export default connect(
-  mapStateToProps,
-  null,
-)(SubmissionList)
+export default SubmissionList

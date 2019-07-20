@@ -16,17 +16,16 @@ import {
   Position,
   HTMLSelect,
   ButtonGroup,
-  TextArea
+  TextArea,
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
 import SafeURL from '@shared/components/SafeUrl'
+import CaseInfoData from '@features/CaseInfo/components'
 import { PROCESS_SUBMISSION, INSERT_SUBMISSION_HISTORY } from '../../graphql/adminQueries'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
-import CaseInfoData from '@features/CaseInfo/components'
 import { AuthConsumer } from '@shared/components/AuthContext/context'
-
 
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
@@ -104,9 +103,7 @@ CategoryList.propTypes = {
   handleChange: PropTypes.func.isRequired,
 }
 
-
 class RejectSubmissionControls extends React.Component {
-
   state = { rejectedReason: null }
 
   handleChange = e => {
@@ -122,7 +119,12 @@ class RejectSubmissionControls extends React.Component {
 
     return (
       <React.Fragment>
-        <TextArea fill placeHolder="reason for rejecting the submission" value={this.state.rejectedReason} onChange={this.handleChange} />
+        <TextArea
+          fill
+          placeHolder="reason for rejecting the submission"
+          value={this.state.rejectedReason}
+          onChange={this.handleChange}
+        />
         <Mutation mutation={PROCESS_SUBMISSION}>
           {updateSubmission => (
             <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
@@ -150,8 +152,8 @@ class RejectSubmissionControls extends React.Component {
                             submissionID: uuid,
                             decision: 'REJECTED',
                             processedBy: user.id,
-                            rejectedReason: this.state.rejectedReason
-                          }
+                            rejectedReason: this.state.rejectedReason,
+                          },
                         })
                       }}
                     />
@@ -165,7 +167,15 @@ class RejectSubmissionControls extends React.Component {
     )
   }
 }
-const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePanel, category, handleChange }) => (
+const SubmissionDetailsPanel = ({
+  uuid,
+  teamName,
+  explanation,
+  content,
+  hidePanel,
+  category,
+  handleChange,
+}) => (
   <React.Fragment>
     <div>
       <CategoryList currentCategory={category} handleChange={handleChange} />
@@ -205,8 +215,8 @@ const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePane
                           variables: {
                             submissionID: uuid,
                             decision: 'STARRED',
-                            processedBy: user.id
-                          }
+                            processedBy: user.id,
+                          },
                         })
                       }}
                     />
@@ -241,8 +251,8 @@ const SubmissionDetailsPanel = ({ uuid, teamName, explanation, content, hidePane
                           variables: {
                             submissionID: uuid,
                             decision: 'ACCEPTED',
-                            processedBy: user.id
-                          }
+                            processedBy: user.id,
+                          },
                         })
                       }}
                     />
@@ -334,7 +344,7 @@ const FeedPanel = ({
   explanation,
   content,
   submissionConfigurationByconfigId,
-  case: { uuid: caseID }
+  case: { uuid: caseID },
 }) => (
   <PanelConsumer>
     {({ hidePanel }) => (
