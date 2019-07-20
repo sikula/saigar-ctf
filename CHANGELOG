@@ -13,7 +13,8 @@
     - Submission info in contestant view now has timestamp for pending/approved/rejected submissions
 - General UI/UX Improvements
     - Cleaning up the team filter flow for admins.
-    - Filter states are now persisted across page refreshes
-
+    - Team filter states are now persisted across page refreshes
+    - History filter states now persist across refreshes
+    
 ### Bug Fixes
 - Fixed a bug where the team selection in the History tab for admins/contestants was not showing teams in alphabetical order

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Query, Mutation, Subscription } from 'react-apollo'
 
 import gql from 'graphql-tag'
+import createPersistedState from 'use-persisted-state'
 import { distanceInWordsToNow } from 'date-fns'
 
 // Styles
@@ -229,8 +230,12 @@ class SubmissionItem extends React.Component {
             <H5>{submission.processed}</H5>
           </div>
           <div style={{ fontWeight: 450, marginRight: 10 }}>
-          <span>{`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} / </span>
-            <span>{`Processed: ${distanceInWordsToNow(new Date(submission.processed_at))} Ago`}</span>
+            <span>
+              {`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} /{' '}
+            </span>
+            <span>{`Processed: ${distanceInWordsToNow(
+              new Date(submission.processed_at),
+            )} Ago`}</span>
           </div>
           <div style={{ display: 'inline-flex' }}>
             <CategoryList
@@ -274,7 +279,7 @@ class SubmissionItem extends React.Component {
                           large
                           icon={IconNames.STAR}
                           style={{ marginRight: 10 }}
-                          disabled={submission.processed === "STARRED"}
+                          disabled={submission.processed === 'STARRED'}
                           onClick={() => {
                             updateSubmission({
                               variables: {
@@ -409,40 +414,48 @@ SubmissionItem.propTypes = {
   submission: PropTypes.any.isRequired,
 }
 
-export default class HistoryTab extends React.Component {
-  state = { teams: null, cases: null, category: null, status: ['ACCEPTED', 'REJECTED', 'STARRED'] }
+const useHistoryFilterState = createPersistedState('historyFilter')
 
-  handleSelect = e => {
-    this.setState({
+const HistoryTab = () => {
+  const [historyFilter, setHistoryFilter] = useHistoryFilterState({
+    teams: null,
+    cases: null,
+    category: null,
+    status: ['ACCEPTED', 'REJECTED', 'STARRED'],
+  })
+
+  const handleSelect = e => {
+    setHistoryFilter(prevState => ({
+      ...prevState,
       [e.currentTarget.name]: e.currentTarget.value === '' ? null : e.currentTarget.value,
-    })
+    }))
   }
 
-  handleStatusSelect = e => {
-    this.setState({
+  const handleStatusSelect = e => {
+    setHistoryFilter(prevState => ({
+      ...prevState,
       status:
         e.currentTarget.value === ''
           ? ['ACCEPTED', 'REJECTED', 'STARRED']
           : [e.currentTarget.value],
-    })
+    }))
   }
 
-  render() {
-    return (
-      <React.Fragment>
-        <Query query={SUBMISSION_FILTERS}>
-          {({ data, loading, error }) => {
-            if (loading) return null
-            if (error) return null
+  return (
+    <React.Fragment>
+      <Query query={SUBMISSION_FILTERS}>
+        {({ data, loading, error }) => {
+          if (loading) return null
+          if (error) return null
 
-            if (!Array.isArray(data.event) || !data.event.length) {
-              return <div> No Events Created Yet </div>
-            }
+          if (!Array.isArray(data.event) || !data.event.length) {
+            return <div> No Events Created Yet </div>
+          }
 
-            return (
-              <div style={{ display: 'inline-flex', width: '100%', marginBottom: '20px' }}>
-                <div style={{ width: '100%', marginRight: '20px' }}>
-                  {/* <MultiSelect
+          return (
+            <div style={{ display: 'inline-flex', width: '100%', marginBottom: '20px' }}>
+              <div style={{ width: '100%', marginRight: '20px' }}>
+                {/* <MultiSelect
                     itemPredicate={(query, team, _index, exactMatch) => {
                       const normalizedTeams = team.name.toLowerCase()
                       const normalizedQuery = query.toLowerCase()
@@ -475,111 +488,112 @@ export default class HistoryTab extends React.Component {
                     ]}
                     tagInputProps={{ large: true }}
                   /> */}
-                  <HTMLSelect
-                    name="teams"
-                    onChange={this.handleSelect}
-                    value={this.state.teams}
-                    fill
-                    large
-                  >
-                    <option value="">All Teams</option>
-                    {data.event[0].team_events.map(({ team }) => (
-                      <option key={team.uuid} value={team.uuid}>
-                        {team.name}
-                      </option>
-                    ))}
-                  </HTMLSelect>
-                </div>
-                <div style={{ width: '100%', marginRight: '20px' }}>
-                  <HTMLSelect
-                    name="cases"
-                    onChange={this.handleSelect}
-                    value={this.state.cases}
-                    label="Filter Cases"
-                    fill
-                    large
-                  >
-                    <option value="">All Cases</option>
-                    {data.event[0].eventCasesByeventId.map(({ case: _case }) => (
-                      <option key={_case.uuid} value={_case.uuid}>
-                        {_case.name}
-                      </option>
-                    ))}
-                  </HTMLSelect>
-                </div>
-                <div style={{ width: '100%', marginRight: '20px' }}>
-                  <Query query={SUBMISSION_DETAILS} fetchPolicy="cache-first">
-                    {({ error, loading, data }) => {
-                      if (loading) return null
-                      if (error) return <div>{`${error.message}`}</div>
-
-                      return (
-                        <HTMLSelect
-                          name="category"
-                          value={this.state.category}
-                          onChange={this.handleSelect}
-                          label="Filter Category"
-                          fill
-                          large
-                        >
-                          <option value="">Any Category</option>
-                          {data.submission_configuration.map(config => (
-                            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-                              config.category
-                            } (${config.points} pts.)`}</option>
-                          ))}
-                        </HTMLSelect>
-                      )
-                    }}
-                  </Query>
-                </div>
-                <div style={{ width: '100%' }}>
-                  <HTMLSelect
-                    name="status"
-                    onChange={this.handleStatusSelect}
-                    value={this.state.status}
-                    label="Filter Status"
-                    fill
-                    large
-                  >
-                    <option value="">Any Status</option>
-                    <option value="STARRED">Starred</option>
-                    <option value="ACCEPTED">Accepted</option>
-                    <option value="REJECTED">Rejected</option>
-                  </HTMLSelect>
-                </div>
+                <HTMLSelect
+                  name="teams"
+                  onChange={handleSelect}
+                  value={historyFilter.teams}
+                  fill
+                  large
+                >
+                  <option value="">All Teams</option>
+                  {data.event[0].team_events.map(({ team }) => (
+                    <option key={team.uuid} value={team.uuid}>
+                      {team.name}
+                    </option>
+                  ))}
+                </HTMLSelect>
               </div>
+              <div style={{ width: '100%', marginRight: '20px' }}>
+                <HTMLSelect
+                  name="cases"
+                  onChange={handleSelect}
+                  value={historyFilter.cases}
+                  label="Filter Cases"
+                  fill
+                  large
+                >
+                  <option value="">All Cases</option>
+                  {data.event[0].eventCasesByeventId.map(({ case: _case }) => (
+                    <option key={_case.uuid} value={_case.uuid}>
+                      {_case.name}
+                    </option>
+                  ))}
+                </HTMLSelect>
+              </div>
+              <div style={{ width: '100%', marginRight: '20px' }}>
+                <Query query={SUBMISSION_DETAILS} fetchPolicy="cache-first">
+                  {({ error, loading, data }) => {
+                    if (loading) return null
+                    if (error) return <div>{`${error.message}`}</div>
+
+                    return (
+                      <HTMLSelect
+                        name="category"
+                        value={historyFilter.category}
+                        onChange={handleSelect}
+                        label="Filter Category"
+                        fill
+                        large
+                      >
+                        <option value="">Any Category</option>
+                        {data.submission_configuration.map(config => (
+                          <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+                            config.category
+                          } (${config.points} pts.)`}</option>
+                        ))}
+                      </HTMLSelect>
+                    )
+                  }}
+                </Query>
+              </div>
+              <div style={{ width: '100%' }}>
+                <HTMLSelect
+                  name="status"
+                  onChange={handleStatusSelect}
+                  value={historyFilter.status}
+                  label="Filter Status"
+                  fill
+                  large
+                >
+                  <option value="">Any Status</option>
+                  <option value="STARRED">Starred</option>
+                  <option value="ACCEPTED">Accepted</option>
+                  <option value="REJECTED">Rejected</option>
+                </HTMLSelect>
+              </div>
+            </div>
+          )
+        }}
+      </Query>
+      <Subscription
+        subscription={SUBMISSION_HISTORY}
+        variables={{
+          team: historyFilter.teams,
+          case: historyFilter.cases,
+          category: historyFilter.category,
+          status: historyFilter.status,
+        }}
+      >
+        {({ data, loading, error }) => {
+          if (loading) return <div> Loading... </div>
+          if (error) return <div>Error: `${error.message}`</div>
+
+          if (!Array.isArray(data.event) || !data.event.length) {
+            return (
+              <H5 style={{ textAlign: 'center' }}>
+                There is currently no history, items will appear once submissions have been
+                processed
+              </H5>
             )
-          }}
-        </Query>
-        <Subscription
-          subscription={SUBMISSION_HISTORY}
-          variables={{
-            team: this.state.teams,
-            case: this.state.cases,
-            category: this.state.category,
-            status: this.state.status,
-          }}
-        >
-          {({ data, loading, error }) => {
-            if (loading) return <div> Loading... </div>
-            if (error) return <div>Error: `${error.message}`</div>
+          }
 
-            if (!Array.isArray(data.event) || !data.event.length) {
-              return (
-                <H5 style={{ textAlign: 'center' }}>
-                  There is currently no history, items will appear once submissions have been
-                  processed
-                </H5>
-              )
-            }
-
-            return data.event[0].submissions.map(submission => (
-              <SubmissionItem key={submission.uuid} submission={submission} />
-            ))
-          }}
-        </Subscription>
-      </React.Fragment>
-    )
-  }
+          return data.event[0].submissions.map(submission => (
+            <SubmissionItem key={submission.uuid} submission={submission} />
+          ))
+        }}
+      </Subscription>
+    </React.Fragment>
+  )
 }
+
+export default HistoryTab
