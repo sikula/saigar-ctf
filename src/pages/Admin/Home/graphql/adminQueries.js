@@ -18,7 +18,7 @@ const SUBMISSION_FILTERS = gql`
           name
         }
       }
-      team_events {
+      team_events(order_by: { team: { name: asc } }) {
         team {
           uuid
           name
