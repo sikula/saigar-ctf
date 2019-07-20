@@ -18,7 +18,7 @@ const SUBMISSION_FILTERS = gql`
           name
         }
       }
-      team_events {
+      team_events(order_by: { team: { name: asc } }) {
         team {
           uuid
           name
@@ -41,6 +41,8 @@ const SUBMISSION_HISTORY = gql`
         order_by: { processed_at: desc }
       ) {
         uuid
+        submitted_at
+        processed_at
         processed
         content
         explanation
@@ -62,8 +64,13 @@ const SUBMISSION_HISTORY = gql`
 const LIVE_FEED = gql`
   subscription liveFeed($teams: [uuid]) {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { processed: { _eq: "PENDING" } }, limit: 25) {
+      submissions(
+        where: { processed: { _eq: "PENDING" } }
+        order_by: { submitted_at: desc }
+        limit: 25
+      ) {
         uuid
+        submitted_at
         processed
         content
         explanation
@@ -86,8 +93,13 @@ const LIVE_FEED = gql`
 const LIVE_FEED_FILTERED = gql`
   subscription liveFeedFilter($teams: [uuid]) {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }, limit: 25) {
+      submissions(
+        where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
+        order_by: { submitted_at: desc }
+        limit: 25
+      ) {
         uuid
+        submitted_at
         processed
         content
         explanation
