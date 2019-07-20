@@ -4,7 +4,10 @@ import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
+
 import format from 'date-fns/format'
+import { distanceInWordsToNow } from 'date-fns'
+
 import { Motion, spring } from 'react-motion'
 import { Timeline, TimelineEvent } from 'react-event-timeline'
 
@@ -89,14 +92,23 @@ const SubmissionItem = ({ data, openSubmissionHistory, submissionType }) => (
             style={{
               textAlign: 'right',
               display: 'inline-flex',
-              justifyContent: 'flex-end',
+              justifyContent: 'space-between',
               marginTop: 8,
             }}
           >
+            {submissionType === 'ACCEPTED' && (
+              <div>{`Submitted ${distanceInWordsToNow(new Date(data.submitted_at))} Ago`}</div>
+            )}
+            {submissionType === 'PENDING' && (
+              <div>{`Processed ${distanceInWordsToNow(new Date(data.processed_at))} Ago`}</div>
+            )}
             {submissionType === 'REJECTED' && (
-              <a type="button" onClick={openSubmissionHistory}>
-                Details
-              </a>
+              <React.Fragment>
+                <div>{`Processed ${distanceInWordsToNow(new Date(data.processed_at))} Ago`}</div>
+                <a type="button" onClick={openSubmissionHistory}>
+                  Details
+                </a>
+              </React.Fragment>
             )}
           </div>
         </div>
@@ -118,6 +130,8 @@ const SUBMISSION_LIST = gql`
         order_by: { processed_at: desc }
       ) {
         uuid
+        submitted_at
+        processed_at
         content
         explanation
         submissionConfigurationByconfigId {
