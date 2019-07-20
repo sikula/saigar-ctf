@@ -9,5 +9,6 @@
 - General UI/UX Improvements
     - Cleaning up the team filter flow for admins.
     - Filter states are now persisted across page refreshes
+    
 ### Bug Fixes
 

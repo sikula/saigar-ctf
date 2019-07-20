@@ -8,6 +8,7 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom imports
 import { SlidingPanelConsumer } from '@shared/components/SlidingPane'
 import { PanelProvider, PanelRoot } from '@shared/components/Panel'
+import Can from '@shared/components/AuthContext/Can'
 import SubmissionList from './Feed'
 import SettingsPanel from './SettingsPanel'
 
@@ -41,13 +42,18 @@ const IncomingFeed = () => (
             }}
           >
             Incoming Feed
-            <SlidingPanelConsumer>
-              {({ openSlider }) => (
-                <a onClick={() => openSlider(SettingsPanel)}>
-                  <Icon intent="primary" icon={IconNames.SETTINGS} iconSize={20} />
-                </a>
+            <Can
+              allowedRole="ctf_admin"
+              yes={() => (
+                <SlidingPanelConsumer>
+                  {({ openSlider }) => (
+                    <a onClick={() => openSlider(SettingsPanel)}>
+                      <Icon intent="primary" icon={IconNames.SETTINGS} iconSize={20} />
+                    </a>
+                  )}
+                </SlidingPanelConsumer>
               )}
-            </SlidingPanelConsumer>
+            />
           </div>
         </div>
         <div className="case-data__content">
