@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { ApolloProvider } from 'react-apollo'
+import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks'
 import { Provider } from 'react-redux'
 import { hot } from 'react-hot-loader'
 
@@ -19,7 +20,9 @@ const store = configureStore
 const App = () => (
   <Auth>
     <ApolloProvider client={client}>
-      <Provider store={store}>{routes}</Provider>
+      <ApolloHooksProvider client={client}>
+        <Provider store={store}>{routes}</Provider>
+      </ApolloHooksProvider>
     </ApolloProvider>
   </Auth>
 )

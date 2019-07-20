@@ -6,8 +6,9 @@ import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom imports
+import { SlidingPanelConsumer } from '@shared/components/SlidingPane'
+import { PanelProvider, PanelRoot } from '@shared/components/Panel'
 import SubmissionList from './Feed'
-import { PanelProvider, PanelRoot, PanelConsumer } from '../../../../../shared/components/Panel'
 import SettingsPanel from './SettingsPanel'
 
 import './index.scss'
@@ -40,13 +41,13 @@ const IncomingFeed = () => (
             }}
           >
             Incoming Feed
-            <PanelConsumer>
-              {({ showPanel }) => (
-                <a onClick={() => showPanel(SettingsPanel)}>
+            <SlidingPanelConsumer>
+              {({ openSlider }) => (
+                <a onClick={() => openSlider(SettingsPanel)}>
                   <Icon intent="primary" icon={IconNames.SETTINGS} iconSize={20} />
                 </a>
               )}
-            </PanelConsumer>
+            </SlidingPanelConsumer>
           </div>
         </div>
         <div className="case-data__content">
