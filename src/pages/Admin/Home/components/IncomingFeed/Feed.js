@@ -197,12 +197,12 @@ const JudgeFeed = () => {
 const useTeamFilterState = createPersistedState('teams')
 
 const AdminFeed = () => {
-  const [selectedTeams, setSelectedTeams] = useTeamFilterState()
+  const [selectedTeams] = useTeamFilterState([])
 
-  return selectedTeams.length > 0 ? (
-    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
-  ) : (
+  return !selectedTeams ? (
     <SubscriptionData subscription={LIVE_FEED} teams={selectedTeams} />
+  ) : (
+    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
   )
 }
 
