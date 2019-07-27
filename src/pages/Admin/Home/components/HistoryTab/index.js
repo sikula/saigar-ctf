@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Query, Mutation, Subscription } from 'react-apollo'
 
@@ -24,8 +24,9 @@ import {
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
-// Custom Components
+import ReactPaginate from 'react-paginate'
 
+// Custom Components
 import { AuthConsumer } from '@shared/components/AuthContext/context'
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import {
@@ -36,6 +37,8 @@ import {
 } from '../../graphql/adminQueries'
 
 import ProcessingHistory from './ProcessingHistory'
+
+import './index.scss'
 
 /* TODO(peter): This code is duplicated, should be extracted to a shared component */
 const FeedToaster = Toaster.create({
@@ -196,14 +199,11 @@ const HistoryButton = ({ uuid }) => (
   </SlidingPanelConsumer>
 )
 
-class SubmissionItem extends React.Component {
-  state = {
-    // eslint-disable-next-line react/destructuring-assignment
-    category: this.props.submission.submissionConfigurationByconfigId.uuid,
-    rejectedReason: null,
-  }
+const SubmissionItem = props => {
+  const [category, setCategory] = useState(props.submission.submissionConfigurationByconfigId.uuid)
+  const [rejectedReason, setRejectedReason] = useState()
 
-  handleChange = e => {
+  const handleChange = e => {
     const currentTarget = e.currentTarget.value
     this.setState(prevState => ({
       category: currentTarget,
@@ -211,159 +211,60 @@ class SubmissionItem extends React.Component {
     }))
   }
 
-  handleReasonChange = e => {
-    this.setState({ rejectedReason: e.currentTarget.value })
+  const handleReasonChange = e => {
+    const cv = e.currentTarget.value
+    setRejectedReason(cv)
   }
 
-  clearReasonField = () => {
-    this.setState({ rejectedReason: null })
+  const clearReasonField = () => {
+    setRejectedReason()
   }
 
-  render() {
-    const { submission } = this.props
-    const { category, rejectedReason } = this.state
+  const { submission } = props
 
-    return (
-      <Card style={{ marginBottom: 20 }}>
-        <div style={{ width: '100%', display: 'inline-flex', alignItems: 'baseline' }}>
-          <div style={{ flex: 1 }}>
-            <H5>{submission.processed}</H5>
-          </div>
-          <div style={{ fontWeight: 450, marginRight: 10 }}>
-            <span>
-              {`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} /{' '}
-            </span>
-            <span>{`Processed: ${distanceInWordsToNow(
-              new Date(submission.processed_at),
-            )} Ago`}</span>
-          </div>
-          <div style={{ display: 'inline-flex' }}>
-            <CategoryList
-              currentCategory={category}
-              submissionID={submission.uuid}
-              handleChange={this.handleChange}
-            />
-            <UpdateButton category={category} submissionID={submission.uuid} />
-          </div>
+  return (
+    <Card style={{ marginBottom: 20 }}>
+      <div style={{ width: '100%', display: 'inline-flex', alignItems: 'baseline' }}>
+        <div style={{ flex: 1 }}>
+          <H5>{submission.processed}</H5>
         </div>
-        <code style={{ background: '#cdcdcd' }}>
-          <p>{submission.content}</p>
-          <p style={{ wordWrap: 'break-word' }}>{submission.explanation}</p>
-        </code>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <Tag large style={{ marginRight: 10 }}>
-              <strong>Team: </strong>
-              {submission.teamByteamId.name}
-            </Tag>
-            <Tag large style={{ marginRight: 10 }}>
-              <strong>Case: </strong>
-              {submission.case.name}
-            </Tag>
-            <Tag large>
-              <strong>Category: </strong>
-              {submission.submissionConfigurationByconfigId.category}
-            </Tag>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <HistoryButton uuid={submission.uuid} />
-            <ShareButton uuid={submission.uuid} />
-            <Mutation mutation={PROCESS_SUBMISSION}>
-              {updateSubmission => (
-                <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-                  {insertSubmissionHistory => (
-                    <AuthConsumer>
-                      {({ user }) => (
-                        <Button
-                          intent="warning"
-                          large
-                          icon={IconNames.STAR}
-                          style={{ marginRight: 10 }}
-                          disabled={submission.processed === 'STARRED'}
-                          onClick={() => {
-                            updateSubmission({
-                              variables: {
-                                submissionID: submission.uuid,
-                                value: 'STARRED',
-                                processedAt: new Date(),
-                                category,
-                              },
-                            })
-                            insertSubmissionHistory({
-                              variables: {
-                                submissionID: submission.uuid,
-                                decision: 'STARRED',
-                                processedBy: user.id,
-                              },
-                            })
-                          }}
-                        >
-                          Star
-                        </Button>
-                      )}
-                    </AuthConsumer>
-                  )}
-                </Mutation>
-              )}
-            </Mutation>
-            <Mutation mutation={PROCESS_SUBMISSION}>
-              {updateSubmission => (
-                <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-                  {insertSubmissionHistory => (
-                    <AuthConsumer>
-                      {({ user }) => (
-                        <Button
-                          intent="success"
-                          large
-                          icon={IconNames.TICK}
-                          style={{ marginRight: 10 }}
-                          disabled={submission.processed === 'ACCEPTED'}
-                          onClick={() => {
-                            updateSubmission({
-                              variables: {
-                                submissionID: submission.uuid,
-                                value: 'ACCEPTED',
-                                processedAt: new Date(),
-                                category,
-                              },
-                            })
-                            insertSubmissionHistory({
-                              variables: {
-                                submissionID: submission.uuid,
-                                decision: 'ACCEPTED',
-                                processedBy: user.id,
-                              },
-                            })
-                          }}
-                        >
-                          Approve
-                        </Button>
-                      )}
-                    </AuthConsumer>
-                  )}
-                </Mutation>
-              )}
-            </Mutation>
-          </div>
+        <div style={{ fontWeight: 450, marginRight: 10 }}>
+          <span>
+            {`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} /{' '}
+          </span>
+          <span>{`Processed: ${distanceInWordsToNow(new Date(submission.processed_at))} Ago`}</span>
         </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'end',
-            marginTop: 10,
-            marginRight: 10,
-          }}
-        >
-          <TextArea
-            fill
-            placeHolder={
-              submission.processed === 'REJECTED' ? '' : 'reason why the submission is rejected'
-            }
-            disabled={submission.processed === 'REJECTED'}
-            value={rejectedReason}
-            onChange={this.handleReasonChange}
+        <div style={{ display: 'inline-flex' }}>
+          <CategoryList
+            currentCategory={category}
+            submissionID={submission.uuid}
+            handleChange={handleChange}
           />
+          <UpdateButton category={category} submissionID={submission.uuid} />
+        </div>
+      </div>
+      <code style={{ background: '#cdcdcd' }}>
+        <p>{submission.content}</p>
+        <p style={{ wordWrap: 'break-word' }}>{submission.explanation}</p>
+      </code>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <Tag large style={{ marginRight: 10 }}>
+            <strong>Team: </strong>
+            {submission.teamByteamId.name}
+          </Tag>
+          <Tag large style={{ marginRight: 10 }}>
+            <strong>Case: </strong>
+            {submission.case.name}
+          </Tag>
+          <Tag large>
+            <strong>Category: </strong>
+            {submission.submissionConfigurationByconfigId.category}
+          </Tag>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+          <HistoryButton uuid={submission.uuid} />
+          <ShareButton uuid={submission.uuid} />
           <Mutation mutation={PROCESS_SUBMISSION}>
             {updateSubmission => (
               <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
@@ -371,16 +272,16 @@ class SubmissionItem extends React.Component {
                   <AuthConsumer>
                     {({ user }) => (
                       <Button
-                        intent="danger"
+                        intent="warning"
                         large
-                        icon={IconNames.CROSS}
-                        style={{ marginTop: 10 }}
-                        disabled={!rejectedReason}
+                        icon={IconNames.STAR}
+                        style={{ marginRight: 10 }}
+                        disabled={submission.processed === 'STARRED'}
                         onClick={() => {
                           updateSubmission({
                             variables: {
                               submissionID: submission.uuid,
-                              value: 'REJECTED',
+                              value: 'STARRED',
                               processedAt: new Date(),
                               category,
                             },
@@ -388,14 +289,51 @@ class SubmissionItem extends React.Component {
                           insertSubmissionHistory({
                             variables: {
                               submissionID: submission.uuid,
-                              decision: 'REJECTED',
+                              decision: 'STARRED',
                               processedBy: user.id,
-                              rejectedReason,
                             },
-                          }).then(() => this.clearReasonField())
+                          })
                         }}
                       >
-                        Reject
+                        Star
+                      </Button>
+                    )}
+                  </AuthConsumer>
+                )}
+              </Mutation>
+            )}
+          </Mutation>
+          <Mutation mutation={PROCESS_SUBMISSION}>
+            {updateSubmission => (
+              <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
+                {insertSubmissionHistory => (
+                  <AuthConsumer>
+                    {({ user }) => (
+                      <Button
+                        intent="success"
+                        large
+                        icon={IconNames.TICK}
+                        style={{ marginRight: 10 }}
+                        disabled={submission.processed === 'ACCEPTED'}
+                        onClick={() => {
+                          updateSubmission({
+                            variables: {
+                              submissionID: submission.uuid,
+                              value: 'ACCEPTED',
+                              processedAt: new Date(),
+                              category,
+                            },
+                          })
+                          insertSubmissionHistory({
+                            variables: {
+                              submissionID: submission.uuid,
+                              decision: 'ACCEPTED',
+                              processedBy: user.id,
+                            },
+                          })
+                        }}
+                      >
+                        Approve
                       </Button>
                     )}
                   </AuthConsumer>
@@ -404,9 +342,67 @@ class SubmissionItem extends React.Component {
             )}
           </Mutation>
         </div>
-      </Card>
-    )
-  }
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'end',
+          marginTop: 10,
+          marginRight: 10,
+        }}
+      >
+        <TextArea
+          fill
+          placeHolder={
+            submission.processed === 'REJECTED' ? '' : 'reason why the submission is rejected'
+          }
+          disabled={submission.processed === 'REJECTED'}
+          value={rejectedReason}
+          onChange={handleReasonChange}
+        />
+        <Mutation mutation={PROCESS_SUBMISSION}>
+          {updateSubmission => (
+            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
+              {insertSubmissionHistory => (
+                <AuthConsumer>
+                  {({ user }) => (
+                    <Button
+                      intent="danger"
+                      large
+                      icon={IconNames.CROSS}
+                      style={{ marginTop: 10 }}
+                      disabled={!rejectedReason}
+                      onClick={() => {
+                        updateSubmission({
+                          variables: {
+                            submissionID: submission.uuid,
+                            value: 'REJECTED',
+                            processedAt: new Date(),
+                            category,
+                          },
+                        })
+                        insertSubmissionHistory({
+                          variables: {
+                            submissionID: submission.uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason,
+                          },
+                        }).then(() => clearReasonField())
+                      }}
+                    >
+                      Reject
+                    </Button>
+                  )}
+                </AuthConsumer>
+              )}
+            </Mutation>
+          )}
+        </Mutation>
+      </div>
+    </Card>
+  )
 }
 
 SubmissionItem.propTypes = {
@@ -423,7 +419,14 @@ const HistoryTab = () => {
     category: null,
     status: ['ACCEPTED', 'REJECTED', 'STARRED'],
   })
+  // loadCount tracks how many times the 'Load More' button
+  // has been clicked to calculate the offset of data to fetch
+  const [pageCount, setPageCount] = useState(0)
+  const [pageOffset, setPageOffset] = useState(0)
 
+  // =================================================
+  // Handlers
+  // =================================================
   const handleSelect = e => {
     setHistoryFilter(prevState => ({
       ...prevState,
@@ -439,6 +442,19 @@ const HistoryTab = () => {
           ? ['ACCEPTED', 'REJECTED', 'STARRED']
           : [e.currentTarget.value],
     }))
+  }
+
+  const handlePageChange = data => {
+    const { selected } = data
+    const offset = Math.ceil(selected * 100)
+    setPageOffset(offset)
+  }
+
+  // =================================================
+  // Helpers
+  // =================================================
+  const calculatePageCount = count => {
+    return Math.ceil(count / 100) // 100 submissions per page
   }
 
   return (
@@ -572,6 +588,7 @@ const HistoryTab = () => {
           case: historyFilter.cases,
           category: historyFilter.category,
           status: historyFilter.status,
+          offset: pageOffset,
         }}
       >
         {({ data, loading, error }) => {
@@ -587,11 +604,31 @@ const HistoryTab = () => {
             )
           }
 
+          setPageCount(calculatePageCount(data.event[0].submissions_aggregate.aggregate.count))
+
           return data.event[0].submissions.map(submission => (
             <SubmissionItem key={submission.uuid} submission={submission} />
           ))
         }}
       </Subscription>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <ReactPaginate
+          previousLabel="previous"
+          nextLabel="next"
+          breakLabel="..."
+          pageCount={pageCount}
+          breakClassName="bp3-button"
+          pageClassName="bp3-button"
+          previousClassName="bp3-button"
+          nextClassName="bp3-button"
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          containerClassName="pagination bp3-button-group"
+          subContainerClassName="bp3-button-group"
+          activeClassName="active bp3-intent-primary"
+          onPageChange={handlePageChange}
+        />
+      </div>
     </React.Fragment>
   )
 }
