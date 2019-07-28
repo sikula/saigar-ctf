@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { Query, Mutation } from 'react-apollo'
@@ -219,8 +219,43 @@ const TeamsList = ({ judgeID, closePanel }) => {
   )
 }
 
+const EVENT_ID = gql`
+  query eventId {
+    event(order_by: { start_time: desc }, limit: 1) {
+      uuid
+    }
+  }
+`
+
+const TOGGLE_FFA = gql`
+  mutation toggleFfa($ffa: Boolean!, $event: uuid!) {
+    update_event(where: { uuid: { _eq: $event } }, _set: { free_for_all: $ffa }) {
+      affected_rows
+    }
+  }
+`
+
 const JudgesList = ({ openPanel }) => {
+  const [ffaChecked, setFfaChecked] = useState(false)
+  const { data, loading } = useQuery(EVENT_ID)
+  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
+
+  useEffect(() => {
+    if (!loading) {
+      toggleFfa({
+        variables: {
+          ffa: ffaChecked,
+          event: data.event[0].uuid,
+        },
+      })
+    }
+  }, [ffaChecked])
+
   // Handlers
+  const handleFfaClick = () => {
+    setFfaChecked(prevChecked => !prevChecked)
+  }
+
   const openTeamsPanel = judgeID => {
     openPanel({
       component: TeamsList,
@@ -233,6 +268,9 @@ const JudgesList = ({ openPanel }) => {
     <Query query={JUDGES_QUERY}>
       {({ data, loading }) =>
         !loading && [
+          <div style={{ paddingTop: 10, paddingRight: 20, display: 'flex', justifyContent: 'end' }}>
+            <Switch checked={ffaChecked} label="Free For All" onChange={handleFfaClick} />
+          </div>,
           <div
             style={{
               display: 'inline-flex',

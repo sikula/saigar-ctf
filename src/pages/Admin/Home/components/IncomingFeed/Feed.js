@@ -181,17 +181,31 @@ const JUDGES_FEED = gql`
   }
 `
 
+const EVENT_CONFIG = gql`
+  subscription eventConfig {
+    event(order_by: { start_time: desc }, limit: 1) {
+      free_for_all
+    }
+  }
+`
+
 const JudgeFeed = () => {
   const { user } = useContext(AuthContext)
   const { loading, data } = useSubscription(JUDGES_FEED, {
     variables: { auth0id: user.id },
   })
+  const { eventConfigLoading, eventConfigData } = useSubscription(EVENT_CONFIG)
 
-  if (loading) return null
+  if (loading || eventConfigLoading) return null
 
   const teams = data.judge_team.map(({ team }) => team.uuid)
+  const { free_for_all: freeForAll } = eventConfigData.event[0]
 
-  return <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={teams} />
+  return freeForAll ? (
+    <SubscriptionData subscription={LIVE_FEED} teams={[]} />
+  ) : (
+    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={teams} />
+  )
 }
 
 const useTeamFilterState = createPersistedState('teams')
