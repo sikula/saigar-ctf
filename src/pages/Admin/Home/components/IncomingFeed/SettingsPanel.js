@@ -200,7 +200,7 @@ const TeamsList = ({ judgeID, closePanel }) => {
                 }}
                 key={team.uuid}
               >
-                <span>
+                <span style={{ flexBasis: '33.33%' }}>
                   <Switch
                     id={team.uuid}
                     disabled={selectedTeams.indexOf(team.uuid) !== -1}
@@ -208,8 +208,8 @@ const TeamsList = ({ judgeID, closePanel }) => {
                     onChange={handleTeamToggle}
                   />
                 </span>
-                <span>{team.submissionByTeamAggregate.aggregate.count}</span>
-                <span>{team.name}</span>
+                <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>{team.submissionByTeamAggregate.aggregate.count}</span>
+                <span style={{ flexBasis: '33.33%', textAlign: 'right' }}>{team.name}</span>
               </div>
             ))}
           </React.Fragment>
@@ -297,13 +297,13 @@ const JudgesList = ({ openPanel }) => {
               }}
               key={usr.uuid}
             >
-              <span>{usr.nickname}</span>
+              <span style={{ flexBasis: '33.33%' }}>{usr.nickname}</span>
               <Query query={TEAM_COUNT_QUERY} variables={{ judgeID: usr.uuid }}>
                 {({ data, loading }) =>
-                  !loading && <span>{data.judge_team_aggregate.aggregate.count}</span>
+                  !loading && <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>{data.judge_team_aggregate.aggregate.count}</span>
                 }
               </Query>
-              <span>
+              <span styled={{ flexBasis: '33.33%', textAlign: 'right' }}>
                 <a href="#" onClick={() => openTeamsPanel(usr.uuid)}>
                   Assign
                 </a>
