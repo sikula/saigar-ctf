@@ -33,7 +33,7 @@ const SUBMISSION_HISTORY = gql`
     $team: uuid
     $case: uuid
     $category: uuid
-    $status: [String]
+    $status: [String!]
     $offset: Int
   ) {
     event(order_by: { start_time: desc }, limit: 1) {
