@@ -5,6 +5,7 @@ $case-grid-gutter: $space-l;
 #case-card {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+    flex-grow: 1;
 }
 
 .case-view {
@@ -27,19 +28,54 @@ $case-grid-gutter: $space-l;
 
 .case-card {
     &__grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        margin-right: -$space-l;
-        padding: 1em;
+        // display: flex;
+        // flex-wrap: wrap;
+        // justify-content: flex-start;
+        // margin-right: -$space-l;
+        // padding: 1em;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    &__row {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: flex-start;
     }
 
     &__wrapper {
-        width: calc(25% - #{$case-grid-gutter});
-        margin-right: $case-grid-gutter;
-        margin-bottom: $case-grid-gutter;
-        border: 1px solid $color-light1;; 
-        overflow: hidden;  
+        // width: calc(25% - #{$case-grid-gutter});
+        // margin-right: $case-grid-gutter;
+        // margin-bottom: $case-grid-gutter;
+        // border: 1px solid $color-light1;; 
+        height: 200px;
+        flex-basis: 25%;
+        -ms-flex: auto;
+        width: 259px;
+        position: relative;
+        padding: 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+    @media(max-width: 1333px) {
+      &__wrapper {
+        flex-basis: 33.33%;
+      }
+    }@media(max-width: 1073px) {
+       &__wrapper {
+        flex-basis: 33.33%;
+      }
+    }@media(max-width: 815px) {
+      &__wrapper {
+        flex-basis: 50%;
+      }
+    }@media(max-width: 555px) {
+      &__wrapper {
+        flex-basis: 100%;
+      }
     }
 
     &__actions {
