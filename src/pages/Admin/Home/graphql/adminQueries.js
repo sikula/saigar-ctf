@@ -29,8 +29,19 @@ const SUBMISSION_FILTERS = gql`
 `
 
 const SUBMISSION_HISTORY = gql`
-  subscription submissionHistory($team: uuid, $case: uuid, $category: uuid, $status: [String]) {
+  subscription submissionHistory(
+    $team: uuid
+    $case: uuid
+    $category: uuid
+    $status: [String]
+    $offset: Int
+  ) {
     event(order_by: { start_time: desc }, limit: 1) {
+      submissions_aggregate(where: { processed: { _neq: "PENDING" } }) {
+        aggregate {
+          count
+        }
+      }
       submissions(
         where: {
           processed: { _in: $status }
@@ -39,6 +50,8 @@ const SUBMISSION_HISTORY = gql`
           config_id: { _eq: $category }
         }
         order_by: { processed_at: desc }
+        limit: 100
+        offset: $offset
       ) {
         uuid
         submitted_at
