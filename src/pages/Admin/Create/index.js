@@ -151,7 +151,7 @@ class DownloadCsvButton extends React.Component {
 }
 
 const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
-  <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
+  <div className="case-card__wrapper">
     <Card id="case-card">
       <div style={{ textAlign: 'center' }}>
         <H3 className="case-card__header">{name}</H3>
