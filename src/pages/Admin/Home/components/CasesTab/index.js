@@ -6,9 +6,7 @@ import gql from 'graphql-tag'
 import { differenceInDays } from 'date-fns'
 
 // Styles
-import {
-    Card, Button, Icon, H5, Tag 
-} from '@blueprintjs/core'
+import { Card, Button, Icon, H5, Tag } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
@@ -102,6 +100,5 @@ const CasesTab = () => (
     }}
   </Query>
 )
-
 
 export default CasesTab
