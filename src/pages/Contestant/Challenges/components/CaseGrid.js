@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import FlipMove from 'react-flip-move'
 
 // Custom Components
 import CaseCard from './CaseCard'
@@ -9,11 +8,13 @@ import CaseCard from './CaseCard'
 import '../index.scss'
 
 const CaseGrid = ({ cases }) => (
-  <FlipMove className="case-card__grid" duration={500}>
-    {cases.map(({ case: _case }) => (
-      <CaseCard key={_case.uuid} caseData={_case} />
-    ))}
-  </FlipMove>
+  <div className="case-card__grid">
+    <div className="case-card__row">
+      {cases.map(({ case: _case }) => (
+        <CaseCard key={_case.uuid} caseData={_case} />
+      ))}
+    </div>
+  </div>
 )
 
 CaseGrid.propTypes = {

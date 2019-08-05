@@ -6,19 +6,12 @@ import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
 
 // Styles
-import {
-  Tabs,
-  Tab,
-  Card,
-  Elevation
-} from '@blueprintjs/core'
+import { Tabs, Tab, Card, Elevation } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
 import ScoreGraph from '../../../features/ScoreGraph'
-import {
-  HOME_QUERY,
-} from './graphql/adminQueries'
+import { HOME_QUERY } from './graphql/adminQueries'
 import Can from '../../../shared/components/AuthContext/Can'
 import { AuthConsumer } from '../../../shared/components/AuthContext/context'
 
