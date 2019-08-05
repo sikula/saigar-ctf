@@ -75,7 +75,7 @@ const SUBMISSION_HISTORY = gql`
 `
 
 const LIVE_FEED = gql`
-  subscription liveFeed($teams: [uuid]) {
+  subscription liveFeed($teams: [uuid!]) {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { processed: { _eq: "PENDING" } }
@@ -104,7 +104,7 @@ const LIVE_FEED = gql`
 `
 
 const LIVE_FEED_FILTERED = gql`
-  subscription liveFeedFilter($teams: [uuid]) {
+  subscription liveFeedFilter($teams: [uuid!]) {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
