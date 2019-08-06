@@ -194,7 +194,7 @@ const JudgeFeed = () => {
   const { loading, data } = useSubscription(JUDGES_FEED, {
     variables: { auth0id: user.id },
   })
-  const { eventConfigLoading, eventConfigData } = useSubscription(EVENT_CONFIG)
+  const { loading: eventConfigLoading, data: eventConfigData } = useSubscription(EVENT_CONFIG)
 
   if (loading || eventConfigLoading) return null
 
