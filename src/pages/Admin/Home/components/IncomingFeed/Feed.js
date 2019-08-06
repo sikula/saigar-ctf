@@ -202,7 +202,7 @@ const JudgeFeed = () => {
   const { free_for_all: freeForAll } = eventConfigData.event[0]
 
   return freeForAll ? (
-    <SubscriptionData subscription={LIVE_FEED} teams={[]} />
+    <SubscriptionData subscription={LIVE_FEED} />
   ) : (
     <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={teams} />
   )
@@ -213,8 +213,8 @@ const useTeamFilterState = createPersistedState('teams')
 const AdminFeed = () => {
   const [selectedTeams] = useTeamFilterState([])
 
-  return !selectedTeams ? (
-    <SubscriptionData subscription={LIVE_FEED} teams={selectedTeams} />
+  return !selectedTeams || selectedTeams.length < 1 ? (
+    <SubscriptionData subscription={LIVE_FEED} />
   ) : (
     <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
   )

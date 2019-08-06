@@ -75,7 +75,7 @@ const SUBMISSION_HISTORY = gql`
 `
 
 const LIVE_FEED = gql`
-  subscription liveFeed($teams: [uuid!]) {
+  subscription liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { processed: { _eq: "PENDING" } }
