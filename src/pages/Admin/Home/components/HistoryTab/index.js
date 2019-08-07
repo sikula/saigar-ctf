@@ -205,10 +205,7 @@ const SubmissionItem = props => {
 
   const handleChange = e => {
     const currentTarget = e.currentTarget.value
-    this.setState(prevState => ({
-      category: currentTarget,
-      swappedCategory: prevState.category !== currentTarget,
-    }))
+    setCategory(currentTarget)
   }
 
   const handleReasonChange = e => {
