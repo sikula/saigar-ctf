@@ -80,7 +80,6 @@ const LIVE_FEED = gql`
       submissions(
         where: { processed: { _eq: "PENDING" } }
         order_by: { submitted_at: desc }
-        limit: 25
       ) {
         uuid
         submitted_at
@@ -109,7 +108,6 @@ const LIVE_FEED_FILTERED = gql`
       submissions(
         where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
         order_by: { submitted_at: desc }
-        limit: 25
       ) {
         uuid
         submitted_at
