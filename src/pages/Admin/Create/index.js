@@ -47,6 +47,7 @@ const GET_EVENT_EXPORT_DATA = gql`
   query getData($eventID: uuid!) {
     event_export(where: { uuid: { _eq: $eventID } }) {
       event_name
+      decision
       case_name
       missing_from
       category
@@ -85,6 +86,10 @@ class DownloadCsvButton extends React.Component {
         {
           label: 'Missing From',
           value: 'missing_from',
+        },
+        {
+          label: 'Decision',
+          value: 'decision',
         },
         {
           label: 'Category',
