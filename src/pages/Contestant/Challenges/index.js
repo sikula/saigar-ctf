@@ -79,38 +79,6 @@ const ChallengesPage = () => (
                       </div>
                     </div>
                   </div>
-                  {/* <div className="row">
-                    <div className="col-xs">
-                      <div style={{ margin: 15, textAlign: 'center' }}>
-                        <Card elevation={2}>
-                          <div style={{ fontWeight: 350, fontSize: '2.2em', color: '#137cbd' }}>
-                            <p>Pending</p>
-                            <p>{team.pendingSubmissions.aggregate.count}</p>
-                          </div>
-                        </Card>
-                      </div>
-                    </div>
-                    <div className="col-xs">
-                      <div style={{ margin: 15, textAlign: 'center' }}>
-                        <Card elevation={2}>
-                          <div style={{ fontWeight: 350, fontSize: '2.2em', color: '#0f9960' }}>
-                            <p>Accepted</p>
-                            <p>{team.acceptedSubmissions.aggregate.count}</p>
-                          </div>
-                        </Card>
-                      </div>
-                    </div>
-                    <div className="col-xs">
-                      <div style={{ margin: 15, textAlign: 'center' }}>
-                        <Card elevation={2}>
-                          <div style={{ fontWeight: 350, fontSize: '2.2em', color: '#db3737' }}>
-                            <p>Rejected</p>
-                            <p>{team.rejectedSubmissions.aggregate.count}</p>
-                          </div>
-                        </Card>
-                      </div>
-                    </div>
-                  </div> */}
                   <div className="row">
                     <div className="col-xs">
                       {duser.acceptedTos === false && <TosDialog />}

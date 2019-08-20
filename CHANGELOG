@@ -1,3 +1,12 @@
+## 2019 - 08 - 20
+### Major
+- Judges can now specify a reason for why they approved a submission
+    - In many cases, judges would have liked to give feedback to contestants on why they accepted a submission (e.g. motivation to continue performing quality OSINT)
+
+### Minor
+- Contestants can now see their Starred submissions
+    - Starred submissions were counted as accepted, but they did not show up for the contestants, which caused some confusion.  Now starred submissions show up in the accepted feed.
+
 ## 2019 - 07 - 20
 ### Major
 - Only admins can now assign judges to teams

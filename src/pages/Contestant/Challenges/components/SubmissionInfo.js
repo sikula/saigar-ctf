@@ -37,6 +37,7 @@ const SUBMISSION_HISTORY = gql`
           username
         }
         rejected_reason
+        accepted_reason
       }
     }
   }
@@ -96,13 +97,18 @@ const SubmissionItem = ({ data, openSubmissionHistory, submissionType }) => (
               marginTop: 8,
             }}
           >
-            {submissionType === 'ACCEPTED' && (
-              <div>{`Submitted ${distanceInWordsToNow(new Date(data.submitted_at))} Ago`}</div>
+            {(submissionType.includes('ACCEPTED') || submissionType.includes('STARRED')) && (
+              <React.Fragment>
+                <div>{`Submitted ${distanceInWordsToNow(new Date(data.submitted_at))} Ago`}</div>
+                <a type="button" onClick={openSubmissionHistory}>
+                  Details
+                </a>
+              </React.Fragment>
             )}
-            {submissionType === 'PENDING' && (
+            {submissionType.includes('PENDING') && (
               <div>{`Processed ${distanceInWordsToNow(new Date(data.processed_at))} Ago`}</div>
             )}
-            {submissionType === 'REJECTED' && (
+            {submissionType.includes('REJECTED') && (
               <React.Fragment>
                 <div>{`Processed ${distanceInWordsToNow(new Date(data.processed_at))} Ago`}</div>
                 <a type="button" onClick={openSubmissionHistory}>
@@ -123,10 +129,10 @@ SubmissionItem.propTypes = {
 }
 
 const SUBMISSION_LIST = gql`
-  query submissionList($auth0id: String!, $caseID: uuid!, $submissionType: String!) {
+  query submissionList($auth0id: String!, $caseID: uuid!, $submissionType: [String!]!) {
     team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
       submissionsByteamId(
-        where: { processed: { _eq: $submissionType }, case_id: { _eq: $caseID } }
+        where: { processed: { _in: $submissionType }, case_id: { _eq: $caseID } }
         order_by: { processed_at: desc }
       ) {
         uuid
@@ -233,7 +239,7 @@ const SubmisionHistory = ({ submissionID }) => (
                       iconColor="#FFF"
                       bubbleStyle={{ background: color }}
                     >
-                      {submission.rejected_reason}
+                      {submission.decision === 'ACCEPTED' ? submission.accepted_reason : submission.rejected_reason}
                     </TimelineEvent>
                   )
                 })}

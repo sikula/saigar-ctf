@@ -153,6 +153,7 @@ const INSERT_SUBMISSION_HISTORY = gql`
     $decision: String!
     $processedBy: String!
     $rejectedReason: String
+    $acceptedReason: String
   ) {
     insertSubmissionHistory: insert_submission_history(
       objects: {
@@ -160,6 +161,7 @@ const INSERT_SUBMISSION_HISTORY = gql`
         decision: $decision
         processed_by: $processedBy
         rejected_reason: $rejectedReason
+        accepted_reason: $acceptedReason
       }
     ) {
       affected_rows
