@@ -11,6 +11,7 @@ import {
   Tabs,
   Tab,
   H3,
+  H5,
   Icon,
   Button,
   Toaster,
@@ -114,7 +115,7 @@ const AcceptSubmissionControls = ({ uuid, category, hidePanel }) => {
     <React.Fragment>
       <TextArea
         fill
-        placeHolder="OPTIONAL: Specify a reason why the submission was accepted"
+        placeHolder="(Optional) reason why the submission was accepted"
         value={acceptedReason}
         onChange={handleChange}
       />
@@ -176,7 +177,7 @@ const RejectSubmissionControls = ({ uuid, category, hidePanel }) => {
     <React.Fragment>
       <TextArea
         fill
-        placeHolder="reason for rejecting the submission"
+        placeHolder="Reason for rejecting the submission"
         value={rejectedReason}
         onChange={handleChange}
       />
@@ -222,6 +223,7 @@ const SubmissionDetailsPanel = ({
   teamName,
   explanation,
   content,
+  supportingEvidence,
   hidePanel,
   category,
   handleChange,
@@ -279,14 +281,22 @@ const SubmissionDetailsPanel = ({
         </ButtonGroup>
       </div>
       <div>
-        <div style={{ paddingTop: 10, textAlign: 'center' }}>
-          <H3 style={{ background: '#E1E8ED', padding: 10 }}>{teamName}</H3>
-        </div>
-        <div style={{ paddingTop: 10 }}>
-          <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
-        </div>
-        <div style={{ paddingTop: 10 }}>
-          <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
+        <div style={{ background: '#E1E8ED', padding: 10, marginTop: 10, marginBottom: 10 }}>
+          <div style={{ textAlign: 'center' }}>
+            <H3 style={{ borderBottom: '1px solid #c4cfd7', padding: 10 }}>{teamName}</H3>
+          </div>
+          <div style={{ paddingTop: 10 }}>
+            <H5>Source URL</H5>
+            <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
+          </div>
+          <div style={{ paddingTop: 10 }}>
+            <H5>Relvance</H5>
+            <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
+          </div>
+          <div style={{ paddingTop: 10 }}>
+            <H5>Supporting Evidence</H5>
+            <p style={{ wordWrap: 'break-word' }}>{supportingEvidence}</p>
+          </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
           <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
@@ -303,6 +313,7 @@ const PanelContent = ({
   teamName,
   explanation,
   content,
+  supportingEvidence,
   hidePanel,
   submissionConfiguration,
 }) => {
@@ -324,6 +335,7 @@ const PanelContent = ({
               teamName={teamName}
               explanation={explanation}
               content={content}
+              supportingEvidence={supportingEvidence}
               hidePanel={hidePanel}
               category={category}
               handleChange={handleChange}
@@ -358,6 +370,7 @@ const FeedPanel = ({
   teamByteamId,
   explanation,
   content,
+  supporting_evidence,
   submissionConfigurationByconfigId,
   case: { uuid: caseID },
 }) => (
@@ -384,6 +397,7 @@ const FeedPanel = ({
           teamName={teamByteamId.name}
           explanation={explanation}
           content={content}
+          supportingEvidence={supporting_evidence}
           submissionConfiguration={submissionConfigurationByconfigId}
           hidePanel={hidePanel}
           caseID={caseID}

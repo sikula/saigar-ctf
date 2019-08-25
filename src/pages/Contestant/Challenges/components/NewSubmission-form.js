@@ -1,10 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
+import { useQuery } from '@apollo/react-hooks'
+
 import { isWithinRange } from 'date-fns'
 import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
 
+import { AuthContext } from '@shared/components/AuthContext/context'
 import { SUBMISION_INFO } from '../graphql/queries'
 import { AuthConsumer } from '../../../../shared/components/AuthContext/context'
 
@@ -206,71 +209,86 @@ const SUBMISSION_INFO = {
   },
 }
 
-const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched }) => (
-  <AuthConsumer>
-    {({ user }) => (
-      <Query query={SUBMISION_INFO} variables={{ auth0id: user.id }} fetchPolicy="cache-only">
-        {({ error, loading, data }) => {
-          if (loading) return null
-          if (error) return null
+const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched }) => {
+  // State Layer
+  const { user } = useContext(AuthContext)
 
-          const canCreateSubmission = isWithinRange(
-            new Date(),
-            new Date(data.event[0].start_time),
-            new Date(data.event[0].end_time),
-          )
+  //  GraphQL Layer
+  const { data, loading, error } = useQuery(SUBMISION_INFO, {
+    variables: {
+      auth0id: user.id,
+    },
+  })
 
-          return canCreateSubmission ? (
-            <form id="newSubmissionForm" onSubmit={handleSubmit}>
-              <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
-                <HTMLSelect
-                  name="category"
-                  value={values.category}
-                  onChange={handleChange}
-                  fill
-                  large
-                >
-                  {data.submission_configuration.map(config => (
-                    <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-                      config.category
-                    } (${config.points} pts.)`}</option>
-                  ))}
-                </HTMLSelect>
-              </FormGroup>
-              <FormGroup label="URL" labelInfo="(required)" labelFor="text-input">
-                <TextArea name="proof" fill value={values.proof} onChange={handleChange} />
-                {errors.proof && touched.proof ? (
-                  <div style={{ color: 'red' }}>{errors.proof}</div>
-                ) : null}
-              </FormGroup>
-              <FormGroup label="Explanation" labelInfo="(required)" labelFor="text-input">
-                <TextArea
-                  name="explanation"
-                  fill
-                  value={values.explanation}
-                  onChange={handleChange}
-                />
-                {errors.explanation && touched.explanation ? (
-                  <div style={{ color: 'red' }}>{errors.explanation}</div>
-                ) : null}
-              </FormGroup>
-              <div>
-                {
-                  SUBMISSION_INFO[
-                    data.submission_configuration.filter(item => item.uuid === values.category)[0]
-                      .category
-                  ].text
-                }
-              </div>
-            </form>
-          ) : (
-            <div>Competition is over</div>
-          )
-        }}
-      </Query>
-    )}
-  </AuthConsumer>
-)
+  // ============================================================
+  //  RENDER
+  // ============================================================
+  if (loading) return null
+  if (error) return null
+
+  const canCreateSubmission = isWithinRange(
+    new Date(),
+    new Date(data.event[0].start_time),
+    new Date(data.event[0].end_time),
+  )
+
+  return canCreateSubmission ? (
+    <form id="newSubmissionForm" onSubmit={handleSubmit}>
+      <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
+        <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
+          {data.submission_configuration.map(config => (
+            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
+              config.category
+            } (${config.points} pts.)`}</option>
+          ))}
+        </HTMLSelect>
+      </FormGroup>
+      <FormGroup label="URL" labelInfo="(required)" labelFor="text-input">
+        <TextArea
+          name="proof"
+          placeholder="The URL where this intelligence can be found."
+          fill
+          value={values.proof}
+          onChange={handleChange}
+        />
+        {errors.proof && touched.proof ? <div style={{ color: 'red' }}>{errors.proof}</div> : null}
+      </FormGroup>
+      <FormGroup label="Relavance" labelInfo="(required)" labelFor="text-input">
+        <TextArea
+          name="explanation"
+          placeholder="Reasons why this intelligence is relevant to the case."
+          fill
+          value={values.explanation}
+          onChange={handleChange}
+        />
+        {errors.explanation && touched.explanation ? (
+          <div style={{ color: 'red' }}>{errors.explanation}</div>
+        ) : null}
+      </FormGroup>
+      <FormGroup label="Supporting Evidence" labelInfo="(required)" labelFor="text-input">
+        <TextArea
+          name="supporting_evidence"
+          placeholder="How did you come to the conclusion that this intelligence is valuable. You are permitted to add additional supporting URLs here."
+          fill
+          value={values.supporting_evidence}
+          onChange={handleChange}
+        />
+        {errors.supporting_evidence && touched.supporting_evidence ? (
+          <div style={{ color: 'red' }}>{errors.supporting_evidence}</div>
+        ) : null}
+      </FormGroup>
+      <div>
+        {
+          SUBMISSION_INFO[
+            data.submission_configuration.filter(item => item.uuid === values.category)[0].category
+          ].text
+        }
+      </div>
+    </form>
+  ) : (
+    <div>Competition is over</div>
+  )
+}
 
 NewSubmissionForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,

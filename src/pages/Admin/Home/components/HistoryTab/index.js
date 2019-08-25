@@ -248,7 +248,9 @@ const SubmissionItem = props => {
         </div>
       </div>
       <code style={{ background: '#cdcdcd' }}>
+        <H5>Source URL</H5>
         <p>{submission.content}</p>
+        <H5>Relevance</H5>
         <p style={{ wordWrap: 'break-word' }}>{submission.explanation}</p>
       </code>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -344,7 +346,7 @@ const SubmissionItem = props => {
         <TextArea
           fill
           placeHolder={
-            submission.processed === 'REJECTED' ? '' : 'reason why the submission is rejected'
+            submission.processed === 'REJECTED' ? '' : 'Reason why the submission is rejected'
           }
           disabled={submission.processed === 'REJECTED'}
           value={rejectedReason}
