@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
-
 import format from 'date-fns/format'
 import { distanceInWordsToNow } from 'date-fns'
 
@@ -154,102 +153,100 @@ const SUBMISSION_LIST = gql`
     lead to bugs eventually.  Should refactor out when it becomes an issue.
 */
 const SubmisionHistory = ({ submissionID }) => (
-  <AuthConsumer>
-    {({ user }) => (
-      <Query
-        query={SUBMISSION_HISTORY}
-        variables={{ submissionID }}
-        fetchPolicy="network-only"
-        skip={!submissionID}
-      >
-        {({ data, loading, error }) => {
-          if (!data) return null
-          if (loading) return null
-          if (error) return `Error: ${error}`
+  <Query
+    query={SUBMISSION_HISTORY}
+    variables={{ submissionID }}
+    fetchPolicy="network-only"
+    skip={!submissionID}
+  >
+    {({ data, loading, error }) => {
+      if (!data) return null
+      if (loading) return null
+      if (error) return `Error: ${error}`
 
-          const { submission } = data
-          const {
-            history: submissionHistory,
-            submissionConfigurationByconfigId: config,
-          } = submission[0]
+      const { submission } = data
+      const {
+        history: submissionHistory,
+        submissionConfigurationByconfigId: config,
+      } = submission[0]
 
-          return (
-            <div>
-              <Timeline>
-                {submissionHistory.map(submission => {
-                  let icon
-                  let color
-                  let title
+      return (
+        <div>
+          <Timeline>
+            {submissionHistory.map(submission => {
+              let icon
+              let color
+              let title
 
-                  if (submission.decision === 'ACCEPTED') {
-                    icon = IconNames.TICK
-                    color = '#48AFF0'
-                    title = (
-                      <div>
-                        {submission.processedByUser.role.toLowerCase()}{' '}
-                        <strong>({submission.processedByUser.username})</strong>{' '}
-                        {submission.decision.toLowerCase()} the submission for +{config.points}{' '}
-                        points ({config.category.toLowerCase()})
-                      </div>
-                    )
-                  }
+              if (submission.decision === 'ACCEPTED') {
+                icon = IconNames.TICK
+                color = '#48AFF0'
+                title = (
+                  <div>
+                    {submission.processedByUser.role.toLowerCase()}{' '}
+                    <strong>({submission.processedByUser.username})</strong>{' '}
+                    {submission.decision.toLowerCase()} the submission for +{config.points} points (
+                    {config.category.toLowerCase()})
+                  </div>
+                )
+              }
 
-                  if (submission.decision === 'REJECTED') {
-                    icon = IconNames.CROSS
-                    color = '#A82A2A'
-                    title = (
-                      <div>
-                        {submission.processedByUser.role.toLowerCase()}
-                        <strong>({submission.processedByUser.username})</strong>
-                        {submission.decision.toLowerCase()} the submission
-                      </div>
-                    )
-                  }
+              if (submission.decision === 'REJECTED') {
+                icon = IconNames.CROSS
+                color = '#A82A2A'
+                title = (
+                  <div>
+                    {submission.processedByUser.role.toLowerCase()}
+                    <strong>({submission.processedByUser.username})</strong>
+                    {submission.decision.toLowerCase()} the submission
+                  </div>
+                )
+              }
 
-                  if (submission.decision === 'STARRED') {
-                    icon = IconNames.STAR
-                    color = '#3DCC91'
-                    title = (
-                      <div>
-                        {submission.processedByUser.role.toLowerCase()}
-                        <strong>({submission.processedByUser.username})</strong>
-                        {submission.decision.toLowerCase()} the submission
-                      </div>
-                    )
-                  }
+              if (submission.decision === 'STARRED') {
+                icon = IconNames.STAR
+                color = '#3DCC91'
+                title = (
+                  <div>
+                    {submission.processedByUser.role.toLowerCase()}
+                    <strong>({submission.processedByUser.username})</strong>
+                    {submission.decision.toLowerCase()} the submission
+                  </div>
+                )
+              }
 
-                  if (submission.decision === 'UPDATED_POINTS') {
-                    icon = IconNames.CHANGES
-                    color = '#3DCC91'
-                    title = (
-                      <div>
-                        {submission.processedByUser.role.toLowerCase()}
-                        <strong>({submission.processedByUser.username})</strong>
-                        updated the points on this submission
-                      </div>
-                    )
-                  }
+              if (submission.decision === 'UPDATED_POINTS') {
+                icon = IconNames.CHANGES
+                color = '#3DCC91'
+                title = (
+                  <div>
+                    {submission.processedByUser.role.toLowerCase()}
+                    <strong>({submission.processedByUser.username})</strong>
+                    updated the points on this submission
+                  </div>
+                )
+              }
 
-                  return (
-                    <TimelineEvent
-                      title={title}
-                      createdAt={format(new Date(submission.processed_at), 'HH:mm')}
-                      icon={<Icon icon={icon} />}
-                      contentStyle={{ background: '#EBF1F5' }}
-                      iconColor="#FFF"
-                      bubbleStyle={{ background: color }}
-                    >
-                      {submission.decision === 'ACCEPTED' ? submission.accepted_reason : submission.rejected_reason}
-                    </TimelineEvent>
-                  )
-                })}
-              </Timeline>
-            </div>
-          )
-        }}
-      </Query>
-    )}
-  </AuthConsumer>
+              return (
+                <TimelineEvent
+                  title={title}
+                  createdAt={format(new Date(submission.processed_at), 'HH:mm')}
+                  icon={<Icon icon={icon} />}
+                  contentStyle={{ background: '#EBF1F5' }}
+                  iconColor="#FFF"
+                  bubbleStyle={{ background: color }}
+                >
+                  {submission.decision === 'ACCEPTED'
+                    ? submission.accepted_reason
+                    : submission.rejected_reason}
+                </TimelineEvent>
+              )
+            })}
+          </Timeline>
+        </div>
+      )
+    }}
+  </Query>
 )
 
 const SubmissionList = ({ openPanel, caseID, submissionType }) => {

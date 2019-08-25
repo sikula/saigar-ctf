@@ -230,10 +230,6 @@ const CaseCard = ({ id, name, missingSince }) => (
           {name}
         </H4>
       </div>
-      {/* {/* <p>
-          <strong>Start Time: </strong>
-          {new Date(startTime).toDateString()}
-        </p> */}
       <p>
         <strong>Missing Since: </strong>
         {new Date(missingSince).toDateString()}
@@ -388,7 +384,7 @@ const CasesPanel = () => (
 
 const ADMIN_USERS_QUERY = gql`
   query {
-    user(where: { role: { _in: ["JUDGE", "ADMIN"] } }) {
+    user(where: { role: { _in: ["JUDGE", "ADMIN"] } }, order_by: { role: asc }) {
       uuid
       email
       role
@@ -397,17 +393,6 @@ const ADMIN_USERS_QUERY = gql`
   }
 `
 
-const UserCard = ({ id, name, email, role }) => (
-  <div className="case-card__wrapper">
-    <Card id="case-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <H5 className="case-card__header">{`${name} / (${email})`}</H5>
-        <Tag round>{role}</Tag>
-      </div>
-      {/* <p>{`missing for: ${differenceInDays(new Date(), caseData.missing_since)} days`}</p> */}
-    </Card>
-  </div>
-)
 
 const UsersPanel = () => (
   <div>
@@ -441,21 +426,24 @@ const UsersPanel = () => (
         }
 
         return (
-          <div>
-            <div className="case-card__grid" style={{ padding: 0 }}>
-              <div className="case-card__row">
-                {data.user.map(user => (
-                  <UserCard
-                    key={user.uuid}
-                    id={user.uuid}
-                    name={user.nickname}
-                    email={user.email}
-                    role={user.role}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+          <table style={{ width: '85%', margin: '0 auto' }}>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.user.map(user => (
+                <tr key={user.uuid}>
+                  <td>{user.nickname}</td>
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )
       }}
     </Query>

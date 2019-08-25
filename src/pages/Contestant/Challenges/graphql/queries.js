@@ -65,6 +65,7 @@ const NEW_SUBMISSION_MUTATION = gql`
   mutation insertSubmission(
     $content: String!
     $explanation: String!
+    $supporting_evidence: String!
     $teamId: uuid!
     $eventId: uuid!
     $caseId: uuid!
@@ -74,6 +75,7 @@ const NEW_SUBMISSION_MUTATION = gql`
       objects: {
         content: $content
         explanation: $explanation
+        supporting_evidence: $supporting_evidence
         team_id: $teamId # can get it from user
         event_id: $eventId # can get it from query
         case_id: $caseId # can get it from modal
