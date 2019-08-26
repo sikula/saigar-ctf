@@ -78,146 +78,146 @@ const TEAM_COUNT_QUERY = gql`
   }
 `
 
-const TeamListConnector = ({ children }) => {
-  return (
-    <Query query={EVENT_QUERY}>
-      {({ loading, data: eventData }) =>
-        !loading ? (
-          <Query query={GET_TEAMS} variables={{ eventId: eventData.event[0].uuid }}>
-            {({ data, loading, error }) => {
-              if (loading) return <div>Loading...</div>
-              if (error) return <div>{error.message}</div>
+// const TeamListConnector = ({ children }) => {
+//   return (
+//     <Query query={EVENT_QUERY}>
+//       {({ loading, data: eventData }) =>
+//         !loading ? (
+//           <Query query={GET_TEAMS} variables={{ eventId: eventData.event[0].uuid }}>
+//             {({ data, loading, error }) => {
+//               if (loading) return <div>Loading...</div>
+//               if (error) return <div>{error.message}</div>
 
-              if (!Array.isArray(data.team_event) || !data.team_event.length) {
-                return <H5>No teams are registered for this event</H5>
-              }
+//               if (!Array.isArray(data.team_event) || !data.team_event.length) {
+//                 return <H5>No teams are registered for this event</H5>
+//               }
 
-              return children(data)
-            }}
-          </Query>
-        ) : null
-      }
-    </Query>
-  )
-}
+//               return children(data)
+//             }}
+//           </Query>
+//         ) : null
+//       }
+//     </Query>
+//   )
+// }
 
-const TeamsList = ({ judgeID, closePanel }) => {
-  const [selectedTeams, setSelectedTeams] = useTeamFilterState([])
-  const [addJudgeTeam, addJudgeResult] = useMutation(ADD_JUDGE_TEAM)
-  const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
-  const { loading, data } = useQuery(ASSIGNED_JUDGED_QUERY, {
-    variables: { judgeID },
-    skip: !judgeID,
-  })
+// const TeamsList = ({ judgeID, closePanel }) => {
+//   const [selectedTeams, setSelectedTeams] = useTeamFilterState([])
+//   const [addJudgeTeam, addJudgeResult] = useMutation(ADD_JUDGE_TEAM)
+//   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
+//   const { loading, data } = useQuery(ASSIGNED_JUDGED_QUERY, {
+//     variables: { judgeID },
+//     skip: !judgeID,
+//   })
 
-  const handleTeamToggle = event => {
-    const { id, checked } = event.currentTarget
+//   const handleTeamToggle = event => {
+//     const { id, checked } = event.currentTarget
 
-    if (!checked) {
-      setSelectedTeams(selectedTeams.filter(team => team !== id))
-      removeJudgeTeam({
-        variables: {
-          judgeID,
-          teamID: id,
-        },
-        refetchQueries: [
-          { query: TEAM_COUNT_QUERY, variables: { judgeID } },
-          { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID } },
-        ],
-      })
-      closePanel()
-    } else {
-      setSelectedTeams(selectedTeams.concat(id))
-      addJudgeTeam({
-        variables: {
-          judgeID,
-          teamID: id,
-        },
-        refetchQueries: [
-          { query: TEAM_COUNT_QUERY, variables: { judgeID } },
-          { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID } },
-        ],
-      })
-      closePanel()
-    }
-  }
+//     if (!checked) {
+//       setSelectedTeams(selectedTeams.filter(team => team !== id))
+//       removeJudgeTeam({
+//         variables: {
+//           judgeID,
+//           teamID: id,
+//         },
+//         refetchQueries: [
+//           { query: TEAM_COUNT_QUERY, variables: { judgeID } },
+//           { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID } },
+//         ],
+//       })
+//       closePanel()
+//     } else {
+//       setSelectedTeams(selectedTeams.concat(id))
+//       addJudgeTeam({
+//         variables: {
+//           judgeID,
+//           teamID: id,
+//         },
+//         refetchQueries: [
+//           { query: TEAM_COUNT_QUERY, variables: { judgeID } },
+//           { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID } },
+//         ],
+//       })
+//       closePanel()
+//     }
+//   }
 
-  if (loading) return null
-  return (
-    <React.Fragment>
-      {data.judge_team.length < 1 ? (
-        <div style={{ padding: 10, textAlign: 'center' }}>No Assigned Teams</div>
-      ) : (
-        data.judge_team.map(({ team }) => (
-          <div
-            style={{
-              display: 'inline-flex',
-              width: '100%',
-              padding: '10px 20px 0px 20px',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid #e8e1e1',
-            }}
-            key={team.uuid}
-          >
-            <span>
-              <Switch
-                id={team.uuid}
-                checked={selectedTeams.indexOf(team.uuid) !== -1}
-                onChange={handleTeamToggle}
-              />
-            </span>
-            <span>{team.name}</span>
-          </div>
-        ))
-      )}
-      <div style={{ width: '100%', height: '2px', background: 'gray' }} />
-      <TeamListConnector>
-        {({ team_event: teamEvent }) => (
-          <React.Fragment>
-            <div
-              style={{
-                display: 'inline-flex',
-                width: '100%',
-                padding: '10px 20px 10px 20px',
-                justifyContent: 'space-between',
-                borderBottom: '1px solid #e8e1e1',
-                fontWeight: 800,
-                textTransform: 'uppercase',
-              }}
-            >
-              <span>Assigned</span>
-              <span>Pending Subs.</span>
-              <span>Team Name</span>
-            </div>
-            {teamEvent.map(({ team }) => (
-              <div
-                style={{
-                  display: 'inline-flex',
-                  width: '100%',
-                  padding: '10px 20px 0px 20px',
-                  justifyContent: 'space-between',
-                  borderBottom: '1px solid #e8e1e1',
-                }}
-                key={team.uuid}
-              >
-                <span style={{ flexBasis: '33.33%' }}>
-                  <Switch
-                    id={team.uuid}
-                    disabled={selectedTeams.indexOf(team.uuid) !== -1}
-                    checked={selectedTeams.indexOf(team.uuid) !== -1}
-                    onChange={handleTeamToggle}
-                  />
-                </span>
-                <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>{team.submissionByTeamAggregate.aggregate.count}</span>
-                <span style={{ flexBasis: '33.33%', textAlign: 'right' }}>{team.name}</span>
-              </div>
-            ))}
-          </React.Fragment>
-        )}
-      </TeamListConnector>
-    </React.Fragment>
-  )
-}
+//   if (loading) return null
+//   return (
+//     <React.Fragment>
+//       {data.judge_team.length < 1 ? (
+//         <div style={{ padding: 10, textAlign: 'center' }}>No Assigned Teams</div>
+//       ) : (
+//         data.judge_team.map(({ team }) => (
+//           <div
+//             style={{
+//               display: 'inline-flex',
+//               width: '100%',
+//               padding: '10px 20px 0px 20px',
+//               justifyContent: 'space-between',
+//               borderBottom: '1px solid #e8e1e1',
+//             }}
+//             key={team.uuid}
+//           >
+//             <span>
+//               <Switch
+//                 id={team.uuid}
+//                 checked={selectedTeams.indexOf(team.uuid) !== -1}
+//                 onChange={handleTeamToggle}
+//               />
+//             </span>
+//             <span>{team.name}</span>
+//           </div>
+//         ))
+//       )}
+//       <div style={{ width: '100%', height: '2px', background: 'gray' }} />
+//       <TeamListConnector>
+//         {({ team_event: teamEvent }) => (
+//           <React.Fragment>
+//             <div
+//               style={{
+//                 display: 'inline-flex',
+//                 width: '100%',
+//                 padding: '10px 20px 10px 20px',
+//                 justifyContent: 'space-between',
+//                 borderBottom: '1px solid #e8e1e1',
+//                 fontWeight: 800,
+//                 textTransform: 'uppercase',
+//               }}
+//             >
+//               <span>Assigned</span>
+//               <span>Pending Subs.</span>
+//               <span>Team Name</span>
+//             </div>
+//             {teamEvent.map(({ team }) => (
+//               <div
+//                 style={{
+//                   display: 'inline-flex',
+//                   width: '100%',
+//                   padding: '10px 20px 0px 20px',
+//                   justifyContent: 'space-between',
+//                   borderBottom: '1px solid #e8e1e1',
+//                 }}
+//                 key={team.uuid}
+//               >
+//                 <span style={{ flexBasis: '33.33%' }}>
+//                   <Switch
+//                     id={team.uuid}
+//                     disabled={selectedTeams.indexOf(team.uuid) !== -1}
+//                     checked={selectedTeams.indexOf(team.uuid) !== -1}
+//                     onChange={handleTeamToggle}
+//                   />
+//                 </span>
+//                 <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>{team.submissionByTeamAggregate.aggregate.count}</span>
+//                 <span style={{ flexBasis: '33.33%', textAlign: 'right' }}>{team.name}</span>
+//               </div>
+//             ))}
+//           </React.Fragment>
+//         )}
+//       </TeamListConnector>
+//     </React.Fragment>
+//   )
+// }
 
 const EVENT_ID = gql`
   query eventId {
@@ -235,11 +235,16 @@ const TOGGLE_FFA = gql`
   }
 `
 
-const JudgesList = ({ openPanel }) => {
+const JudgesList = ({ team }) => {
+  // State Layer
   const [ffaChecked, setFfaChecked] = useState(false)
   const { data, loading } = useQuery(EVENT_ID)
-  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
 
+  //  GraphQL Layer
+  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
+  const [addJudgeTeam, addJudgeResult] = useMutation(ADD_JUDGE_TEAM)
+
+  // Lifecycle Methods
   useEffect(() => {
     if (!loading) {
       toggleFfa({
@@ -256,14 +261,22 @@ const JudgesList = ({ openPanel }) => {
     setFfaChecked(prevChecked => !prevChecked)
   }
 
-  const openTeamsPanel = judgeID => {
-    openPanel({
-      component: TeamsList,
-      props: { judgeID },
-      title: 'Team List',
+  const handleAssignJudge = uuid => {
+    addJudgeTeam({
+      variables: {
+        judgeID: uuid,
+        teamID: team,
+      },
+      refetchQueries: [
+        { query: TEAM_COUNT_QUERY, variables: { judgeID: uuid } },
+        { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID: uuid } },
+      ],
     })
   }
 
+  // =================================================================
+  // RENDER
+  // =================================================================
   return (
     <Query query={JUDGES_QUERY}>
       {({ data, loading }) =>
@@ -300,11 +313,15 @@ const JudgesList = ({ openPanel }) => {
               <span style={{ flexBasis: '33.33%' }}>{usr.nickname}</span>
               <Query query={TEAM_COUNT_QUERY} variables={{ judgeID: usr.uuid }}>
                 {({ data, loading }) =>
-                  !loading && <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>{data.judge_team_aggregate.aggregate.count}</span>
+                  !loading && (
+                    <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>
+                      {data.judge_team_aggregate.aggregate.count}
+                    </span>
+                  )
                 }
               </Query>
               <span styled={{ flexBasis: '33.33%', textAlign: 'right' }}>
-                <a href="#" onClick={() => openTeamsPanel(usr.uuid)}>
+                <a href="#" onClick={() => handleAssignJudge(usr.uuid)}>
                   Assign
                 </a>
               </span>
@@ -330,14 +347,7 @@ const SettingsPanel = ({ isOpen, onRequestClose, ...otherProps }) => (
     </SlidingPane.Header>
 
     <SlidingPane.Content style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 90 }}>
-      <PanelStack
-        className="panel-stack"
-        initialPanel={{
-          component: JudgesList,
-          props: {},
-          title: 'Judges',
-        }}
-      />
+      <JudgesList team={otherProps.team} />
     </SlidingPane.Content>
   </SlidingPane>
 )
