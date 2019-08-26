@@ -189,7 +189,7 @@ const RejectSubmissionControls = ({ uuid, category, hidePanel }) => {
             large
             disabled={!rejectedReason}
             icon={IconNames.CROSS}
-            style={{ marginTop: 10 }}
+            style={{ marginTop: 10, marginBottom: 20 }}
             onClick={() => {
               processSubmission({
                 variables: {

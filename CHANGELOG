@@ -2,7 +2,9 @@
 ### Major
 - Judges can now specify a reason for why they approved a submission
     - In many cases, judges would have liked to give feedback to contestants on why they accepted a submission (e.g. motivation to continue performing quality OSINT)
-
+- The submission process for contestants has been slightly modified, now they need to provide: source url, relevance, and supporting evidence
+    - This will hopefully lead to better intelligence submissions
+    
 ### Minor
 - Contestants can now see their Starred submissions
     - Starred submissions were counted as accepted, but they did not show up for the contestants, which caused some confusion.  Now starred submissions show up in the accepted feed.
