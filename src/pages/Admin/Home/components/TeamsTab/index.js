@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 // Styles
@@ -18,9 +18,9 @@ import SettingsPanel from '../IncomingFeed/SettingsPanel'
         For now, we just do client side logic.
 */
 const TEAMS_NEED_ASSIGNMENT = gql`
-  subscription {
+  subscription TEAM_ASSIGNMENTS($eventId: uuid!) {
     team_event(
-      where: { event_id: { _eq: "2ded62b8-1023-4796-b2e4-4566773679bb" } }
+      where: { event_id: { _eq: $eventId } }
       order_by: { team: { submissionsByteamId_aggregate: { count: desc } } }
     ) {
       team {
@@ -71,9 +71,23 @@ const TEAM_COUNT_QUERY = gql`
   }
 `
 
+const EVENT_QUERY = gql`
+  query eventQuery {
+    event(order_by: { start_time: desc }, limit: 1) {
+      uuid
+    }
+  }
+`
+
 const TeamsTab = () => {
   // GraphQL Layer
-  const { data, loading } = useSubscription(TEAMS_NEED_ASSIGNMENT)
+  const { data: eventData, loading: eventLoading } = useQuery(EVENT_QUERY)
+  const { data, loading } = useSubscription(TEAMS_NEED_ASSIGNMENT, {
+    variables: {
+      eventId: eventData ? eventData.event[0].uuid : null
+    }
+  })
+
   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
 
   // Handlers
