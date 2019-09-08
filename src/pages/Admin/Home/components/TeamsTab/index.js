@@ -84,8 +84,8 @@ const TeamsTab = () => {
   const { data: eventData, loading: eventLoading } = useQuery(EVENT_QUERY)
   const { data, loading } = useSubscription(TEAMS_NEED_ASSIGNMENT, {
     variables: {
-      eventId: eventData ? eventData.event[0].uuid : null
-    }
+      eventId: eventData && !eventLoading ? eventData.event[0].uuid : null,
+    },
   })
 
   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
