@@ -80,7 +80,10 @@ const HomePageData = () => (
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
-                  <Tab id="teams" title="Teams" panel={<TeamsTab />} />
+                  <Can
+                    allowedRole={['ctf_admin']}
+                    yes={() => <Tab id="teams" title="Teams" panel={<TeamsTab />} />}
+                  />
                   <Tab id="cases" title="Cases" panel={<CasesTab />} />
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
                   <Tab id="history" title="History" panel={<HistoryTab />} />
