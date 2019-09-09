@@ -81,7 +81,7 @@ const HomePageData = () => (
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
                   <Can
-                    allowedRole={['ctf_admin']}
+                    allowedRole={['judge']}
                     yes={() => <Tab id="teams" title="Teams" panel={<TeamsTab />} />}
                   />
                   <Tab id="cases" title="Cases" panel={<CasesTab />} />
