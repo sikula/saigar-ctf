@@ -78,7 +78,7 @@ const SUBMISSION_HISTORY = gql`
 const LIVE_FEED = gql`
   subscription liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { processed: { _eq: "PENDING" } }, order_by: { submitted_at: desc }) {
+      submissions(where: { processed: { _eq: "PENDING" } }, order_by: { submitted_at: asc }) {
         uuid
         submitted_at
         processed
@@ -95,6 +95,11 @@ const LIVE_FEED = gql`
         }
         teamByteamId {
           name
+          judge_teams_aggregate {
+            aggregate {
+              count
+            }
+          }
         }
       }
     }
@@ -106,7 +111,7 @@ const LIVE_FEED_FILTERED = gql`
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
-        order_by: { submitted_at: desc }
+        order_by: { submitted_at: asc }
       ) {
         uuid
         submitted_at
@@ -124,6 +129,11 @@ const LIVE_FEED_FILTERED = gql`
         }
         teamByteamId {
           name
+          judge_teams_aggregate {
+            aggregate {
+              count
+            }
+          }
         }
       }
     }

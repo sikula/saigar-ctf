@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSubscription, useMutation, useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 // Styles
-import { H4, Button } from '@blueprintjs/core'
+import { H4, Button, Switch } from '@blueprintjs/core'
 
 // Custom Components
 import Can from '@shared/components/AuthContext/Can'
@@ -32,7 +32,7 @@ const TEAMS_NEED_ASSIGNMENT = gql`
             nickname
           }
         }
-        submissionsByteamId_aggregate(where: { processed: { _eq: "PENDING" } }) {
+        submissionsByteamId_aggregate(where: { processed: { _in: ["PENDING", "ACCEPTED"] } }) {
           aggregate {
             count
           }
@@ -79,7 +79,40 @@ const EVENT_QUERY = gql`
   }
 `
 
+const TOGGLE_FFA = gql`
+  mutation toggleFfa($ffa: Boolean!, $event: uuid!) {
+    update_event(where: { uuid: { _eq: $event } }, _set: { free_for_all: $ffa }) {
+      affected_rows
+    }
+  }
+`
+
+const FFAToggle = ({ ffaChecked, handleFfaClick }) => {
+  const { data, loading } = useQuery(EVENT_QUERY)
+  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
+
+  useEffect(() => {
+    if (!loading) {
+      toggleFfa({
+        variables: {
+          ffa: ffaChecked,
+          event: data.event[0].uuid,
+        },
+      })
+    }
+  }, [ffaChecked])
+
+
+  return (
+    <div style={{ paddingTop: 10, paddingRight: 20, display: 'flex', justifyContent: 'end' }}>
+      <Switch checked={ffaChecked} label="Free For All" onChange={handleFfaClick} />
+    </div>
+  )
+}
+
 const TeamsTab = () => {
+  const [ffaChecked, setFfaChecked] = useState(false)
+  
   // GraphQL Layer
   const { data: eventData, loading: eventLoading } = useQuery(EVENT_QUERY)
   const { data, loading } = useSubscription(TEAMS_NEED_ASSIGNMENT, {
@@ -90,7 +123,12 @@ const TeamsTab = () => {
 
   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
 
+
   // Handlers
+  const handleFfaClick = () => {
+    setFfaChecked(prevChecked => !prevChecked)
+  }
+
   const handleUnassignJudge = (judge, team) => {
     removeJudgeTeam({
       variables: {
@@ -106,8 +144,18 @@ const TeamsTab = () => {
 
   if (loading) return <div>Loading...</div>
 
+  if (ffaChecked) {
+    return (
+      <React.Fragment>
+        <FFAToggle ffaChecked={ffaChecked} handleFfaClick={handleFfaClick} />
+        <H4>Free For All Actived</H4>
+      </React.Fragment>
+    )
+  }
+  
   return (
     <React.Fragment>
+      <FFAToggle ffaChecked={ffaChecked} handleFfaClick={handleFfaClick} />
       <div style={{ height: 'auto', width: '50%', margin: '0 auto' }}>
         {data.team_event.map(({ team }) => {
           if (team.submissionsByteamId_aggregate.aggregate.count < 1) {
@@ -181,8 +229,6 @@ const TeamsTab = () => {
                   </Button>
                 )}
               />
-              {/* <H5>{team.judge_teams[0].user.nickname}</H5> */}
-              {/* {JSON.stringify(team)} */}
             </div>
           )
         })}

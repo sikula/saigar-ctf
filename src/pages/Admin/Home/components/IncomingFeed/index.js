@@ -42,7 +42,7 @@ const IncomingFeed = () => (
             }}
           >
             Incoming Feed
-            <Can
+            {/* <Can
               allowedRole="ctf_admin"
               yes={() => (
                 <SlidingPanelConsumer>
@@ -53,7 +53,7 @@ const IncomingFeed = () => (
                   )}
                 </SlidingPanelConsumer>
               )}
-            />
+            /> */}
           </div>
         </div>
         <div className="case-data__content">
