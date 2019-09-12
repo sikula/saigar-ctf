@@ -8,7 +8,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 // import { connect } from 'react-redux'
 
 import gql from 'graphql-tag'
-import createPersistedState from 'use-persisted-state'
+// import createPersistedState from 'use-persisted-state'
 
 // Styles
 import { Icon, Switch, H5, PanelStack } from '@blueprintjs/core'
@@ -18,19 +18,19 @@ import './SettingsPanel.scss'
 
 // Custom imports
 import { SlidingPane } from '@shared/components/SlidingPane'
-import { GET_TEAMS } from '../../graphql/adminQueries'
+// import { GET_TEAMS } from '../../graphql/adminQueries'
 
-const useTeamFilterState = createPersistedState('teams')
+// const useTeamFilterState = createPersistedState('teams')
 
-// TODO(peter): this needs to be cleaned up a bit, we might want to rethink the
-// event system and how we requery by event
-const EVENT_QUERY = gql`
-  query eventQuery {
-    event(order_by: { start_time: desc }, limit: 1) {
-      uuid
-    }
-  }
-`
+// // TODO(peter): this needs to be cleaned up a bit, we might want to rethink the
+// // event system and how we requery by event
+// const EVENT_QUERY = gql`
+//   query eventQuery {
+//     event(order_by: { start_time: desc }, limit: 1) {
+//       uuid
+//     }
+//   }
+// `
 
 const ADD_JUDGE_TEAM = gql`
   mutation addJudgeTeam($judgeID: uuid!, $teamID: uuid!) {
@@ -40,17 +40,17 @@ const ADD_JUDGE_TEAM = gql`
   }
 `
 
-const REMOVE_JUDGE_TEAM = gql`
-  mutation removeJudgeTeam($judgeID: uuid!, $teamID: uuid!) {
-    delete_judge_team(where: { judge_id: { _eq: $judgeID }, team_id: { _eq: $teamID } }) {
-      affected_rows
-    }
-  }
-`
+// const REMOVE_JUDGE_TEAM = gql`
+//   mutation removeJudgeTeam($judgeID: uuid!, $teamID: uuid!) {
+//     delete_judge_team(where: { judge_id: { _eq: $judgeID }, team_id: { _eq: $teamID } }) {
+//       affected_rows
+//     }
+//   }
+// `
 
 const JUDGES_QUERY = gql`
   query judgesList {
-    user(where: { role: { _in: ["JUDGE", "ADMIN"] } }, order_by: { nickname: asc }) {
+    user(where: { role: { _in: ["JUDGE"] } }, order_by: { nickname: asc }) {
       uuid
       nickname
     }
@@ -281,9 +281,6 @@ const JudgesList = ({ team }) => {
     <Query query={JUDGES_QUERY}>
       {({ data, loading }) =>
         !loading && [
-          <div style={{ paddingTop: 10, paddingRight: 20, display: 'flex', justifyContent: 'end' }}>
-            <Switch checked={ffaChecked} label="Free For All" onChange={handleFfaClick} />
-          </div>,
           <div
             style={{
               display: 'inline-flex',
