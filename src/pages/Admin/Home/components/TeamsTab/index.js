@@ -113,6 +113,7 @@ const FFAToggle = ({ ffaChecked, handleFfaClick }) => {
 const TeamsTab = () => {
   const [ffaChecked, setFfaChecked] = useState(false)
   
+  
   // GraphQL Layer
   const { data: eventData, loading: eventLoading } = useQuery(EVENT_QUERY)
   const { data, loading } = useSubscription(TEAMS_NEED_ASSIGNMENT, {
