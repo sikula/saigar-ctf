@@ -59,6 +59,7 @@ const SUBMISSION_HISTORY = gql`
         processed
         content
         explanation
+        supporting_evidence
         case {
           name
         }
@@ -77,15 +78,13 @@ const SUBMISSION_HISTORY = gql`
 const LIVE_FEED = gql`
   subscription liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(
-        where: { processed: { _eq: "PENDING" } }
-        order_by: { submitted_at: desc }
-      ) {
+      submissions(where: { processed: { _eq: "PENDING" } }, order_by: { submitted_at: desc }) {
         uuid
         submitted_at
         processed
         content
         explanation
+        supporting_evidence
         case {
           uuid
           name
@@ -114,6 +113,7 @@ const LIVE_FEED_FILTERED = gql`
         processed
         content
         explanation
+        supporting_evidence
         case {
           uuid
           name
@@ -153,6 +153,7 @@ const INSERT_SUBMISSION_HISTORY = gql`
     $decision: String!
     $processedBy: String!
     $rejectedReason: String
+    $acceptedReason: String
   ) {
     insertSubmissionHistory: insert_submission_history(
       objects: {
@@ -160,6 +161,7 @@ const INSERT_SUBMISSION_HISTORY = gql`
         decision: $decision
         processed_by: $processedBy
         rejected_reason: $rejectedReason
+        accepted_reason: $acceptedReason
       }
     ) {
       affected_rows

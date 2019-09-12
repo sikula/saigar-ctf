@@ -44,7 +44,7 @@ const CREATE_EVENT_MUTATION = gql`
 
 const CASES_QUERY = gql`
   query getCases {
-    event {
+    event(order_by: { start_time: desc }) {
       name
       eventCasesByeventId {
         case {
@@ -116,7 +116,6 @@ export {
   CREATE_CASE_MUTATION,
 }
 
-
 // ADD ARRAY OF USERS TO A TEAM, including bridge table
 // mutation {
 // 	insert_team(objects: [{
@@ -142,7 +141,6 @@ export {
 //     affected_rows
 //   }
 // }
-
 
 // ADD Team to Event, Users to Teams including bridge tables
 // mutation {
@@ -173,8 +171,7 @@ export {
 //   }
 // }
 
-
-// Add multiple teams + multiple users to teams including bride tables 
+// Add multiple teams + multiple users to teams including bride tables
 // mutation {
 //   insert_team_event(objects:[{
 //     event_id:"3d16fcce-4e6a-47b8-a76b-dd0712e1e771"

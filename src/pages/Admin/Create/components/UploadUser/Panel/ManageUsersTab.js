@@ -78,7 +78,7 @@ const TeamSelect = ({ values, handleChange, teamId, eventId }) => (
         <HTMLSelect name="eventID" value={teamId} onChange={handleChange} fill large>
           <React.Fragment>
             <option value="" defaultValue="" hidden>
-              Chose a team
+              Choose a team
             </option>
             {data.event[0].team_events.map(({ team }) => (
               <option key={team.uuid} value={team.uuid}>

@@ -10,7 +10,7 @@ import { distanceInWordsToNow } from 'date-fns'
 
 // Styles
 import { Motion, spring } from 'react-motion'
-import { Icon, Tag, H3 } from '@blueprintjs/core'
+import { Tabs, Tab, Icon, Tag, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom components
@@ -21,6 +21,8 @@ import { AuthContext } from '@shared/components/AuthContext/context'
 
 import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
+
+import './Feed.scss'
 
 const SUBMISSION_TYPES = {
   DARK_WEB: 'Dark Web',
@@ -213,11 +215,16 @@ const useTeamFilterState = createPersistedState('teams')
 const AdminFeed = () => {
   const [selectedTeams] = useTeamFilterState([])
 
-  return !selectedTeams || selectedTeams.length < 1 ? (
-    <SubscriptionData subscription={LIVE_FEED} />
-  ) : (
-    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
-  )
+  let subscriptionComponent
+  if (!selectedTeams || selectedTeams.length < 1) {
+    subscriptionComponent = <SubscriptionData subscription={LIVE_FEED} />
+  } else {
+    subscriptionComponent = (
+      <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
+    )
+  }
+
+  return subscriptionComponent
 }
 
 const SubmissionList = () => (

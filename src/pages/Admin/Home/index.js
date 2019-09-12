@@ -18,6 +18,7 @@ import { AuthConsumer } from '../../../shared/components/AuthContext/context'
 import './index.scss'
 
 import CountdownClock from './components/CountdownClock'
+import TeamsTab from './components/TeamsTab'
 import CasesTab from './components/CasesTab'
 import HistoryTab from './components/HistoryTab'
 
@@ -79,6 +80,7 @@ const HomePageData = () => (
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
                 <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
+                  <Tab id="teams" title="Teams" panel={<TeamsTab />} />
                   <Tab id="cases" title="Cases" panel={<CasesTab />} />
                   <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
                   <Tab id="history" title="History" panel={<HistoryTab />} />

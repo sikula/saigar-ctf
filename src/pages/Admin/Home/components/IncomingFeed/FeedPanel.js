@@ -1,7 +1,8 @@
 /* eslint-disable no-return-assign, react/no-multi-comp */
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 
+import { useMutation } from '@apollo/react-hooks'
 import { Query, Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -10,6 +11,7 @@ import {
   Tabs,
   Tab,
   H3,
+  H5,
   Icon,
   Button,
   Toaster,
@@ -23,48 +25,42 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom imports
 import SafeURL from '@shared/components/SafeUrl'
 import CaseInfoData from '@features/CaseInfo/components'
+import { AuthConsumer } from '@shared/components/AuthContext/context'
 import { PROCESS_SUBMISSION, INSERT_SUBMISSION_HISTORY } from '../../graphql/adminQueries'
 import { PanelConsumer } from '../../../../../shared/components/Panel'
-import { AuthConsumer } from '@shared/components/AuthContext/context'
 
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
   position: Position.TOP_LEFT,
 })
 
-const ShareButton = class extends React.PureComponent {
-  copySubmissionUrl = e => {
-    this.textArea.select()
+const ShareButton = ({ uuid }) => {
+  const textAreaRef = useRef()
+
+  const copySubmissionUrl = e => {
+    textAreaRef.current.select()
     document.execCommand('copy')
     e.target.focus()
 
     FeedToaster.show({ message: 'Shareable link copied successfully!' })
   }
 
-  render() {
-    const { uuid } = this.props
-    return (
-      <React.Fragment>
-        <Button
-          intent="primary"
-          large
-          fill
-          icon={IconNames.CLIPBOARD}
-          onClick={this.copySubmissionUrl}
-        >
-          Share
-        </Button>
+  return (
+    <React.Fragment>
+      <Button intent="primary" large fill icon={IconNames.CLIPBOARD} onClick={copySubmissionUrl}>
+        Share
+      </Button>
 
-        <textarea
-          ref={textArea => (this.textArea = textArea)}
-          readOnly
-          value={`${window.location.protocol}//${window.location.hostname}/submission/${uuid}`}
-          style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
-        />
-      </React.Fragment>
-    )
-  }
+      <textarea
+        ref={textAreaRef}
+        readOnly
+        value={`${window.location.protocol}//${window.location.hostname}/submission/${uuid}`}
+        style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
+      />
+    </React.Fragment>
+  )
 }
+
 ShareButton.propTypes = {
   uuid: PropTypes.string.isRequired,
 }
@@ -103,223 +99,253 @@ CategoryList.propTypes = {
   handleChange: PropTypes.func.isRequired,
 }
 
-class RejectSubmissionControls extends React.Component {
-  state = { rejectedReason: null }
+const AcceptSubmissionControls = ({ uuid, category, hidePanel }) => {
+  const [acceptedReason, setAcceptedReason] = useState()
 
-  handleChange = e => {
-    this.setState({ rejectedReason: e.target.value })
+  // GraphQL Layer
+  const [processSubmission] = useMutation(PROCESS_SUBMISSION)
+  const [insertSubmissionHist] = useMutation(INSERT_SUBMISSION_HISTORY)
+
+  // Handler Functions
+  const handleChange = e => {
+    setAcceptedReason(e.target.value)
   }
 
-  clearField = () => {
-    this.setState({ rejectedReason: null })
-  }
-
-  render() {
-    const { uuid, category, hidePanel } = this.props
-
-    return (
-      <React.Fragment>
-        <TextArea
-          fill
-          placeHolder="reason for rejecting the submission"
-          value={this.state.rejectedReason}
-          onChange={this.handleChange}
-        />
-        <Mutation mutation={PROCESS_SUBMISSION}>
-          {updateSubmission => (
-            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-              {insertSubmissionHistory => (
-                <AuthConsumer>
-                  {({ user }) => (
-                    <Button
-                      text="Reject"
-                      intent="danger"
-                      large
-                      disabled={!this.state.rejectedReason}
-                      icon={IconNames.CROSS}
-                      style={{ marginTop: 10 }}
-                      onClick={() => {
-                        updateSubmission({
-                          variables: {
-                            submissionID: uuid,
-                            value: 'REJECTED',
-                            processedAt: new Date(),
-                            category,
-                          },
-                        }).then(() => hidePanel())
-                        insertSubmissionHistory({
-                          variables: {
-                            submissionID: uuid,
-                            decision: 'REJECTED',
-                            processedBy: user.id,
-                            rejectedReason: this.state.rejectedReason,
-                          },
-                        })
-                      }}
-                    />
-                  )}
-                </AuthConsumer>
-              )}
-            </Mutation>
-          )}
-        </Mutation>
-      </React.Fragment>
-    )
-  }
+  return (
+    <React.Fragment>
+      <TextArea
+        fill
+        placeHolder="(Optional) reason why the submission was accepted"
+        value={acceptedReason}
+        onChange={handleChange}
+      />
+      <AuthConsumer>
+        {({ user }) => (
+          <Button
+            text="Accept"
+            intent="success"
+            large
+            icon={IconNames.CROSS}
+            style={{ marginTop: 10, marginBottom: 20 }}
+            onClick={() => {
+              processSubmission({
+                variables: {
+                  submissionID: uuid,
+                  value: 'ACCEPTED',
+                  processedAt: new Date(),
+                  category,
+                },
+              })
+                .then(() =>
+                  insertSubmissionHist({
+                    variables: {
+                      submissionID: uuid,
+                      decision: 'ACCEPTED',
+                      processedBy: user.id,
+                      acceptedReason,
+                    },
+                  }),
+                )
+                .then(hidePanel)
+            }}
+          />
+        )}
+      </AuthConsumer>
+    </React.Fragment>
+  )
 }
+
+/*
+  @NOTE(Peter):
+    This is a duplicate basically of the code above, but there are quite a few
+    parameters that differ so right now I'm just duplicating, but we can look
+    back at this later to see how we can combine the two.
+*/
+const RejectSubmissionControls = ({ uuid, category, hidePanel }) => {
+  const [rejectedReason, setRejectedReason] = useState()
+
+  // GraphQL Layer
+  const [processSubmission] = useMutation(PROCESS_SUBMISSION)
+  const [insertSubmissionHist] = useMutation(INSERT_SUBMISSION_HISTORY)
+
+  // Handler Functions
+  const handleChange = e => {
+    setRejectedReason(e.target.value)
+  }
+
+  return (
+    <React.Fragment>
+      <TextArea
+        fill
+        placeHolder="Reason for rejecting the submission"
+        value={rejectedReason}
+        onChange={handleChange}
+      />
+      <AuthConsumer>
+        {({ user }) => (
+          <Button
+            text="Reject"
+            intent="danger"
+            large
+            disabled={!rejectedReason}
+            icon={IconNames.CROSS}
+            style={{ marginTop: 10, marginBottom: 20 }}
+            onClick={() => {
+              processSubmission({
+                variables: {
+                  submissionID: uuid,
+                  value: 'REJECTED',
+                  processedAt: new Date(),
+                  category,
+                },
+              })
+                .then(() =>
+                  insertSubmissionHist({
+                    variables: {
+                      submissionID: uuid,
+                      decision: 'REJECTED',
+                      processedBy: user.id,
+                      rejectedReason,
+                    },
+                  }),
+                )
+                .then(hidePanel)
+            }}
+          />
+        )}
+      </AuthConsumer>
+    </React.Fragment>
+  )
+}
+
 const SubmissionDetailsPanel = ({
   uuid,
   teamName,
   explanation,
   content,
+  supportingEvidence,
   hidePanel,
   category,
   handleChange,
-}) => (
-  <React.Fragment>
-    <div>
-      <CategoryList currentCategory={category} handleChange={handleChange} />
-    </div>
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        marginTop: 10,
-        alignItems: 'center',
-      }}
-    >
-      <ButtonGroup fill>
-        <ShareButton uuid={uuid} />
-        <Mutation mutation={PROCESS_SUBMISSION}>
-          {updateSubmission => (
-            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-              {insertSubmissionHistory => (
-                <AuthConsumer>
-                  {({ user }) => (
-                    <Button
-                      text="Star"
-                      intent="warning"
-                      large
-                      fill
-                      icon={IconNames.STAR}
-                      onClick={() => {
-                        updateSubmission({
-                          variables: {
-                            submissionID: uuid,
-                            value: 'STARRED',
-                            processedAt: new Date(),
-                            category,
-                          },
-                        }).then(() => hidePanel())
-                        insertSubmissionHistory({
-                          variables: {
-                            submissionID: uuid,
-                            decision: 'STARRED',
-                            processedBy: user.id,
-                          },
-                        })
-                      }}
-                    />
-                  )}
-                </AuthConsumer>
-              )}
-            </Mutation>
-          )}
-        </Mutation>
-        <Mutation mutation={PROCESS_SUBMISSION}>
-          {updateSubmission => (
-            <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-              {insertSubmissionHistory => (
-                <AuthConsumer>
-                  {({ user }) => (
-                    <Button
-                      text="Approve"
-                      intent="success"
-                      large
-                      fill
-                      icon={IconNames.TICK}
-                      onClick={() => {
-                        updateSubmission({
-                          variables: {
-                            submissionID: uuid,
-                            value: 'ACCEPTED',
-                            processedAt: new Date(),
-                            category,
-                          },
-                        }).then(() => hidePanel())
-                        insertSubmissionHistory({
-                          variables: {
-                            submissionID: uuid,
-                            decision: 'ACCEPTED',
-                            processedBy: user.id,
-                          },
-                        })
-                      }}
-                    />
-                  )}
-                </AuthConsumer>
-              )}
-            </Mutation>
-          )}
-        </Mutation>
-      </ButtonGroup>
-    </div>
-    <div>
-      <div style={{ paddingTop: 10, textAlign: 'center' }}>
-        <H3 style={{ background: '#E1E8ED', padding: 10 }}>{teamName}</H3>
-      </div>
-      <div style={{ paddingTop: 10 }}>
-        <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
-      </div>
-      <div style={{ paddingTop: 10 }}>
-        <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
-        <RejectSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
-      </div>
-    </div>
-  </React.Fragment>
-)
+}) => {
+  // GraphQL Layer
+  const [processSubmission] = useMutation(PROCESS_SUBMISSION)
+  const [insertSubmissionHist] = useMutation(INSERT_SUBMISSION_HISTORY)
 
-class PanelContent extends React.Component {
-  state = {
-    // eslint-disable-next-line react/destructuring-assignment
-    category: this.props.submissionConfiguration.uuid,
-  }
-
-  handleChange = e => {
-    this.setState({
-      category: e.currentTarget.value,
-    })
-  }
-
-  render() {
-    const { uuid, caseID, teamName, explanation, content, hidePanel } = this.props
-    const { category } = this.state
-
-    return (
-      <React.Fragment>
-        <Tabs id="detailsTab" selectedTabIndex="submissionDetails" renderActiveTabPanelOnly>
-          <Tab
-            id="submissionDetails"
-            title="Submission Details"
-            panel={
-              <SubmissionDetailsPanel
-                uuid={uuid}
-                teamName={teamName}
-                explanation={explanation}
-                content={content}
-                hidePanel={hidePanel}
-                category={category}
-                handleChange={this.handleChange}
+  return (
+    <React.Fragment>
+      <div>
+        <CategoryList currentCategory={category} handleChange={handleChange} />
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          marginTop: 10,
+          alignItems: 'center',
+        }}
+      >
+        <ButtonGroup fill>
+          <ShareButton uuid={uuid} />
+          <AuthConsumer>
+            {({ user }) => (
+              <Button
+                text="Star"
+                intent="warning"
+                large
+                fill
+                icon={IconNames.STAR}
+                onClick={() => {
+                  processSubmission({
+                    variables: {
+                      submissionID: uuid,
+                      value: 'STARRED',
+                      processedAt: new Date(),
+                      category,
+                    },
+                  })
+                    .then(() =>
+                      insertSubmissionHist({
+                        variables: {
+                          submissionID: uuid,
+                          decision: 'STARRED',
+                          processedBy: user.id,
+                        },
+                      }),
+                    )
+                    .then(hidePanel)
+                }}
               />
-            }
-          />
-          <Tab id="caseDetails" title="Case Details" panel={<CaseInfoData caseID={caseID} />} />
-        </Tabs>
-      </React.Fragment>
-    )
+            )}
+          </AuthConsumer>
+        </ButtonGroup>
+      </div>
+      <div>
+        <div style={{ background: '#E1E8ED', padding: 10, marginTop: 10, marginBottom: 10 }}>
+          <div style={{ textAlign: 'center' }}>
+            <H3 style={{ borderBottom: '1px solid #c4cfd7', padding: 10 }}>{teamName}</H3>
+          </div>
+          <div style={{ paddingTop: 10 }}>
+            <H5>Source URL</H5>
+            <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
+          </div>
+          <div style={{ paddingTop: 10 }}>
+            <H5>Relvance</H5>
+            <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
+          </div>
+          <div style={{ paddingTop: 10 }}>
+            <H5>Supporting Evidence</H5>
+            <p style={{ wordWrap: 'break-word' }}>{supportingEvidence}</p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
+          <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
+          <RejectSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
+        </div>
+      </div>
+    </React.Fragment>
+  )
+}
+
+const PanelContent = ({
+  uuid,
+  caseID,
+  teamName,
+  explanation,
+  content,
+  supportingEvidence,
+  hidePanel,
+  submissionConfiguration,
+}) => {
+  const [category, setCategory] = useState(submissionConfiguration.uuid)
+
+  const handleChange = e => {
+    setCategory(e.currentTarget.value)
   }
+
+  return (
+    <React.Fragment>
+      <Tabs id="detailsTab" selectedTabIndex="submissionDetails" renderActiveTabPanelOnly>
+        <Tab
+          id="submissionDetails"
+          title="Submission Details"
+          panel={
+            <SubmissionDetailsPanel
+              uuid={uuid}
+              teamName={teamName}
+              explanation={explanation}
+              content={content}
+              supportingEvidence={supportingEvidence}
+              hidePanel={hidePanel}
+              category={category}
+              handleChange={handleChange}
+            />
+          }
+        />
+        <Tab id="caseDetails" title="Case Details" panel={<CaseInfoData caseID={caseID} />} />
+      </Tabs>
+    </React.Fragment>
+  )
 }
 
 PanelContent.propTypes = {
@@ -330,6 +356,7 @@ PanelContent.propTypes = {
   explanation: PropTypes.string.isRequired,
   content: PropTypes.string.isRequired,
   hidePanel: PropTypes.func.isRequired,
+  caseID: PropTypes.string.isRequired,
 }
 
 /* 
@@ -343,6 +370,7 @@ const FeedPanel = ({
   teamByteamId,
   explanation,
   content,
+  supporting_evidence,
   submissionConfigurationByconfigId,
   case: { uuid: caseID },
 }) => (
@@ -369,6 +397,7 @@ const FeedPanel = ({
           teamName={teamByteamId.name}
           explanation={explanation}
           content={content}
+          supportingEvidence={supporting_evidence}
           submissionConfiguration={submissionConfigurationByconfigId}
           hidePanel={hidePanel}
           caseID={caseID}

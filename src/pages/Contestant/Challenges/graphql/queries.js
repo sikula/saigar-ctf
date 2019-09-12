@@ -26,7 +26,7 @@ const CASE_LIST = gql`
           }
           acceptedSubmissions: submissions_aggregate(
             where: {
-              processed: { _eq: "ACCEPTED" }
+              processed: { _in: ["ACCEPTED", "STARRED"] }
               teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
             }
           ) {
@@ -47,28 +47,8 @@ const CASE_LIST = gql`
         }
       }
     }
-    # NOT NEEDED
     team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
       name
-      pendingSubmissions: submissionsByteamId_aggregate(where: { processed: { _eq: "PENDING" } }) {
-        aggregate {
-          count
-        }
-      }
-      acceptedSubmissions: submissionsByteamId_aggregate(
-        where: { processed: { _eq: "ACCEPTED" } }
-      ) {
-        aggregate {
-          count
-        }
-      }
-      rejectedSubmissions: submissionsByteamId_aggregate(
-        where: { processed: { _eq: "REJECTED" } }
-      ) {
-        aggregate {
-          count
-        }
-      }
     }
   }
 `
@@ -85,6 +65,7 @@ const NEW_SUBMISSION_MUTATION = gql`
   mutation insertSubmission(
     $content: String!
     $explanation: String!
+    $supporting_evidence: String!
     $teamId: uuid!
     $eventId: uuid!
     $caseId: uuid!
@@ -94,6 +75,7 @@ const NEW_SUBMISSION_MUTATION = gql`
       objects: {
         content: $content
         explanation: $explanation
+        supporting_evidence: $supporting_evidence
         team_id: $teamId # can get it from user
         event_id: $eventId # can get it from query
         case_id: $caseId # can get it from modal

@@ -93,7 +93,7 @@ const CaseCard = ({ caseData }) => {
             <p style={{ textAlign: 'center' }}>
               {pendingSubmissions.aggregate.count}
               <br />
-              <ViewSubmissionButton id={rest.uuid} name={rest.name} submissionType="PENDING" />
+              <ViewSubmissionButton id={rest.uuid} name={rest.name} submissionType={['PENDING']} />
             </p>
           </div>
           <Divider />
@@ -102,7 +102,11 @@ const CaseCard = ({ caseData }) => {
             <p style={{ textAlign: 'center' }}>
               {acceptedSubmissions.aggregate.count}
               <br />
-              <ViewSubmissionButton id={rest.uuid} name={rest.name} submissionType="ACCEPTED" />
+              <ViewSubmissionButton
+                id={rest.uuid}
+                name={rest.name}
+                submissionType={['ACCEPTED', 'STARRED']}
+              />
             </p>
           </div>
           <Divider />
@@ -111,7 +115,7 @@ const CaseCard = ({ caseData }) => {
             <p style={{ textAlign: 'center' }}>
               {rejectedSubmissions.aggregate.count}
               <br />
-              <ViewSubmissionButton id={rest.uuid} name={rest.name} submissionType="REJECTED" />
+              <ViewSubmissionButton id={rest.uuid} name={rest.name} submissionType={['REJECTED']} />
             </p>
           </div>
         </div>
