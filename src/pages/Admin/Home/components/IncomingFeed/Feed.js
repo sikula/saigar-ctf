@@ -49,7 +49,14 @@ const SubmissionItem = ({ data }) => (
     {value => (
       <div>
         <div style={animation.render(value)} className="case-data__item__wrapper">
-          <div className="case-data__item">
+          <div
+            className="case-data__item"
+            style={
+              data.teamByteamId.judge_teams_aggregate.aggregate.count > 0
+                ? { borderLeft: '6px solid #3DCC91' }
+                : { borderLeft: '6px solid #FF7373' }
+            }
+          >
             <div
               style={{
                 padding: '5px 0px 5px 0px',
@@ -104,13 +111,29 @@ const SubmissionItem = ({ data }) => (
         </div>
         <div style={{ textAlign: 'center', ...animation.render(value) }}>
           <Query query={URL_SEEN_COUNT} variables={{ url: data.content }}>
-            {({ data, loading }) =>
+            {({ data: urlData, loading }) =>
               !loading ? (
-                <div style={{ color: '#394B59', fontSize: '0.85em', fontWeight: 600 }}>
+                <div
+                  style={
+                    data.teamByteamId.judge_teams_aggregate.aggregate.count > 0
+                      ? {
+                          borderLeft: '6px solid #3DCC91',
+                          color: '#394B59',
+                          fontSize: '0.85em',
+                          fontWeight: 600,
+                        }
+                      : {
+                          borderLeft: '6px solid #FF7373',
+                          color: '#394B59',
+                          fontSize: '0.85em',
+                          fontWeight: 600,
+                        }
+                  }
+                >
                   <Icon icon={IconNames.EMPLOYMENT} />
-                  {data.urlCount.aggregate.count === 1
-                    ? `${data.urlCount.aggregate.count} URL HIT`
-                    : `${data.urlCount.aggregate.count} URL HITS`}
+                  {urlData.urlCount.aggregate.count === 1
+                    ? `${urlData.urlCount.aggregate.count} URL HIT`
+                    : `${urlData.urlCount.aggregate.count} URL HITS`}
                 </div>
               ) : null
             }

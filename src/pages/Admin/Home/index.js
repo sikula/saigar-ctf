@@ -79,12 +79,27 @@ const HomePageData = () => (
           <div className="row" style={{ marginBttom: '10px' }}>
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
-                <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
-                  <Tab id="teams" title="Teams" panel={<TeamsTab />} />
-                  <Tab id="cases" title="Cases" panel={<CasesTab />} />
-                  <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
-                  <Tab id="history" title="History" panel={<HistoryTab />} />
-                </Tabs>
+                <Can
+                  allowedRole={['ctf_admin']}
+                  yes={() => (
+                    <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
+                      <Tab id="teams" title="Teams" panel={<TeamsTab />} />
+                      <Tab id="cases" title="Cases" panel={<CasesTab />} />
+                      <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
+                      <Tab id="history" title="History" panel={<HistoryTab />} />
+                    </Tabs>
+                  )}
+                />
+                <Can
+                  allowedRole={['judge']}
+                  yes={() => (
+                    <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
+                      <Tab id="cases" title="Cases" panel={<CasesTab />} />
+                      <Tab id="scoreboard" title="Scoreboard" panel={<ScoreGraph dark={false} />} />
+                      <Tab id="history" title="History" panel={<HistoryTab />} />
+                    </Tabs>
+                  )}
+                />
               </div>
             </div>
           </div>
