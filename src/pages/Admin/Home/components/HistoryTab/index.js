@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
+import { useMutation } from '@apollo/react-hooks'
 import { Query, Mutation, Subscription } from 'react-apollo'
 
 import gql from 'graphql-tag'
@@ -46,38 +47,38 @@ const FeedToaster = Toaster.create({
   position: Position.TOP_LEFT,
 })
 
-const ShareButton = class extends React.PureComponent {
-  copySubmissionUrl = e => {
-    this.textArea.select()
+const ShareButton = ({ uuid }) => {
+  const textAreaRef = useRef()
+
+  const copySubmissionUrl = e => {
+    textAreaRef.current.select()
     document.execCommand('copy')
     e.target.focus()
 
     FeedToaster.show({ message: 'Shareable link copied successfully!' })
   }
 
-  render() {
-    const { uuid } = this.props
-    return (
-      <React.Fragment>
-        <Button
-          intent="primary"
-          large
-          icon={IconNames.CLIPBOARD}
-          onClick={this.copySubmissionUrl}
-          style={{ marginRight: 10 }}
-        >
-          Share
-        </Button>
-        <textarea
-          ref={textArea => (this.textArea = textArea)}
-          readOnly
-          value={`${window.location.protocol}//${window.location.hostname}/submission/${uuid}`}
-          style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
-        />
-      </React.Fragment>
-    )
-  }
+  return (
+    <React.Fragment>
+      <Button
+        intent="primary"
+        large
+        icon={IconNames.CLIPBOARD}
+        onClick={copySubmissionUrl}
+        style={{ marginRight: 10 }}
+      >
+        Share
+      </Button>
+      <textarea
+        ref={textAreaRef}
+        readOnly
+        value={`${window.location.protocol}//${window.location.hostname}/submission/${uuid}`}
+        style={{ position: 'absolute', zIndex: '-1', height: 0, opacity: '0.01' }}
+      />
+    </React.Fragment>
+  )
 }
+
 ShareButton.propTypes = {
   uuid: PropTypes.string.isRequired,
 }
@@ -200,9 +201,15 @@ const HistoryButton = ({ uuid }) => (
 )
 
 const SubmissionItem = props => {
+  // Local State
   const [category, setCategory] = useState(props.submission.submissionConfigurationByconfigId.uuid)
   const [rejectedReason, setRejectedReason] = useState()
 
+  // GraphQL Layer
+  const [processSubmission] = useMutation(PROCESS_SUBMISSION)
+  const [insertSubmissionHist] = useMutation(INSERT_SUBMISSION_HISTORY)
+
+  // Handler Functions
   const handleChange = e => {
     const currentTarget = e.currentTarget.value
     setCategory(currentTarget)
@@ -241,7 +248,9 @@ const SubmissionItem = props => {
         </div>
       </div>
       <code style={{ background: '#cdcdcd' }}>
+        <H5>Source URL</H5>
         <p>{submission.content}</p>
+        <H5>Relevance</H5>
         <p style={{ wordWrap: 'break-word' }}>{submission.explanation}</p>
       </code>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -262,82 +271,67 @@ const SubmissionItem = props => {
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           <HistoryButton uuid={submission.uuid} />
           <ShareButton uuid={submission.uuid} />
-          <Mutation mutation={PROCESS_SUBMISSION}>
-            {updateSubmission => (
-              <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-                {insertSubmissionHistory => (
-                  <AuthConsumer>
-                    {({ user }) => (
-                      <Button
-                        intent="warning"
-                        large
-                        icon={IconNames.STAR}
-                        style={{ marginRight: 10 }}
-                        disabled={submission.processed === 'STARRED'}
-                        onClick={() => {
-                          updateSubmission({
-                            variables: {
-                              submissionID: submission.uuid,
-                              value: 'STARRED',
-                              processedAt: new Date(),
-                              category,
-                            },
-                          })
-                          insertSubmissionHistory({
-                            variables: {
-                              submissionID: submission.uuid,
-                              decision: 'STARRED',
-                              processedBy: user.id,
-                            },
-                          })
-                        }}
-                      >
-                        Star
-                      </Button>
-                    )}
-                  </AuthConsumer>
-                )}
-              </Mutation>
+          <AuthConsumer>
+            {({ user }) => (
+              <Button
+                intent="warning"
+                large
+                icon={IconNames.STAR}
+                style={{ marginRight: 10 }}
+                disabled={submission.processed === 'STARRED'}
+                onClick={() => {
+                  processSubmission({
+                    variables: {
+                      submissionID: submission.uuid,
+                      value: 'STARRED',
+                      processedAt: new Date(),
+                      category,
+                    },
+                  })
+                  insertSubmissionHist({
+                    variables: {
+                      submissionID: submission.uuid,
+                      decision: 'STARRED',
+                      processedBy: user.id,
+                    },
+                  })
+                }}
+              >
+                Star
+              </Button>
             )}
-          </Mutation>
-          <Mutation mutation={PROCESS_SUBMISSION}>
-            {updateSubmission => (
-              <Mutation mutation={INSERT_SUBMISSION_HISTORY}>
-                {insertSubmissionHistory => (
-                  <AuthConsumer>
-                    {({ user }) => (
-                      <Button
-                        intent="success"
-                        large
-                        icon={IconNames.TICK}
-                        style={{ marginRight: 10 }}
-                        disabled={submission.processed === 'ACCEPTED'}
-                        onClick={() => {
-                          updateSubmission({
-                            variables: {
-                              submissionID: submission.uuid,
-                              value: 'ACCEPTED',
-                              processedAt: new Date(),
-                              category,
-                            },
-                          })
-                          insertSubmissionHistory({
-                            variables: {
-                              submissionID: submission.uuid,
-                              decision: 'ACCEPTED',
-                              processedBy: user.id,
-                            },
-                          })
-                        }}
-                      >
-                        Approve
-                      </Button>
-                    )}
-                  </AuthConsumer>
-                )}
-              </Mutation>
+          </AuthConsumer>
+
+          <AuthConsumer>
+            {({ user }) => (
+              <Button
+                intent="success"
+                large
+                icon={IconNames.TICK}
+                style={{ marginRight: 10 }}
+                disabled={submission.processed === 'ACCEPTED'}
+                onClick={() => {
+                  processSubmission({
+                    variables: {
+                      submissionID: submission.uuid,
+                      value: 'ACCEPTED',
+                      processedAt: new Date(),
+                      category,
+                    },
+                  })
+                  insertSubmissionHist({
+                    variables: {
+                      submissionID: submission.uuid,
+                      decision: 'ACCEPTED',
+                      processedBy: user.id,
+                    },
+                  })
+                }}
+              >
+                Approve
+              </Button>
             )}
-          </Mutation>
+          </AuthConsumer>
         </div>
       </div>
       <div
@@ -352,7 +346,7 @@ const SubmissionItem = props => {
         <TextArea
           fill
           placeHolder={
-            submission.processed === 'REJECTED' ? '' : 'reason why the submission is rejected'
+            submission.processed === 'REJECTED' ? '' : 'Reason why the submission is rejected'
           }
           disabled={submission.processed === 'REJECTED'}
           value={rejectedReason}
@@ -386,7 +380,7 @@ const SubmissionItem = props => {
                             processedBy: user.id,
                             rejectedReason,
                           },
-                        }).then(() => clearReasonField())
+                        }).then(clearReasonField)
                       }}
                     >
                       Reject

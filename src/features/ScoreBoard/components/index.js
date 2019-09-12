@@ -28,7 +28,6 @@ TeamList.propTypes = {
   teams: PropTypes.objectOf(PropTypes.object).isRequired,
 }
 
-
 const EVENT_QUERY = gql`
   query eventQuery {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -39,31 +38,35 @@ const EVENT_QUERY = gql`
 
 const ScoreBoard = () => (
   <Query query={EVENT_QUERY}>
-    {({ error, loading, data: eventData }) => !loading ? (
-        <Subscription subscription={GET_SCOREBOARD} variables={{ eventID: eventData.event[0].uuid }}>
-        {({ data, loading, error }) => {
-          if (!data) return null
-          if (loading) {
-            return <div>Loading...</div>
-          }
-    
-          if (error) return <div>`${error.message}`</div>
-    
-          return (
-            <table style={{ width: '100%', marginTop: 20 }}>
-              <thead>
-                <tr>
-                  <th>Place</th>
-                  <th>Team Name</th>
-                  <th>Submissions</th>
-                  <th>Points</th>
-                </tr>
-              </thead>
-              <TeamList teams={data.scoreboard} />
-            </table>
-          )
-        }}
-      </Subscription>
+    {({ error, loading, data: eventData }) =>
+      !loading ? (
+        <Subscription
+          subscription={GET_SCOREBOARD}
+          variables={{ eventID: eventData.event[0].uuid }}
+        >
+          {({ data, loading, error }) => {
+            if (!data) return null
+            if (loading) {
+              return <div>Loading...</div>
+            }
+
+            if (error) return <div>`${error.message}`</div>
+
+            return (
+              <table style={{ width: '100%', marginTop: 20 }}>
+                <thead>
+                  <tr>
+                    <th>Place</th>
+                    <th>Team Name</th>
+                    <th>Submissions</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <TeamList teams={data.scoreboard} />
+              </table>
+            )
+          }}
+        </Subscription>
       ) : null
     }
   </Query>

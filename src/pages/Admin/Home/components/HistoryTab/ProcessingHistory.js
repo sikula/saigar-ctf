@@ -35,6 +35,7 @@ const SUBMISSION_HISTORY = gql`
           points
         }
         rejected_reason
+        accepted_reason
       }
     }
   }
@@ -130,8 +131,9 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
                               <div>
                                 {submission.processedByUser.role.toLowerCase()}
                                 <strong>({submission.processedByUser.username})</strong>
-                                updated the points on this submission to
-                                ({submission.submission_configuration.category.toLowerCase()}) {submission.submission_configuration.points} points
+                                updated the points on this submission to (
+                                {submission.submission_configuration.category.toLowerCase()}){' '}
+                                {submission.submission_configuration.points} points
                               </div>
                             )
                           }
@@ -144,8 +146,11 @@ const SubmissionHistory = ({ isOpen, onRequestClose, ...otherProps }) => (
                               contentStyle={{ background: '#EBF1F5' }}
                               iconColor="#FFF"
                               bubbleStyle={{ background: color }}
+                              key={submission.uuid}
                             >
-                              {submission.rejected_reason}
+                              {submission.decision === 'ACCEPTED'
+                                ? submission.accepted_reason
+                                : submission.rejected_reason}
                             </TimelineEvent>
                           )
                         })}
