@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const Dotenv = require('dotenv-webpack')
 
 const config = {
-  devtool: 'source-map',
+  devtool: 'hidden-source-map',
   mode: 'production',
   stats: {
     chunks: true,
