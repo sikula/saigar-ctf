@@ -158,6 +158,7 @@ const TeamsTab = () => {
     <React.Fragment>
       <FFAToggle ffaChecked={ffaChecked} handleFfaClick={handleFfaClick} />
       <div style={{ height: 'auto', width: '50%', margin: '0 auto' }}>
+        {data.team_event.length < 1 && null}
         {data.team_event.map(({ team }) => {
           if (team.submissionsByteamId_aggregate.aggregate.count < 1) {
             return null
