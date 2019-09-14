@@ -53,6 +53,7 @@ const GET_EVENT_EXPORT_DATA = gql`
       category
       explanation
       content
+      supporting_evidence
     }
   }
 `
@@ -100,8 +101,12 @@ class DownloadCsvButton extends React.Component {
           value: 'content',
         },
         {
-          lable: 'Proof',
+          label: 'Relevance',
           value: 'explanation',
+        },
+        {
+          label: 'Supporting Evidence',
+          value: 'supporting_evidence',
         },
       ]
 
