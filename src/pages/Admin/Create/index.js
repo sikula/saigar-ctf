@@ -245,7 +245,7 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipe
         )}
       </SlidingPanelConsumer>
       <DownloadCsvButton event={eventID} />
-      <SlidingPanelConsumer>
+      {/* <SlidingPanelConsumer>
         {({ openSlider }) => (
           <Button
             className="case-card__actions"
@@ -255,7 +255,7 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipe
             style={{ background: '#DB3737' }}
           />
         )}
-      </SlidingPanelConsumer>
+      </SlidingPanelConsumer> */}
     </div>
   </div>
 )
@@ -269,9 +269,7 @@ EventCard.propTypes = {
 
 const DELETE_CASE_MUTATION = gql`
   mutation DELETE_CASE($caseId: uuid!) {
-    delete_event_case(where: {
-      case_id: { _eq: $caseId }
-    }) {
+    delete_event_case(where: { case_id: { _eq: $caseId } }) {
       affected_rows
     }
   }
@@ -280,7 +278,7 @@ const DELETE_CASE_MUTATION = gql`
 const CaseCard = ({ id, name, missingSince }) => {
   const [deleteCase] = useMutation(DELETE_CASE_MUTATION, {
     variables: { caseId: id },
-    refetchQueries: [{ query: CASES_QUERY }]
+    refetchQueries: [{ query: CASES_QUERY }],
   })
 
   return (
