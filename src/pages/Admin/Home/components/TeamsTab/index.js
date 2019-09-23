@@ -11,14 +11,18 @@ import { SlidingPanelConsumer } from '@shared/components/SlidingPane'
 import SettingsPanel from '../IncomingFeed/SettingsPanel'
 
 /*
-    NOTE(peter):
+    @NOTE(peter):
         Currently in Hasura there is no way to query by aggregate count, ideally we would
         want to filter for teams whose submission count is greater than 0.
 
         For now, we just do client side logic.
+
+    @NOTE(peter):
+      Might be a bug with this, fetches eventID before running this, but null is being passed
+      
 */
 const TEAMS_NEED_ASSIGNMENT = gql`
-  subscription TEAM_ASSIGNMENTS($eventId: uuid!) {
+  subscription TEAM_ASSIGNMENTS($eventId: uuid) {
     team_event(
       where: { event_id: { _eq: $eventId } }
       order_by: { team: { submissionsByteamId_aggregate: { count: desc } } }
