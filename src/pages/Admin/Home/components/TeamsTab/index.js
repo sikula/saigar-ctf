@@ -102,7 +102,6 @@ const FFAToggle = ({ ffaChecked, handleFfaClick }) => {
     }
   }, [ffaChecked])
 
-
   return (
     <div style={{ paddingTop: 10, paddingRight: 20, display: 'flex', justifyContent: 'end' }}>
       <Switch checked={ffaChecked} label="Free For All" onChange={handleFfaClick} />
@@ -112,8 +111,7 @@ const FFAToggle = ({ ffaChecked, handleFfaClick }) => {
 
 const TeamsTab = () => {
   const [ffaChecked, setFfaChecked] = useState(false)
-  
-  
+
   // GraphQL Layer
   const { data: eventData, loading: eventLoading } = useQuery(EVENT_QUERY)
   const { data, loading } = useSubscription(TEAMS_NEED_ASSIGNMENT, {
@@ -123,7 +121,6 @@ const TeamsTab = () => {
   })
 
   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
-
 
   // Handlers
   const handleFfaClick = () => {
@@ -143,7 +140,7 @@ const TeamsTab = () => {
     })
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading || eventLoading) return <div>Loading...</div>
 
   if (ffaChecked) {
     return (
@@ -153,7 +150,7 @@ const TeamsTab = () => {
       </React.Fragment>
     )
   }
-  
+
   return (
     <React.Fragment>
       <FFAToggle ffaChecked={ffaChecked} handleFfaClick={handleFfaClick} />
