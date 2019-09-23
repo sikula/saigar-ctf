@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Query, ApolloConsumer } from 'react-apollo'
+import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 // Styles
@@ -16,6 +17,8 @@ import {
   H5,
   H4,
   H3,
+  Dialog,
+  Classes,
 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
@@ -160,7 +163,32 @@ class DownloadCsvButton extends React.Component {
   }
 }
 
-const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
+const WipeEventDialog = ({ isOpen, onWipeClick, onCancelClick }) => (
+  <Dialog
+    isOpen={isOpen}
+    autoFocus
+    canEscapeKeyClose={false}
+    canOutsideClickClose={false}
+    className={Classes.DARK}
+  >
+    <div className={Classes.DIALOG_BODY}>
+      <H3>Warning</H3>
+      <p>This action will wipe all the data for the current event. This action is irreversible.</p>
+    </div>
+    <div className={Classes.DIALOG_FOOTER}>
+      <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+        <Button large intent="danger" onClick={onWipeClick}>
+          !! WIPE !!
+        </Button>
+        <Button large intent="primary" minimal onClick={onCancelClick}>
+          CANCEL
+        </Button>
+      </div>
+    </div>
+  </Dialog>
+)
+
+const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipeClick }) => (
   <div className="case-card__wrapper">
     <Card id="case-card">
       <div style={{ textAlign: 'center' }}>
@@ -217,9 +245,21 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions }) => (
         )}
       </SlidingPanelConsumer>
       <DownloadCsvButton event={eventID} />
+      <SlidingPanelConsumer>
+        {({ openSlider }) => (
+          <Button
+            className="case-card__actions"
+            minimal
+            icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
+            onClick={() => onWipeClick(eventID)}
+            style={{ background: '#DB3737' }}
+          />
+        )}
+      </SlidingPanelConsumer>
     </div>
   </div>
 )
+
 EventCard.propTypes = {
   eventID: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -227,102 +267,145 @@ EventCard.propTypes = {
   endTime: PropTypes.string.isRequired,
 }
 
-const CaseCard = ({ id, name, missingSince }) => (
-  <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
-    <Card id="case-card">
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-        <H4 className="case-card__header" style={{ textAlign: 'center' }}>
-          {name}
-        </H4>
+const DELETE_CASE_MUTATION = gql`
+  mutation DELETE_CASE($caseId: uuid!) {
+    delete_event_case(where: {
+      case_id: { _eq: $caseId }
+    }) {
+      affected_rows
+    }
+  }
+`
+
+const CaseCard = ({ id, name, missingSince }) => {
+  const [deleteCase] = useMutation(DELETE_CASE_MUTATION, {
+    variables: { caseId: id },
+    refetchQueries: [{ query: CASES_QUERY }]
+  })
+
+  return (
+    <div className="case-card__wrapper" style={{ width: 'calc(33.33% - 24px)' }}>
+      <Card id="case-card">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+          <H4 className="case-card__header" style={{ textAlign: 'center' }}>
+            {name}
+          </H4>
+        </div>
+        <p>
+          <strong>Missing Since: </strong>
+          {new Date(missingSince).toDateString()}
+        </p>
+      </Card>
+      <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
+        <SlidingPanelConsumer>
+          {({ openSlider }) => (
+            <Button
+              className="case-card__actions"
+              minimal
+              icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
+              onClick={() => openSlider(EditCase, { caseID: id })}
+            />
+          )}
+        </SlidingPanelConsumer>
+        <Button
+          className="case-card__actions"
+          style={{ background: '#DB3737', borderRadius: 0 }}
+          minimal
+          icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
+          onClick={deleteCase}
+        />
       </div>
-      <p>
-        <strong>Missing Since: </strong>
-        {new Date(missingSince).toDateString()}
-      </p>
-    </Card>
-    <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
-      <SlidingPanelConsumer>
-        {({ openSlider }) => (
-          <Button
-            className="case-card__actions"
-            minimal
-            icon={<Icon icon={IconNames.EDIT} style={{ color: '#394B59' }} iconSize={20} />}
-            onClick={() => openSlider(EditCase, { caseID: id })}
-          />
-        )}
-      </SlidingPanelConsumer>
-      {/* <SlidingPanelConsumer>
-        {({ openSlider }) => (
-          <Button
-            className="case-card__actions"
-            style={{ background: '#F55656', borderRadius: 0 }}
-            minimal
-            icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
-            onClick={() => openSlider(UploadUser, { eventID, eventName: name, startTime, endTime })}
-          />
-        )}
-      </SlidingPanelConsumer> */}
     </div>
-  </div>
-)
+  )
+}
+
 CaseCard.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   missingSince: PropTypes.string.isRequired,
 }
 
-const EventsPanel = () => (
-  <div>
-    <div style={{ paddingBottom: 10 }}>
-      <SlidingPanelConsumer>
-        {({ openSlider }) => (
-          <Button
-            id="createbutton"
-            style={{
-              width: '148px',
-              height: '40px',
-              background: '#1F4B99',
-              color: '#FFFFFF',
-              display: 'flex',
-            }}
-            onClick={() => openSlider(CreateEvent, { agency_id: 1 })}
-            icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
-          >
-            Add Event
-          </Button>
-        )}
-      </SlidingPanelConsumer>
-      {/* <Button large intent="primary" text="Add Event" icon={IconNames.ADD} /> */}
-    </div>
-    <div className="case-card__grid" style={{ padding: 0 }}>
-      <Query query={EVENTS_QUERY}>
-        {({ data, loading, error }) => {
-          if (loading) return <div>Loading....</div>
-          if (error) return <div>`${error.message}`</div>
+const EventsPanel = () => {
+  // Internal State Layer
+  const [wipeDialogOpen, setWipeDialogOpen] = useState(false)
+  const [currentEvent, setCurrentEvent] = useState()
 
-          if (!Array.isArray(data.event) || !data.event.length) {
-            return <H5>No events currently. Click the 'Add Event' button to create an event</H5>
-          }
+  //  GraphQL Layer
 
-          return (
-            <div className="case-card__row">
-              {data.event.map(event => (
-                <EventCard
-                  key={event.uuid}
-                  eventID={event.uuid}
-                  name={event.name}
-                  startTime={event.start_time}
-                  endTime={event.end_time}
-                  totalSubmissions={event.totalSubmissions}
-                />
-              ))}
-            </div>
-          )
-        }}
-      </Query>
+  // Handlers
+  const handleWipeClick = eventID => {
+    setWipeDialogOpen(true)
+    setCurrentEvent(eventID)
+  }
+
+  const handleWipeApproveClick = () => {
+    console.log('WIPING')
+    setWipeDialogOpen(false)
+  }
+
+  const handleCancelClick = () => {
+    setWipeDialogOpen(false)
+  }
+
+  return (
+    <div>
+      <div style={{ paddingBottom: 10 }}>
+        <SlidingPanelConsumer>
+          {({ openSlider }) => (
+            <Button
+              id="createbutton"
+              style={{
+                width: '148px',
+                height: '40px',
+                background: '#1F4B99',
+                color: '#FFFFFF',
+                display: 'flex',
+              }}
+              onClick={() => openSlider(CreateEvent, { agency_id: 1 })}
+              icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
+            >
+              Add Event
+            </Button>
+          )}
+        </SlidingPanelConsumer>
+        {/* <Button large intent="primary" text="Add Event" icon={IconNames.ADD} /> */}
+      </div>
+      <div className="case-card__grid" style={{ padding: 0 }}>
+        <Query query={EVENTS_QUERY}>
+          {({ data, loading, error }) => {
+            if (loading) return <div>Loading....</div>
+            if (error) return <div>`${error.message}`</div>
+
+            if (!Array.isArray(data.event) || !data.event.length) {
+              return <H5>No events currently. Click the 'Add Event' button to create an event</H5>
+            }
+
+            return (
+              <div className="case-card__row">
+                {data.event.map(event => (
+                  <EventCard
+                    key={event.uuid}
+                    eventID={event.uuid}
+                    name={event.name}
+                    startTime={event.start_time}
+                    endTime={event.end_time}
+                    totalSubmissions={event.totalSubmissions}
+                    onWipeClick={handleWipeClick}
+                  />
+                ))}
+              </div>
+            )
+          }}
+        </Query>
+      </div>
+      <WipeEventDialog
+        isOpen={wipeDialogOpen}
+        onWipeClick={handleWipeApproveClick}
+        onCancelClick={handleCancelClick}
+      />
     </div>
-  </div>
-)
+  )
+}
 
 const CasesPanel = () => (
   <React.Fragment>
@@ -397,7 +480,6 @@ const ADMIN_USERS_QUERY = gql`
     }
   }
 `
-
 
 const UsersPanel = () => (
   <div>
