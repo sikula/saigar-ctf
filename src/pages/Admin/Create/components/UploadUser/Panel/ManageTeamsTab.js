@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Mutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -27,56 +27,46 @@ const TEAMS_QUERY = gql`
   }
 `
 
-export default class ManageTeamsTab extends React.Component {
-  state = { teamName: undefined }
+const ManageTeamsTab = ({ eventId }) => {
+  const [teamName, setTeamName] = useState()
 
-  handleChange = e => {
-    this.setState({
-      teamName: e.target.value,
-    })
+  const handleChange = e => {
+    setTeamName(e.target.value)
   }
 
-  render() {
-    const { teamName } = this.state
-    const { eventId } = this.props
-
-    return (
-      <div style={{ marginTop: 10 }}>
-        <table style={{ width: '100%' }}>
-          <thead>
-            <td>Team Name</td>
-            <td />
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <InputGroup name="teamName" value={teamName} onChange={this.handleChange} />
-              </td>
-              <td>
-                <Mutation
-                  mutation={ADD_USER_TO_EVENT}
-                  refetchQueries={[
-                    {
-                      query: TEAMS_QUERY,
-                      variables: { eventId },
-                    },
-                  ]}
-                  variables={{ eventId, teamName }}
-                >
-                  {insert_team_event => (
-                    <Button
-                      intent="primary"
-                      icon={IconNames.PLUS}
-                      fill
-                      onClick={insert_team_event}
-                    />
-                  )}
-                </Mutation>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    )
-  }
+  return (
+    <div style={{ marginTop: 10 }}>
+      <table style={{ width: '100%' }}>
+        <thead>
+          <td>Team Name</td>
+          <td />
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <InputGroup name="teamName" value={teamName} onChange={handleChange} />
+            </td>
+            <td>
+              <Mutation
+                mutation={ADD_USER_TO_EVENT}
+                refetchQueries={[
+                  {
+                    query: TEAMS_QUERY,
+                    variables: { eventId },
+                  },
+                ]}
+                variables={{ eventId, teamName }}
+              >
+                {insert_team_event => (
+                  <Button intent="primary" icon={IconNames.PLUS} fill onClick={insert_team_event} />
+                )}
+              </Mutation>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
 }
+
+export default ManageTeamsTab
