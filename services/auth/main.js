@@ -56,30 +56,12 @@ const handler = async event => {
 
     await auth0.createUser(createUserOpts).catch(err => console.log(err))
 
-    // #2 Create Reset Ticket
-    // const createResetOpts = {
-    //   email,
-    //   connection_id: 'con_C7x24ofiVd6bVRXp',
-    // }
-
     await auth0A
       .requestChangePasswordEmail({
         email: event.data.new.email,
         connection: `${process.env.AUTH0_CONNECTION}`,
       })
       .catch(err => console.log(err))
-
-    // const { ticket } = await auth0
-    //   .createPasswordChangeTicket(createResetOpts)
-    //   .catch(err => console.log(err))
-
-    // #3 Send email with reset ticket
-    // const msg = {
-    //     to: email,
-    //     from:
-    // }
-    // eslint-disable-next-line no-console
-    // console.log('INSERT', ticket)
   }
 }
 
