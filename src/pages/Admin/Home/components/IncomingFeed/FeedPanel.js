@@ -302,6 +302,145 @@ const SubmissionDetailsPanel = ({
           <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
           <RejectSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
         </div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="News Site"
+                  intent="danger"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'We do not accept sources from news sites as they are already known by law enforcement.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                  style={{ marginRight: 10 }}
+                />
+              )}
+            </AuthConsumer>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Duplicate Submission"
+                  intent="danger"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'You or one of your team members has already submitted this source, so this is a duplicate.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Needs Context"
+                  intent="danger"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'We need more context on why this source is relevant to the case.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                  style={{ marginRight: 10 }}
+                />
+              )}
+            </AuthConsumer>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Not Relevant"
+                  intent="danger"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason: 'This source was deemed not relevant to this case.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+          </div>
+        </div>
       </div>
     </React.Fragment>
   )
