@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Query, ApolloConsumer } from 'react-apollo'
+import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 import JSZip from 'jszip'
@@ -8,7 +9,7 @@ import { saveAs } from 'file-saver'
 import { Parser } from 'json2csv'
 
 // Style Library
-import { Dialog, Toaster, Position, Classes, Card, Button, Icon, H3 } from '@blueprintjs/core'
+import { Dialog, Toaster, Position, Classes, Card, Button, Icon, H3, H5 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
@@ -55,31 +56,105 @@ const GET_EVENT_EXPORT_DATA = gql`
         10) delete case
         11) delete event
         12) delete judge_team
+
+      This is the query:
+        query GET_EVENT_DATA($eventID: uuid!) {
+          event(where: {
+            uuid: { _eq: $eventID }
+          }) {
+            team_events {
+              team {
+                name
+                user_team {
+                  user {
+                    nickname
+                  }
+                }
+                judge_teams {
+                  judge_id
+                }
+              }
+            }
+          }
+        }
 */
-const WipeEventDialog = ({ isOpen, onWipeClick, onCancelClick }) => (
-  <Dialog
-    isOpen={isOpen}
-    autoFocus
-    canEscapeKeyClose={false}
-    canOutsideClickClose={false}
-    className={Classes.DARK}
-  >
-    <div className={Classes.DIALOG_BODY}>
-      <H3>Warning</H3>
-      <p>This action will wipe all the data for the current event. This action is irreversible.</p>
-    </div>
-    <div className={Classes.DIALOG_FOOTER}>
-      <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-        <Button large intent="danger" onClick={onWipeClick}>
-          !! WIPE !!
-        </Button>
-        <Button large intent="primary" minimal onClick={onCancelClick}>
-          CANCEL
-        </Button>
+
+const EVENT_DATA = gql`
+  query getEventData($eventId: uuid!) {
+    event(where: { uuid: { _eq: $eventId } }) {
+      team_events {
+        team {
+          uuid
+          user_team {
+            user {
+              email
+            }
+          }
+          judge_teams {
+            judge_id
+          }
+        }
+      }
+    }
+  }
+`
+
+const WipeEventDialog = ({ isOpen, onWipeClick, onCancelClick }) => {
+  const { data, loading, error } = useQuery(EVENT_DATA, {
+    variables: {
+      eventId: 'f4edfe2e-0ef2-4dd4-b1aa-5dd2d17487af',
+    },
+  })
+
+  if (!loading) {
+    const { team_events: team } = data.event[0]
+    console.log(team)
+  }
+
+  return (
+    <Dialog
+      isOpen={isOpen}
+      autoFocus
+      canEscapeKeyClose={false}
+      canOutsideClickClose={false}
+      className={Classes.DARK}
+    >
+      <div className={Classes.DIALOG_BODY}>
+        {loading ? (
+          <div>Loading....</div>
+        ) : (
+          <React.Fragment>
+            <H3>Warning</H3>
+            <p>
+              This action will wipe all the data for the current event. This action is irreversible.
+            </p>
+            <p>
+              <strong>The following data will be removed:</strong>
+              <ul>
+                <li>All Teams registered for the event</li>
+                <li>All Users on the team</li>
+                <li>All Cases for the event</li>
+                <li>All Submissions on each case</li>
+                <li>All history for a submission </li>
+                <li>The event </li>
+              </ul>
+            </p>
+          </React.Fragment>
+        )}
       </div>
-    </div>
-  </Dialog>
-)
+      <div className={Classes.DIALOG_FOOTER}>
+        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+          <Button large intent="danger" onClick={onWipeClick}>
+            !! WIPE !!
+          </Button>
+          <Button large intent="primary" minimal onClick={onCancelClick}>
+            CANCEL
+          </Button>
+        </div>
+      </div>
+    </Dialog>
+  )
+}
 
 const groupBy = key => array =>
   array.reduce((objectsByKeyValue, obj) => {
@@ -228,17 +303,13 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipe
         )}
       </SlidingPanelConsumer>
       <DownloadCsvButton event={eventID} />
-      {/* <SlidingPanelConsumer>
-          {({ openSlider }) => (
-            <Button
-              className="case-card__actions"
-              minimal
-              icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
-              onClick={() => onWipeClick(eventID)}
-              style={{ background: '#DB3737' }}
-            />
-          )}
-        </SlidingPanelConsumer> */}
+      <Button
+        className="case-card__actions"
+        minimal
+        icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
+        onClick={() => onWipeClick(eventID)}
+        style={{ background: '#DB3737' }}
+      />
     </div>
   </div>
 )
