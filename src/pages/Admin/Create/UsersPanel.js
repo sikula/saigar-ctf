@@ -3,7 +3,7 @@ import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
 // Styles
-import { Button, Icon } from '@blueprintjs/core'
+import { Button, Icon, H5 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
