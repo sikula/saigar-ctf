@@ -106,10 +106,9 @@ const WipeEventDialog = ({ isOpen, onWipeClick, onCancelClick }) => {
     },
   })
 
-  if (!loading) {
-    const { team_events: team } = data.event[0]
-    console.log(team)
-  }
+  // if (!loading) {
+  //   const { team_events: team } = data.event[0]
+  // }
 
   return (
     <Dialog
@@ -303,13 +302,13 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipe
         )}
       </SlidingPanelConsumer>
       <DownloadCsvButton event={eventID} />
-      <Button
+      {/* <Button
         className="case-card__actions"
         minimal
         icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
         onClick={() => onWipeClick(eventID)}
         style={{ background: '#DB3737' }}
-      />
+      /> */}
     </div>
   </div>
 )
@@ -394,11 +393,11 @@ const EventsPanel = () => {
           }}
         </Query>
       </div>
-      <WipeEventDialog
+      {/* <WipeEventDialog
         isOpen={wipeDialogOpen}
         onWipeClick={handleWipeApproveClick}
         onCancelClick={handleCancelClick}
-      />
+      /> */}
     </div>
   )
 }
