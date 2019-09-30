@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Query } from 'react-apollo'
-import { isWithinRange } from 'date-fns'
+import { isWithinInterval } from 'date-fns'
 
 // Styles
 import { H2, H4 } from '@blueprintjs/core'
@@ -25,7 +25,7 @@ const ChallengesPage = () => (
               if (loading) return null
               if (error) return <div>{error.message}</div>
 
-              const eventStarted = isWithinRange(
+              const eventStarted = isWithinInterval(
                 new Date(), // date
                 new Date(data.event[0].start_time), // start
                 new Date(data.event[0].end_time), // end
