@@ -5,7 +5,7 @@ import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import format from 'date-fns/format'
-import { distanceInWordsToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 
 import { Motion, spring } from 'react-motion'
 import { Timeline, TimelineEvent } from 'react-event-timeline'
@@ -98,18 +98,18 @@ const SubmissionItem = ({ data, openSubmissionHistory, submissionType }) => (
           >
             {(submissionType.includes('ACCEPTED') || submissionType.includes('STARRED')) && (
               <React.Fragment>
-                <div>{`Submitted ${distanceInWordsToNow(new Date(data.submitted_at))} Ago`}</div>
+                <div>{`Submitted ${formatDistanceToNow(new Date(data.submitted_at))} Ago`}</div>
                 <a type="button" onClick={openSubmissionHistory}>
                   Details
                 </a>
               </React.Fragment>
             )}
             {submissionType.includes('PENDING') && (
-              <div>{`Processed ${distanceInWordsToNow(new Date(data.processed_at))} Ago`}</div>
+              <div>{`Processed ${formatDistanceToNow(new Date(data.processed_at))} Ago`}</div>
             )}
             {submissionType.includes('REJECTED') && (
               <React.Fragment>
-                <div>{`Processed ${distanceInWordsToNow(new Date(data.processed_at))} Ago`}</div>
+                <div>{`Processed ${formatDistanceToNow(new Date(data.processed_at))} Ago`}</div>
                 <a type="button" onClick={openSubmissionHistory}>
                   Details
                 </a>

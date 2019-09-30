@@ -5,7 +5,7 @@ import { Query, Mutation, Subscription } from 'react-apollo'
 
 import gql from 'graphql-tag'
 import createPersistedState from 'use-persisted-state'
-import { distanceInWordsToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 
 // Styles
 import {
@@ -234,9 +234,9 @@ const SubmissionItem = props => {
         </div>
         <div style={{ fontWeight: 450, marginRight: 10 }}>
           <span>
-            {`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} /{' '}
+            {`Submitted: ${formatDistanceToNow(new Date(submission.submitted_at))} Ago`} /{' '}
           </span>
-          <span>{`Processed: ${distanceInWordsToNow(new Date(submission.processed_at))} Ago`}</span>
+          <span>{`Processed: ${formatDistanceToNow(new Date(submission.processed_at))} Ago`}</span>
         </div>
         <div style={{ display: 'inline-flex' }}>
           <CategoryList

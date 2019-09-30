@@ -4,7 +4,7 @@ import { Query, Subscription } from 'react-apollo'
 import { useSubscription } from '@apollo/react-hooks'
 
 import gql from 'graphql-tag'
-import { distanceInWordsToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 
 // Styles
 import { Motion, spring } from 'react-motion'
@@ -66,7 +66,7 @@ const SubmissionItem = ({ data }) => (
               <span style={{ fontWeight: 450, fontSize: '1em' }}>{data.teamByteamId.name}</span>
               <span
                 style={{ fontWeight: 300, fontSize: '0.8em', textTransform: 'uppercase' }}
-              >{`${distanceInWordsToNow(new Date(data.submitted_at), {
+              >{`${formatDistanceToNow(new Date(data.submitted_at), {
                 includeSeconds: true,
               })} Ago`}</span>
             </div>
