@@ -1,16 +1,14 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-static-element-interactions, jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Query, Subscription } from 'react-apollo'
 import { useSubscription } from '@apollo/react-hooks'
 
-import createPersistedState from 'use-persisted-state'
 import gql from 'graphql-tag'
 import { distanceInWordsToNow } from 'date-fns'
 
 // Styles
 import { Motion, spring } from 'react-motion'
-import { Tabs, Tab, Icon, Tag, H3 } from '@blueprintjs/core'
+import { Icon, Tag, H3 } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom components
@@ -233,22 +231,7 @@ const JudgeFeed = () => {
   )
 }
 
-const useTeamFilterState = createPersistedState('teams')
-
-const AdminFeed = () => {
-  const [selectedTeams] = useTeamFilterState([])
-
-  let subscriptionComponent
-  if (!selectedTeams || selectedTeams.length < 1) {
-    subscriptionComponent = <SubscriptionData subscription={LIVE_FEED} />
-  } else {
-    subscriptionComponent = (
-      <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
-    )
-  }
-
-  return subscriptionComponent
-}
+const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
 
 const SubmissionList = () => (
   <React.Fragment>

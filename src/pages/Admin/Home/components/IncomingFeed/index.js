@@ -1,16 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid, jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */
 import React from 'react'
 
-// Styles
-import { Icon } from '@blueprintjs/core'
-import { IconNames } from '@blueprintjs/icons'
-
 // Custom imports
-import { SlidingPanelConsumer } from '@shared/components/SlidingPane'
 import { PanelProvider, PanelRoot } from '@shared/components/Panel'
-import Can from '@shared/components/AuthContext/Can'
 import SubmissionList from './Feed'
-import SettingsPanel from './SettingsPanel'
 
 import './index.scss'
 
@@ -42,18 +34,6 @@ const IncomingFeed = () => (
             }}
           >
             Incoming Feed
-            {/* <Can
-              allowedRole="ctf_admin"
-              yes={() => (
-                <SlidingPanelConsumer>
-                  {({ openSlider }) => (
-                    <a onClick={() => openSlider(SettingsPanel)}>
-                      <Icon intent="primary" icon={IconNames.SETTINGS} iconSize={20} />
-                    </a>
-                  )}
-                </SlidingPanelConsumer>
-              )}
-            /> */}
           </div>
         </div>
         <div className="case-data__content">
