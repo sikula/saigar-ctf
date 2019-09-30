@@ -123,9 +123,13 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           {children}
         </Flex>
         <Fixed className="footer">
-          Powered by{' '}
+          Powered by Saigar Technologies |{' '}
           <a href="https://saigar.io" target="_blank">
             saigar.io
+          </a>
+          |{' '}
+          <a href="https://twitter.com/@saigar_to" target="_blank">
+            @saigar_to
           </a>{' '}
           |{' '}
           <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
@@ -146,25 +150,6 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
         </Layout>
       </Fixed>
     )}
-    {/* <div
-      style={{
-        position: 'absolute',
-        width: '300px',
-        left: '78px',
-        background: '#F5F8FA',
-        top: 0,
-        height: '100%',
-        padding: 20,
-        zIndex: 9999,
-        borderRight: '1px solid #e6dddd',
-        boxShadow: '-10px 0px 10px 1px rgba(0, 0, 0,0.08)',
-      }}
-    >
-      <div style={{ float: 'right' }}>
-        <Icon icon={IconNames.CROSS} iconSize={32} />
-      </div>
-      <div className="teamList">hi</div>
-    </div> */}
   </Layout>
 )
 
