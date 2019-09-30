@@ -1,38 +1,6 @@
 /* eslint-disable react/sort-comp, react/no-unused-state */
 import React, { createContext } from 'react'
 import PropTypes from 'prop-types'
-// import SlidingPane from '../components'
-
-// const SlidingPanelContext = createContext({
-//   component: null,
-//   props: {},
-//   openSlider: () => {},
-//   closeSlider: () => {},
-// })
-
-// export class SlidingPanelProvider extends React.Component {
-//   openSlider = (component, props = {}) => {
-//     this.setState({ component, props })
-//   }
-
-//   closeSlider = () => {
-//     this.setState({ component: null, props: {} })
-//   }
-
-//   state = {
-//     component: null,
-//     props: {},
-//     openSlider: this.openSlider,
-//     closeSlider: this.closeSlider,
-//   }
-
-//   render() {
-//     const { children } = this.props
-//     return (
-//       <SlidingPanelContext.Provider value={this.state}>{children}</SlidingPanelContext.Provider>
-//     )
-//   }
-// }
 
 const SlidingPanelContext = createContext({
   props: {},

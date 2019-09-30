@@ -94,7 +94,6 @@ const createChartOptions = theme => ({
   },
 })
 
-
 const EVENT_QUERY = gql`
   query eventQuery {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -105,37 +104,44 @@ const EVENT_QUERY = gql`
 
 const ScoreGraph = ({ dark }) => (
   <Query query={EVENT_QUERY}>
-    {({ loading, error, data: eventData }) => !loading ? <Subscription subscription={GET_SCOREGRAPH} variables={{ eventID: eventData.event[0].uuid }}>
-    {({ data, loading, error }) => {
-      console.log(error)
-      if (!data) return null
-      if (loading) {
-        return <div>Loading...</div>
-      }
-
-      if (error) return <div>`${error.message}`</div>
-
-      const teamSeries = transformData(data.scoreGraph)
-
-      return (
-        <div
-          style={{
-            background: dark ? 'linear-gradient(#354450, #394B59)' : undefined,
-          }}
+    {({ loading, error, data: eventData }) =>
+      !loading ? (
+        <Subscription
+          subscription={GET_SCOREGRAPH}
+          variables={{ eventID: eventData.event[0].uuid }}
         >
-          <div style={{ padding: '1em' }}>
-            <Chart
-              options={createChartOptions(dark && 'dark')}
-              series={teamSeries}
-              type="line"
-              width="100%"
-              height={450}
-            />
-          </div>
-        </div>
-      )
-    }}
-  </Subscription> : null}
+          {({ data, loading, error }) => {
+            console.log(error)
+            if (!data) return null
+            if (loading) {
+              return <div>Loading...</div>
+            }
+
+            if (error) return <div>`${error.message}`</div>
+
+            const teamSeries = transformData(data.scoreGraph)
+
+            return (
+              <div
+                style={{
+                  background: dark ? 'linear-gradient(#354450, #394B59)' : undefined,
+                }}
+              >
+                <div style={{ padding: '1em' }}>
+                  <Chart
+                    options={createChartOptions(dark && 'dark')}
+                    series={teamSeries}
+                    type="line"
+                    width="100%"
+                    height={450}
+                  />
+                </div>
+              </div>
+            )
+          }}
+        </Subscription>
+      ) : null
+    }
   </Query>
 )
 
