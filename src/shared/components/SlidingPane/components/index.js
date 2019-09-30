@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 /*
     @NOTE:
         Heavily borrowed from (https://github.com/DimitryDushkin/sliding-pane/blob/master/src/index.js)
@@ -75,7 +74,9 @@ SlidingPaneHeader.Menu = SlidingPaneHeaderMenu
 SlidingPaneHeader.Actions = SlidingPaneHeaderActions
 
 const SlidingPaneContent = ({ children, className, ...rest }) => (
-  <div className={className || 'slide-pane__content'} {...rest}>{children}</div>
+  <div className={className || 'slide-pane__content'} {...rest}>
+    {children}
+  </div>
 )
 SlidingPaneContent.displayName = 'SlidingPaneContent'
 SlidingPaneContent.propTypes = {

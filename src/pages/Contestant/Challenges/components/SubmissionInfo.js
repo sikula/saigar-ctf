@@ -1,4 +1,4 @@
-/* eslint-disable react/require-default-props, react/forbid-prop-types, jsx-a11y/anchor-is-valid */
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
