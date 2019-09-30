@@ -1,16 +1,14 @@
-/* eslint-disable react/require-default-props, react/forbid-prop-types, jsx-a11y/anchor-is-valid */
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Query } from 'react-apollo'
-import gql from 'graphql-tag'
 
 // Styles
 import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 // Custom Components
-import { SlidingPane } from '../../../../shared/components/SlidingPane'
 import CaseInfoData from '@features/CaseInfo/components'
+import { SlidingPane } from '../../../../shared/components/SlidingPane'
 
 const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane

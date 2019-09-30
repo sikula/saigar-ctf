@@ -1,7 +1,6 @@
-/* eslint-disable react/require-default-props, react/forbid-prop-types, jsx-a11y/anchor-is-valid */
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { Query, Mutation } from 'react-apollo'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import { Formik } from 'formik'
@@ -15,7 +14,6 @@ import { IconNames } from '@blueprintjs/icons'
 // Custom Components
 import { AuthContext } from '@shared/components/AuthContext/context'
 import { SlidingPane, SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
-import { AuthConsumer } from '../../../../shared/components/AuthContext/context'
 
 import NewSubmissionForm from './NewSubmission-form'
 import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO, CASE_LIST } from '../graphql/queries'
