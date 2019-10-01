@@ -4,11 +4,9 @@ import PropTypes from 'prop-types'
 import { Query, Mutation } from 'react-apollo'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 
-// import { bindActionCreators } from 'redux'
-// import { connect } from 'react-redux'
+
 
 import gql from 'graphql-tag'
-// import createPersistedState from 'use-persisted-state'
 
 // Styles
 import { Icon, Switch, H5, PanelStack } from '@blueprintjs/core'
@@ -18,19 +16,7 @@ import './SettingsPanel.scss'
 
 // Custom imports
 import { SlidingPane } from '@shared/components/SlidingPane'
-// import { GET_TEAMS } from '../../graphql/adminQueries'
 
-// const useTeamFilterState = createPersistedState('teams')
-
-// // TODO(peter): this needs to be cleaned up a bit, we might want to rethink the
-// // event system and how we requery by event
-// const EVENT_QUERY = gql`
-//   query eventQuery {
-//     event(order_by: { start_time: desc }, limit: 1) {
-//       uuid
-//     }
-//   }
-// `
 
 const ADD_JUDGE_TEAM = gql`
   mutation addJudgeTeam($judgeID: uuid!, $teamID: uuid!) {
@@ -40,13 +26,6 @@ const ADD_JUDGE_TEAM = gql`
   }
 `
 
-// const REMOVE_JUDGE_TEAM = gql`
-//   mutation removeJudgeTeam($judgeID: uuid!, $teamID: uuid!) {
-//     delete_judge_team(where: { judge_id: { _eq: $judgeID }, team_id: { _eq: $teamID } }) {
-//       affected_rows
-//     }
-//   }
-// `
 
 const JUDGES_QUERY = gql`
   query judgesList {
@@ -77,147 +56,6 @@ const TEAM_COUNT_QUERY = gql`
     }
   }
 `
-
-// const TeamListConnector = ({ children }) => {
-//   return (
-//     <Query query={EVENT_QUERY}>
-//       {({ loading, data: eventData }) =>
-//         !loading ? (
-//           <Query query={GET_TEAMS} variables={{ eventId: eventData.event[0].uuid }}>
-//             {({ data, loading, error }) => {
-//               if (loading) return <div>Loading...</div>
-//               if (error) return <div>{error.message}</div>
-
-//               if (!Array.isArray(data.team_event) || !data.team_event.length) {
-//                 return <H5>No teams are registered for this event</H5>
-//               }
-
-//               return children(data)
-//             }}
-//           </Query>
-//         ) : null
-//       }
-//     </Query>
-//   )
-// }
-
-// const TeamsList = ({ judgeID, closePanel }) => {
-//   const [selectedTeams, setSelectedTeams] = useTeamFilterState([])
-//   const [addJudgeTeam, addJudgeResult] = useMutation(ADD_JUDGE_TEAM)
-//   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
-//   const { loading, data } = useQuery(ASSIGNED_JUDGED_QUERY, {
-//     variables: { judgeID },
-//     skip: !judgeID,
-//   })
-
-//   const handleTeamToggle = event => {
-//     const { id, checked } = event.currentTarget
-
-//     if (!checked) {
-//       setSelectedTeams(selectedTeams.filter(team => team !== id))
-//       removeJudgeTeam({
-//         variables: {
-//           judgeID,
-//           teamID: id,
-//         },
-//         refetchQueries: [
-//           { query: TEAM_COUNT_QUERY, variables: { judgeID } },
-//           { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID } },
-//         ],
-//       })
-//       closePanel()
-//     } else {
-//       setSelectedTeams(selectedTeams.concat(id))
-//       addJudgeTeam({
-//         variables: {
-//           judgeID,
-//           teamID: id,
-//         },
-//         refetchQueries: [
-//           { query: TEAM_COUNT_QUERY, variables: { judgeID } },
-//           { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID } },
-//         ],
-//       })
-//       closePanel()
-//     }
-//   }
-
-//   if (loading) return null
-//   return (
-//     <React.Fragment>
-//       {data.judge_team.length < 1 ? (
-//         <div style={{ padding: 10, textAlign: 'center' }}>No Assigned Teams</div>
-//       ) : (
-//         data.judge_team.map(({ team }) => (
-//           <div
-//             style={{
-//               display: 'inline-flex',
-//               width: '100%',
-//               padding: '10px 20px 0px 20px',
-//               justifyContent: 'space-between',
-//               borderBottom: '1px solid #e8e1e1',
-//             }}
-//             key={team.uuid}
-//           >
-//             <span>
-//               <Switch
-//                 id={team.uuid}
-//                 checked={selectedTeams.indexOf(team.uuid) !== -1}
-//                 onChange={handleTeamToggle}
-//               />
-//             </span>
-//             <span>{team.name}</span>
-//           </div>
-//         ))
-//       )}
-//       <div style={{ width: '100%', height: '2px', background: 'gray' }} />
-//       <TeamListConnector>
-//         {({ team_event: teamEvent }) => (
-//           <React.Fragment>
-//             <div
-//               style={{
-//                 display: 'inline-flex',
-//                 width: '100%',
-//                 padding: '10px 20px 10px 20px',
-//                 justifyContent: 'space-between',
-//                 borderBottom: '1px solid #e8e1e1',
-//                 fontWeight: 800,
-//                 textTransform: 'uppercase',
-//               }}
-//             >
-//               <span>Assigned</span>
-//               <span>Pending Subs.</span>
-//               <span>Team Name</span>
-//             </div>
-//             {teamEvent.map(({ team }) => (
-//               <div
-//                 style={{
-//                   display: 'inline-flex',
-//                   width: '100%',
-//                   padding: '10px 20px 0px 20px',
-//                   justifyContent: 'space-between',
-//                   borderBottom: '1px solid #e8e1e1',
-//                 }}
-//                 key={team.uuid}
-//               >
-//                 <span style={{ flexBasis: '33.33%' }}>
-//                   <Switch
-//                     id={team.uuid}
-//                     disabled={selectedTeams.indexOf(team.uuid) !== -1}
-//                     checked={selectedTeams.indexOf(team.uuid) !== -1}
-//                     onChange={handleTeamToggle}
-//                   />
-//                 </span>
-//                 <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>{team.submissionByTeamAggregate.aggregate.count}</span>
-//                 <span style={{ flexBasis: '33.33%', textAlign: 'right' }}>{team.name}</span>
-//               </div>
-//             ))}
-//           </React.Fragment>
-//         )}
-//       </TeamListConnector>
-//     </React.Fragment>
-//   )
-// }
 
 const EVENT_ID = gql`
   query eventId {

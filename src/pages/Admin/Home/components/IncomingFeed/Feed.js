@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import { Query, Subscription } from 'react-apollo'
 import { useSubscription } from '@apollo/react-hooks'
 
-import createPersistedState from 'use-persisted-state'
 import gql from 'graphql-tag'
 import { distanceInWordsToNow } from 'date-fns'
 
@@ -233,22 +232,8 @@ const JudgeFeed = () => {
   )
 }
 
-const useTeamFilterState = createPersistedState('teams')
 
-const AdminFeed = () => {
-  const [selectedTeams] = useTeamFilterState([])
-
-  let subscriptionComponent
-  if (!selectedTeams || selectedTeams.length < 1) {
-    subscriptionComponent = <SubscriptionData subscription={LIVE_FEED} />
-  } else {
-    subscriptionComponent = (
-      <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={selectedTeams} />
-    )
-  }
-
-  return subscriptionComponent
-}
+const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
 
 const SubmissionList = () => (
   <React.Fragment>
