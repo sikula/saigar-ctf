@@ -1,11 +1,11 @@
 config:
-  target: https://saigar-ctf-heroku.herokuapp.com
+  target: https://api.tracelabs.org
   phases:
     - duration: 300
       arrivalRate: 20 
   defaults:
     headers:
-      Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlF6VTNRMEZETVVWQk9EazJRa0kyTXprMVJESTVNelJDUTBOQlJURkVRVFJGTURkR05UUTFNZyJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLWRlZmF1bHQtcm9sZSI6ImNvbnRlc3RhbnQiLCJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbImN0Zl9hZG1pbiIsImp1ZGdlIiwiY29udGVzdGFudCJdLCJ4LWhhc3VyYS11c2VyLWlkIjoiYXV0aDB8NWM3MzFjMTY1NDJjYzEzYWVjMjAwZjMzIn0sImh0dHBzOi8vY3RmLnNhaWdhci5pby9yb2xlcyI6eyJncm91cHMiOlsiY29udGVzdGFudCJdLCJyb2xlcyI6W10sInBlcm1pc3Npb25zIjpbXX0sIm5pY2tuYW1lIjoiY29udGVzdGFudDEiLCJuYW1lIjoiY29udGVzdGFudEBzYWlnYXIuaW8iLCJwaWN0dXJlIjoiaHR0cHM6Ly9zLmdyYXZhdGFyLmNvbS9hdmF0YXIvMGJmZjJkMjY2MWU5YWVjZDEzYzRmNjE4MjhlYjE3M2U_cz00ODAmcj1wZyZkPWh0dHBzJTNBJTJGJTJGY2RuLmF1dGgwLmNvbSUyRmF2YXRhcnMlMkZjby5wbmciLCJ1cGRhdGVkX2F0IjoiMjAxOS0wNS0yM1QwMTo0NDoxNi42MDZaIiwiZW1haWwiOiJjb250ZXN0YW50QHNhaWdhci5pbyIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9zaWt1bGF0ZXN0LmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1YzczMWMxNjU0MmNjMTNhZWMyMDBmMzMiLCJhdWQiOiJVbnQyZDI4MTkwTTNQWGR2RVVDTHAxb1IzcDBzNG5oQSIsImlhdCI6MTU1ODU3NTg1NywiZXhwIjoxNTU4NjExODU3LCJhdF9oYXNoIjoicXY1dFJ6eU82Nm5JY1pHUEFTQUpFQSIsIm5vbmNlIjoiRzJYdlptT3M2cVBuSHd2QnFqc2xnUWUuTGhTSDJOUDcifQ.gbWms97RtuCqd2liFvm7vqt13sQ2zppwGVOHlHJxFr2UDQ8ZV1Qg5FNct7ZaFJ0REj-kzfIgmoDQx5RULZyoP-OIkDxwp1x3Bxgcve2Q8wyORIeV_v6t-SX3p9qoq74RI8tZqdSWNaLSw2hCWMOKUFHAT3Zd7mHMKkJqY6X0RbMD3JN4cyLvC5rosj6-04NwcpMIc_3am7Dm3SVmv7OmbyrgZGyZ7Uo5eT4OUBoiZyTse3sFrwULYrXcFeq9iK9m2DWdmaVzdYAJVoZEsJ8W0bOTzPU3jpUZR1c4ejwhQkxx5PK5Ml1cMYwD25e55Ypk1jlLqjrr83A621sVyqXpng
+      Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik1FVkRSa05ETmpnelJqTTBSalV5UmpNd09VTTVOa1JCTjBNNVJEZEZNMFF6TjBNMU5qYzFOUSJ9.eyJodHRwczovL2N0Zi5zYWlnYXIuaW8vcm9sZXMiOnsiZ3JvdXBzIjpbImNvbnRlc3RhbnQiXX0sImh0dHBzOi8vaGFzdXJhLmlvL2p3dC9jbGFpbXMiOnsieC1oYXN1cmEtZGVmYXVsdC1yb2xlIjoiY29udGVzdGFudCIsIngtaGFzdXJhLWFsbG93ZWQtcm9sZXMiOlsiY3RmX2FkbWluIiwianVkZ2UiLCJjb250ZXN0YW50Il0sIngtaGFzdXJhLXVzZXItaWQiOiJhdXRoMHw1ZDkyOWQ2ODMyODU2ZDBjNThlOWJiODkifSwibmlja25hbWUiOiJwaW90ciIsIm5hbWUiOiJyb2NjbzU2QGdtYWlsLmNvbSIsInBpY3R1cmUiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci81ZGVhZDAxMjVkZmI5MTBkNmRmZGQ3OWM3NmY5OTI0Zj9zPTQ4MCZyPXBnJmQ9aHR0cHMlM0ElMkYlMkZjZG4uYXV0aDAuY29tJTJGYXZhdGFycyUyRnJvLnBuZyIsInVwZGF0ZWRfYXQiOiIyMDE5LTEwLTAxVDIyOjI3OjE3LjU1N1oiLCJlbWFpbCI6InJvY2NvNTZAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJpc3MiOiJodHRwczovL3RyYWNlbGFicy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWQ5MjlkNjgzMjg1NmQwYzU4ZTliYjg5IiwiYXVkIjoidXE5aHhBQzFVeGpKM3JKYlBucXlVb1hBMlhhYnowbDIiLCJpYXQiOjE1Njk5Njg4MzgsImV4cCI6MTU3MDAwNDgzOCwiYXRfaGFzaCI6ImxhX3VzZDhZemt1NFhSSUMtN2lqU1EiLCJub25jZSI6IlF-MVlORFJRcHdIRS4wTTJSeTA4TTF1Vm5peDl6ZXZUIn0.fhCfkRIRMAJFUgbT3IFRov3wkIDhkKjE8SXwWaO1u6UR1mCbXCV9fd9BwE24x2dz1rY6h0xcakNSdRBji4CANv4C7E4MIvAlWX38UfDWS634nUmi0hv9TCfjIHtE5zvVfSuN7_7Q8tpDIW9brSc_d46U-ZT2WId8iaLeBm0OXj2pXndSjn2HMWmhgVVq3lK2HF8pHpBzRbtXBiHwHbqX8m_KGmpzfdxe9IA8LaM5r0aPNAgApe_wRy5_yROtZU-1S--rwuQuBTwh2lnSPhxowqpo38nPHu2YEAk9_6zdzFCBJ_gVMl1slFEI6mPXdP30Vt9LkBK-fzSVmjrwknOXIQ
   plugins:
     faker: {}
   processor: './stress.js'
@@ -18,6 +18,7 @@ config:
         $eventId: uuid!
         $caseId: uuid!
         $configId: uuid!
+        $supportingEvidence: String!
       ) {
         insert_submission(
           objects: {
@@ -27,6 +28,7 @@ config:
             event_id: $eventId
             case_id: $caseId
             config_id: $configId
+            supporting_evidence: $supportingEvidence
           }
         ) {
           affected_rows
@@ -34,18 +36,20 @@ config:
       }
     content: '$faker.internet.url'
     proof: '$faker.lorem.sentence'
+    supportingEvidence: '$faker.lorem.sentence'
 scenarios:
   - flow:
       - function: "generateRandomData"
       # - log: "New Virtual User: {{ url }}, {{ explanation }}, {{ category }}"
       - post:
-          url: "/v1alpha1/graphql"
+          url: "/v1/graphql"
           json:
             query: "{{ submission }}"
             variables:
                 content: "{{ content }}"
                 explanation: "{{ proof }}"
-                teamId: "ae431ebe-4b84-4204-b99e-887c629e470c"
-                eventId: "3d16fcce-4e6a-47b8-a76b-dd0712e1e771"
-                caseId: "92f25242-b06d-4c7c-ba93-1466f8ab277c"
+                teamId: "d77b8b5c-f6aa-4560-b277-a8f110f389c9"
+                eventId: "c68571a3-61dd-47b9-b170-29afa0aeb200"
+                caseId: "66bf29df-0481-4ebd-ba3f-f83f1f52c03a"
                 configId: "{{ category }}"
+                supportingEvidence: "{{ supportingEvidence }}"

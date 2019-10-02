@@ -1,15 +1,15 @@
 const Faker = require('faker')
 
 const categories = [
-  'bb4550ea-3217-4c47-a225-4e95d06e5cf8',
-  'b4fbf505-2a03-47e4-b9c3-ce4c7d94bc3d',
-  '70e2096f-2517-4c36-baef-79a651ff5cd9',
-  'c5303458-aef7-4013-ba09-248edbd40c49',
-  'e5b16aad-de59-4b75-8299-30b9c49f4004',
-  'ee9fecc8-1959-4b21-9843-e841aa540b8f',
-  '2721aa5f-4b5a-4a99-a20d-f6ef50cfcdfa',
-  '222a8e35-de0a-436c-9a9a-438c7b5a7c3b',
-  '0f576cf8-c942-4015-8cbc-d8862d42389c',
+  'c4d7f7e2-970b-4b22-8d51-5ceb5a864abb',
+  'e3a5dcc5-8923-40e0-8dec-6a17812fe224',
+  'fd33d39f-3e17-4ac7-b681-87c08703bfec',
+  '01cf495e-6572-4edf-a45a-274c74dfade6',
+  '72560fcc-c411-4e68-9514-782260d9f379',
+  '6b533e93-a1da-4673-8305-941e90d3654a',
+  '102325e9-01e8-4909-8324-9135085cdb0a',
+  'dfd242f9-8428-4585-b765-77c10739f08b',
+  'a196ebfe-3425-461f-80ef-2b8a5d6844cf',
 ]
 
 function generateRandomData(userContext, events, done) {
