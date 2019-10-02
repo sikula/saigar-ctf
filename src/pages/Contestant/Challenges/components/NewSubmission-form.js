@@ -32,15 +32,16 @@ const SUBMISSION_INFO = {
       <div>
         <strong>DARK WEB</strong>
         <p>
-          Relevant information found on the dark web about the subject. This can include but not
-          limited to:
+          Relevant information found on the dark web about the subject. 
         </p>
+        <strong style={{ color: "red" }}>
+          Your submission must originate from a .onion URL to be considered Dark Web - Eg. https://dsfjldsjflj.onion
+        </strong>
         <ul>
-          <li>pciture or details of subject on sites such as backstage</li>
-          <li>discussion regarding subject on dark web sites</li>
+          <li>pictures or details of subject on human trafficking related dark we sites</li>
           <li>the sales of goods by the subject on the dark web</li>
           <li>any activity or post by the subject on the dark web</li>
-          <li>password breach data that includes the subject's username</li>
+          <li>data breaches posted on the dark web that include the subject's personal information</li>
         </ul>
         <strong style={{ color: 'red' }}>
           Please use caution when exploring the dark web as you are likely see graphic pictures.
