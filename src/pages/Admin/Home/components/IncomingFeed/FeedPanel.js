@@ -84,9 +84,11 @@ const CategoryList = ({ currentCategory, handleChange }) => (
       return (
         <HTMLSelect name="category" value={currentCategory} onChange={handleChange} fill large>
           {data.submission_configuration.map(config => (
-            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-              config.category
-            } (${config.points} pts.)`}</option>
+            <option
+              key={config.uuid}
+              id={config.category}
+              value={config.uuid}
+            >{`${config.category} (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       )
@@ -301,6 +303,150 @@ const SubmissionDetailsPanel = ({
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
           <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
           <RejectSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Non-Permitted Source"
+                  intent="danger"
+                  alignText="left"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  style={{ marginRight: 10 }}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'This submission originated from a non-permitted source such as: news, media, law enforcement, or speculative websites.  We do not accept these as they provide minimal intelligence value to law enforcement.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Duplicate Submission"
+                  intent="danger"
+                  alignText="left"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'You or one of your team members has already submitted this intelligence.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Additional Context Required"
+                  intent="danger"
+                  alignText="left"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  style={{ marginRight: 10 }}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'To award points for this submission, we require additional context or support this intelligence',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Not Relevant"
+                  intent="danger"
+                  alignText="left"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'This submission has been determined as not relevant to the case.',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+          </div>
         </div>
       </div>
     </React.Fragment>
