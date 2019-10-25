@@ -237,9 +237,11 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
       <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
         <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
           {data.submission_configuration.map(config => (
-            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-              config.category
-            } (${config.points} pts.)`}</option>
+            <option
+              key={config.uuid}
+              id={config.category}
+              value={config.uuid}
+            >{`${config.category} (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       </FormGroup>
