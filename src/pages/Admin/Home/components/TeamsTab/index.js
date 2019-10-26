@@ -79,6 +79,7 @@ const EVENT_QUERY = gql`
   query eventQuery {
     event(order_by: { start_time: desc }, limit: 1) {
       uuid
+      free_for_all
     }
   }
 `
@@ -91,29 +92,20 @@ const TOGGLE_FFA = gql`
   }
 `
 
-const FFAToggle = ({ ffaChecked, handleFfaClick }) => {
-  const { data, loading } = useQuery(EVENT_QUERY)
-  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
+const FFAToggle = ({ ffaChecked, handleFfaClick }) => (
+  <div style={{ paddingTop: 10, paddingRight: 20, display: 'flex', justifyContent: 'end' }}>
+    <Switch checked={ffaChecked} label="Free For All" onChange={handleFfaClick} />
+  </div>
+)
 
-  useEffect(() => {
-    if (!loading) {
-      toggleFfa({
-        variables: {
-          ffa: ffaChecked,
-          event: data.event[0].uuid,
-        },
-      })
-    }
-  }, [ffaChecked])
-
-  return (
-    <div style={{ paddingTop: 10, paddingRight: 20, display: 'flex', justifyContent: 'end' }}>
-      <Switch checked={ffaChecked} label="Free For All" onChange={handleFfaClick} />
-    </div>
-  )
-}
+/*
+  1) [x] Fetch free_for_all from database
+  2) set it to state
+  3) [x] handle the toggle
+*/
 
 const TeamsTab = () => {
+  // State Layer
   const [ffaChecked, setFfaChecked] = useState(false)
 
   // GraphQL Layer
@@ -124,11 +116,34 @@ const TeamsTab = () => {
     },
   })
 
+  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
   const [removeJudgeTeam, removeJudgeResult] = useMutation(REMOVE_JUDGE_TEAM)
+
+  useEffect(() => {
+    if (!eventLoading) {
+      setFfaChecked(eventData.event[0].free_for_all)
+    }
+  }, [eventLoading])
+
+  // useEffect(() => {
+  //   console.log(" IS HOULD ONLY GET CALLED ONCE ", ffaChecked)
+
+  //   toggleFfa({
+  //     variables: {
+  //       ffa: ffaChecked,
+  //       event: eventData.event[0].uuid,
+  //     },
+  //   })
+  // }, [ffaChecked])
 
   // Handlers
   const handleFfaClick = () => {
-    setFfaChecked(prevChecked => !prevChecked)
+    toggleFfa({
+      variables: {
+        ffa: !ffaChecked,
+        event: eventData.event[0].uuid,
+      },
+    }).then(() => setFfaChecked(prevChecked => !prevChecked))
   }
 
   const handleUnassignJudge = (judge, team) => {
