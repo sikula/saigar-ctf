@@ -8,9 +8,6 @@ const ResourcesPage = () => (
 
     <ul>
       <li>
-        <a href="https://inteltechniques.com/menu.html">https://inteltechniques.com/menu.html</a>
-      </li>
-      <li>
         <a href="https://osintframework.com/">https://osintframework.com/</a>
       </li>
       <li>
