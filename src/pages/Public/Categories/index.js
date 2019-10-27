@@ -187,15 +187,14 @@ const Categories = () => (
       >
         <strong>DARK WEB / 1000 points</strong>
         <p>
-          Relevant information found on the dark web about the subject. This can include but not
-          limited to:
+          Relevant information found on the dark web about the subject.
         </p>
+        <p style={{ color: 'red' }}>Your submission must originate from a .onion URL to be considered Dark Web - Eg. https://dsfjldsjflj.onion</p>
         <ul>
-          <li>picture or details of subject on sites such as backpage</li>
-          <li>discussion regarding subject on dark web sites</li>
-          <li>the sales of goods by the subject on the dark web</li>
+          <li>pictures or details of subject on human trafficking related dark web sites</li>
+          <li>the sales of goods by the subject on dark web sites</li>
           <li>any activity or post by the subject on the dark web</li>
-          <li>password breach data that includes the subject's username</li>
+          <li>data breaches posted on the dark web that include the subject's personal information</li>
         </ul>
       </div>
     </div>
