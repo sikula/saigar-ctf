@@ -1,5 +1,8 @@
 import React from 'react'
 
+// Styles
+import { FormGroup, InputGroup } from '@blueprintjs/core'
+
 const LoginPage = () => (
     <div
         style={{
@@ -16,7 +19,6 @@ const LoginPage = () => (
                 style={{
                     margin: '0 auto',
                     width: '480px',
-                    height: '640px',
                     background: '#FFF',
                     boxShadow: 'rgba(12, 52, 75, 0.05) 0px 3px 3px',
                     borderRadius: '8px'
@@ -27,12 +29,36 @@ const LoginPage = () => (
                         width: '100%',
                         borderBottom: '1px solid #ece7e7',
                         textAlign: 'center',
-                        borderRadius: '8px',
                         paddingTop: 10,
                         paddingBottom: 10,
                     }}
                 >
                     <h2 style={{ fontWeight: 500 }}>Login to <span style={{ fontWeight: 600 }}>Saigar CE</span></h2>
+                </div>
+                <div style={{ margin: 30 }}>
+                    <FormGroup label="Email" labelFor="text-input">
+                        <InputGroup
+                            id="text-input"
+                            name="email"
+                            placeholder="example@gmail.com"
+                            large
+                        />
+                    </FormGroup>
+                    <FormGroup label="Password" labelFor="text-input">
+                        <InputGroup
+                            id="text-input"
+                            name="password"
+                            large
+                            type="password"
+                        />
+                    </FormGroup>
+                </div>
+                <div style={{
+                    borderTop: '1px solid #ece7e7',
+                    padding: 20,
+                    textAlign: 'center'
+                }}>
+                    Forgot password?
                 </div>
             </div>
             <div style={{ color: "#000", padding: 10 }}>
