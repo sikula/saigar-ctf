@@ -165,7 +165,7 @@ const TeamsTab = () => {
     return (
       <React.Fragment>
         <FFAToggle ffaChecked={ffaChecked} handleFfaClick={handleFfaClick} />
-        <H4>Free For All Actived</H4>
+        <H4>Free For All Activated</H4>
       </React.Fragment>
     )
   }
