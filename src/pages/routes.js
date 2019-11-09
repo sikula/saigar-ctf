@@ -25,6 +25,14 @@ const AsyncSubmissionPage = React.lazy(() =>
 const AsyncChallengesPage = React.lazy(() =>
   import(/* webpackChunkName: "ChallengesPage" */ './Contestant/Challenges'),
 )
+
+// PUBLIC PAGES
+const AsyncLoginPage = React.lazy(() =>
+  import(/* webpackChunkName: "LoginPage" */ './Public/Login')
+)
+const AsyncRegisterPage = React.lazy(() =>
+  import(/* webpackChunkName: "RegisterPage" */ './Public/Register')
+)
 const AsyncScoreboardPage = React.lazy(() =>
   import(/* webpackChunkName: "ScoreBoardPage" */ './Public/ScoreBoard'),
 )
@@ -79,6 +87,18 @@ const CtfRoutes = ({ match }) => (
     />
 
     {/* PUBLIC ROUTES */}
+    <PublicRoute
+      exact
+      path={`${match.url}login2`}
+      layout={props => <div {...props} />}
+      component={AsyncLoginPage}
+    />
+    <PublicRoute
+      exact
+      path={`${match.url}register`}
+      layout={props => <div {...props} />}
+      component={AsyncRegisterPage}
+    />
     <PublicRoute
       exact
       path={`${match.url}submission/:submissionID`}
