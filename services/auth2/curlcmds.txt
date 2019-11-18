@@ -1,4 +1,7 @@
 curl.exe -v -H "Content-Type: application/json" -d '{""Username"": ""tester1"", 
+""Password"": ""password1"", ""Email"": ""tester1@saigar.io""}' http://localhost:8000/register
+
+curl.exe -v -H "Content-Type: application/json" -d '{""Username"": ""tester1"", 
 ""Password"": ""password1""}' http://localhost:8000/signin
 
-curl.exe -v --cookie "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoidGVzdGVyMSIsIk5pY2tuYW1lIjoiZmlyc3QgdGVzdGVyIiwiUGljdHVyZSI6ImF2YXRhci5wbmciLCJFbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsIkVtYWlsX1ZlcmlmaWVkIjp0cnVlfQ.CvXXNPlkciumrcEYnVm8Y8giha3LhvJApdTWUMNrsRc" http://localhost:8000/tokentest
+curl.exe -v --cookie "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJOYW1lIjoidGVzdGVyMSIsIk5pY2tuYW1lIjoiZmlyc3QgdGVzdGVyIiwiUGljdHVyZSI6ImF2YXRhci5wbmciLCJFbWFpbCI6InRlc3QxQGVtYWlsLmNvbSIsIkVtYWlsX1ZlcmlmaWVkIjp0cnVlLCJleHAiOjE1NzQwMjcxNzN9._PMyRQU9XCsDQODtIt4lQXwTv49q6cffO_2n57gxVYc" http://localhost:8000/tokentest
