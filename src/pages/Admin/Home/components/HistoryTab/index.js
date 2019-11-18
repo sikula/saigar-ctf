@@ -5,7 +5,7 @@ import { Query, Mutation, Subscription } from 'react-apollo'
 
 import gql from 'graphql-tag'
 import createPersistedState from 'use-persisted-state'
-import { distanceInWordsToNow } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
 
 // Styles
 import {
@@ -234,9 +234,9 @@ const SubmissionItem = props => {
         </div>
         <div style={{ fontWeight: 450, marginRight: 10 }}>
           <span>
-            {`Submitted: ${distanceInWordsToNow(new Date(submission.submitted_at))} Ago`} /{' '}
+            {`Submitted: ${formatDistanceToNow(new Date(submission.submitted_at))} Ago`} /{' '}
           </span>
-          <span>{`Processed: ${distanceInWordsToNow(new Date(submission.processed_at))} Ago`}</span>
+          <span>{`Processed: ${formatDistanceToNow(new Date(submission.processed_at))} Ago`}</span>
         </div>
         <div style={{ display: 'inline-flex' }}>
           <CategoryList
@@ -252,6 +252,8 @@ const SubmissionItem = props => {
         <p>{submission.content}</p>
         <H5>Relevance</H5>
         <p style={{ wordWrap: 'break-word' }}>{submission.explanation}</p>
+        <H5>Supporting Evidence</H5>
+        <p style={{ wordWrap: 'break-word' }}>{submission.supporting_evidence}</p>
       </code>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
@@ -462,39 +464,6 @@ const HistoryTab = () => {
           return (
             <div style={{ display: 'inline-flex', width: '100%', marginBottom: '20px' }}>
               <div style={{ width: '100%', marginRight: '20px' }}>
-                {/* <MultiSelect
-                    itemPredicate={(query, team, _index, exactMatch) => {
-                      const normalizedTeams = team.name.toLowerCase()
-                      const normalizedQuery = query.toLowerCase()
-
-                      if (exactMatch) {
-                        return normalizedTeams === normalizedQuery
-                      } else {
-                        return `${team.name}`.indexOf(normalizedQuery) >= 0;
-                      }
-                    }}
-                    itemRenderer={(team, { handleClick, modifiers, query }) => {
-                      if (!modifiers.matchesPredicate) {
-                        return null
-                      }
-                      const text = `${team.name}`
-                      return (
-                        <MenuItem active={modifiers.active} disabled={modifiers.disabled} label={team.name.toString()} key={team.uuid} onClick={() => console.log("HELLO WORLD")} text={text} />
-                      )
-                    }}
-                    tagRenderer={team => team.name}
-                    items={[
-                      {
-                        uuid: "1",
-                        name: "Yo"
-                      },
-                      {
-                        uuid: '2',
-                        name: "Sherlock"
-                      }
-                    ]}
-                    tagInputProps={{ large: true }}
-                  /> */}
                 <HTMLSelect
                   name="teams"
                   onChange={handleSelect}

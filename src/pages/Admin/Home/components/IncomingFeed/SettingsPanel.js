@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 import { Query, Mutation } from 'react-apollo'
@@ -9,14 +9,13 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 // Styles
-import { Icon, Switch, H5, PanelStack } from '@blueprintjs/core'
+import { Icon } from '@blueprintjs/core'
 import { IconNames } from '@blueprintjs/icons'
 
 import './SettingsPanel.scss'
 
 // Custom imports
 import { SlidingPane } from '@shared/components/SlidingPane'
-
 
 const ADD_JUDGE_TEAM = gql`
   mutation addJudgeTeam($judgeID: uuid!, $teamID: uuid!) {
@@ -25,7 +24,6 @@ const ADD_JUDGE_TEAM = gql`
     }
   }
 `
-
 
 const JUDGES_QUERY = gql`
   query judgesList {
@@ -74,31 +72,10 @@ const TOGGLE_FFA = gql`
 `
 
 const JudgesList = ({ team }) => {
-  // State Layer
-  const [ffaChecked, setFfaChecked] = useState(false)
-  const { data, loading } = useQuery(EVENT_ID)
-
   //  GraphQL Layer
-  const [toggleFfa, toggleFfaResult] = useMutation(TOGGLE_FFA)
   const [addJudgeTeam, addJudgeResult] = useMutation(ADD_JUDGE_TEAM)
 
-  // Lifecycle Methods
-  useEffect(() => {
-    if (!loading) {
-      toggleFfa({
-        variables: {
-          ffa: ffaChecked,
-          event: data.event[0].uuid,
-        },
-      })
-    }
-  }, [ffaChecked])
-
   // Handlers
-  const handleFfaClick = () => {
-    setFfaChecked(prevChecked => !prevChecked)
-  }
-
   const handleAssignJudge = uuid => {
     addJudgeTeam({
       variables: {
