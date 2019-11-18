@@ -1,42 +1,13 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import { Query, ApolloConsumer } from 'react-apollo'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import React from 'react'
 
 // Styles
-import {
-  Toaster,
-  Position,
-  Card,
-  Button,
-  Tabs,
-  Tag,
-  Tab,
-  Icon,
-  H5,
-  H4,
-  H3,
-  Dialog,
-  Classes,
-} from '@blueprintjs/core'
-import { IconNames } from '@blueprintjs/icons'
-
-import { Parser } from 'json2csv'
-import { saveAs } from 'file-saver'
-import JSZip from 'jszip'
+import { Tabs, Tab } from '@blueprintjs/core'
 
 // Custom Components
-import CreateCase from './components/CreateCase'
-import EditCase from './components/EditCase'
-import CreateEvent from './components/CreateEvent'
-import EditEvent from './components/EditEvent'
-import UploadUser from './components/UploadUser'
-import AddAdmin from './components/AddAdmins'
+import EventsPanel from './EventsPanel'
+import CasesPanel from './CasesPanel'
+import UsersPanel from './UsersPanel'
 
-import { EVENTS_QUERY, CASES_QUERY } from './graphql/graphQueries'
-
-import { SlidingPanelConsumer } from '../../../shared/components/SlidingPane'
 import Can from '../../../shared/components/AuthContext/Can'
 
 import './index.scss'

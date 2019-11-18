@@ -1,15 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { Query } from 'react-apollo'
 import { useQuery } from '@apollo/react-hooks'
 
-import { isWithinRange } from 'date-fns'
+import { isWithinInterval } from 'date-fns'
 import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
 
 import { AuthContext } from '@shared/components/AuthContext/context'
 import { SUBMISION_INFO } from '../graphql/queries'
-import { AuthConsumer } from '../../../../shared/components/AuthContext/context'
 
 const SUBMISSION_INFO = {
   LOCATION: {
@@ -227,7 +225,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
   if (loading) return null
   if (error) return null
 
-  const canCreateSubmission = isWithinRange(
+  const canCreateSubmission = isWithinInterval(
     new Date(),
     new Date(data.event[0].start_time),
     new Date(data.event[0].end_time),

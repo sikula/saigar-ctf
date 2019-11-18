@@ -1,22 +1,14 @@
 version: '3.6'
 services:
   saigar-ui:
-    image: saigar-ctf:latest
+    image: saigar-ctf:1.09-26.1
     ports:
-    - "5000:5000"
-    depends_on:
-    - "graphql-engine"
+    - "127.0.0.1:5000:5000"
     restart: always
     build: .
   saigar-auth:
-    image: saigar-auth:latest
+    image: saigar-auth:1.09-26.1
     ports:
-    - "3000:3000"
+    - "127.0.0.1:3000:3000"
     restart: always
     build: services/auth
-  saigar-file-upload:
-    image: saigar-fu:latest
-    ports:
-    - "7000:7000"
-    restart: always
-    build: services/file-upload

@@ -26,6 +26,29 @@ sgMailer.setApiKey('SENDGRID_API_KEY')
 const app = express()
 
 const handler = async event => {
+  if (event.op === 'UPDATE') {
+    let userRole
+    if (event.data.new.role === 'CONTESTANT') {
+      userRole = 'contestant'
+    } else if (event.data.new.role === 'JUDGE') {
+      userRole = 'judge'
+    } else if (event.data.new.role === 'ADMIN') {
+      userRole = 'ctf_admin'
+    } else {
+      console.log('[ERROR]: INCORRECT ROLE')
+    }
+
+    await auth0.updateUserMetadata({
+      authorization: {
+        groups: [userRole],
+      },
+    })
+  }
+
+  if (event.op === 'DELETE') {
+    await auth0.deleteUser({ id: event.data.old.auth0id })
+  }
+
   if (event.op === 'INSERT') {
     // eslint-disable-next-line no-console
     console.log(event)
@@ -54,32 +77,28 @@ const handler = async event => {
       },
     }
 
-    await auth0.createUser(createUserOpts).catch(err => console.log(err))
-
-    // #2 Create Reset Ticket
-    // const createResetOpts = {
-    //   email,
-    //   connection_id: 'con_C7x24ofiVd6bVRXp',
-    // }
-
-    await auth0A
-      .requestChangePasswordEmail({
-        email: event.data.new.email,
-        connection: `${process.env.AUTH0_CONNECTION}`,
+    await auth0
+      .createUser(createUserOpts)
+      .then(async () => {
+        // Send off a password change email
+        await auth0A
+          .requestChangePasswordEmail({
+            email: event.data.new.email,
+            connection: `${process.env.AUTH0_CONNECTION}`,
+          })
+          .catch(err => console.log(err))
       })
-      .catch(err => console.log(err))
-
-    // const { ticket } = await auth0
-    //   .createPasswordChangeTicket(createResetOpts)
-    //   .catch(err => console.log(err))
-
-    // #3 Send email with reset ticket
-    // const msg = {
-    //     to: email,
-    //     from:
-    // }
-    // eslint-disable-next-line no-console
-    // console.log('INSERT', ticket)
+      .catch(async err => {
+        // If the user already exists (409), then just resent the password change email
+        if (err.statusCode === 409) {
+          await auth0A
+            .requestChangePasswordEmail({
+              email: event.data.new.email,
+              connection: `${process.env.AUTH0_CONNECTION}`,
+            })
+            .catch(err => console.log(err))
+        }
+      })
   }
 }
 
