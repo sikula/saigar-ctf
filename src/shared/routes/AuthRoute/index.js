@@ -7,7 +7,7 @@ const AuthCallback = ({ history }) => (
     {({ handleAuthentication }) => {
       handleAuthentication().then(res => {
         const { groups } = res.idTokenPayload['https://ctf.saigar.io/roles']
-        if (groups.includes('ctf_admin') || groups.includes('judge')) {
+        if (groups.includes('ctf_admin') || groups.includes('judge') || groups.includes('super_admin')) {
           // const url = JSON.parse(sessionStorage.getItem('redirectBackTo')).pathname || '/home'
           // history.replace(url)
           history.replace('/home')

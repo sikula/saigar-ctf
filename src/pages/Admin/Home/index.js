@@ -80,7 +80,7 @@ const HomePageData = () => (
             <div className="col-xs">
               <div style={{ padding: '1em' }}>
                 <Can
-                  allowedRole={['ctf_admin']}
+                  allowedRole={['super_admin', 'ctf_admin']}
                   yes={() => (
                     <Tabs id="homePageTabs" renderActiveTabPanelOnly animate>
                       <Tab id="teams" title="Teams" panel={<TeamsTab />} />
@@ -109,6 +109,6 @@ const HomePageData = () => (
   </Query>
 )
 
-const HomePage = () => <Can allowedRole={['ctf_admin', 'judge']} yes={() => <HomePageData />} />
+const HomePage = () => <Can allowedRole={['super_admin', 'ctf_admin', 'judge']} yes={() => <HomePageData />} />
 
 export default HomePage

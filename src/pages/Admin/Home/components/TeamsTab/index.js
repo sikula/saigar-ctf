@@ -199,7 +199,7 @@ const TeamsTab = () => {
                 <H4>{team.name}</H4>
                 <H4>Unassigned</H4>
                 <Can
-                  allowedRole="ctf_admin"
+                  allowedRole={"super_admin" || "ctf_admin"}
                   yes={() => (
                     <SlidingPanelConsumer>
                       {({ openSlider }) => (
@@ -236,7 +236,7 @@ const TeamsTab = () => {
               <H4>{team.name}</H4>
               <H4>{team.judge_teams[0].user.nickname}</H4>
               <Can
-                allowedRole="ctf_admin"
+                allowedRole={"super_admin" || "ctf_admin"}
                 yes={() => (
                   <Button
                     intent="primary"
