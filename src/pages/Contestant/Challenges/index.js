@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { Query } from 'react-apollo'
 import { useQuery } from '@apollo/react-hooks'
-import { isWithinRange } from 'date-fns'
+import { isWithinInterval } from 'date-fns'
 
 import gql from 'graphql-tag'
 
@@ -138,10 +138,11 @@ const ChallengesPage = () => {
     return <div>No Events Created yet</div>
   }
 
-  const eventStarted = isWithinRange(
+  const eventStarted = isWithinInterval(
     new Date(), // current Date
-    new Date(data.event[0].start_time), // event start time
-    new Date(data.event[0].end_time), // event end time
+    { start: new Date(data.event[0].start_time),
+      end: new Date(data.event[0].end_time)
+    },
   )
 
   if (!eventStarted) {
