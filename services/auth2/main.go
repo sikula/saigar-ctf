@@ -1,60 +1,103 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
+
+	"gopkg.in/auth0.v1"
+	"gopkg.in/auth0.v1/management"
 )
 
-const (
-	dbhost     = "ec2-54-235-68-3.compute-1.amazonaws.com"
-	dbport     = 5432
-	dbuser     = "jwazffnrvcyaht"
-	dbpassword = "892dd71a78a36003756dd7c0862db6193176096569b3dbb8797e7365ce9d7b3f"
-	dbname     = "d90qblbo4d06m"
+var jwtSecretKey = []byte("NmR6TFIfUQHiEimUjqkYML4SVFuZsSCzAgnW7b7B0tSRTKfmcrV2oApiQjAV9L5SR0Aj2zLstgHiDyp6KFHOgCJa")
+
+var (
+	AUTH0_DOMAIN = "sikulatest.auth0.com"
+	AUTH0_ID     = "uB0gs971j8jWcYicr9b5Dfy5aSN24Bss"
+	AUTH0_SECRET = "7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L"
 )
 
-var db *sql.DB
+var auth0m *management.Management
+
+// var auth0m *management.Management
+
+// var auth0m management
 
 func main() {
-	//Database setup
-	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=require",
-		dbhost, dbport, dbuser, dbpassword, dbname)
-	db, err := sql.Open("postgres", sqlInfo)
+	// Auth0 Setup
+	var err error
+	auth0m, err = management.New(AUTH0_DOMAIN, AUTH0_ID, AUTH0_SECRET)
+
 	if err != nil {
 		panic(err)
 	}
 
-	//Server setup
+	// auth0m.User.Create()
+	// Database setup
+	dbSetup()
+
+	// Setup and configure routes
 	router := http.NewServeMux()
-	router.HandleFunc("/register", Register)
+	router.HandleFunc("/register", RegisterInAuth0)
 	router.HandleFunc("/signin", Signin)
 	router.HandleFunc("/tokentest", TokenTest)
 	router.HandleFunc("/refresh", Refresh)
+
+	// Enable CORS (Cross Origin Request Sharing)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:8084", "https://ctf.tracelabs.org"},
+		AllowedHeaders:   []string{"Accepts", "Content-Type"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(router)
+
+	// Initialize the server
 	httpServer := &http.Server{
-		Addr:         ":8000",
-		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		Addr:              ":8080",
+		Handler:           handler,
+		ReadHeaderTimeout: 20 * time.Second,
+		ReadTimeout:       20 * time.Second,
+		WriteTimeout:      20 * time.Second,
 	}
 	httpServer.RegisterOnShutdown(func() {
 		fmt.Println("Shutting down server")
 		db.Close()
 	})
-	fmt.Println("Server starting on http://localhost:8000")
-	httpErr := httpServer.ListenAndServe()
-	if httpErr != nil {
-		panic(httpErr)
-	}
+	fmt.Println("Server starting on http://localhost:8080")
+
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	waitForShutdown(httpServer)
+}
+
+func waitForShutdown(server *http.Server) {
+	interruptChan := make(chan os.Signal, 1)
+	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	<-interruptChan
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	server.Shutdown(ctx)
+
+	os.Exit(0)
 }
 
 type Claims struct {
@@ -63,6 +106,7 @@ type Claims struct {
 	Picture        string
 	Email          string
 	Email_Verified bool
+	Role           string
 	jwt.StandardClaims
 }
 
@@ -73,7 +117,46 @@ type RegisterBody struct {
 	Email    string
 }
 
-func Register(w http.ResponseWriter, r *http.Request) {
+type Metadata struct {
+	role string
+}
+
+func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
+	// user, err := auth0m.User.ListByEmail(strings.ToLower("test@testuser1.com"))
+
+	// fmt.Printf("%+v\n", *user[0].Email)
+
+	// test := map[string]interface{}{
+	// 	"Name": "Derp",
+	// }
+
+	// fmt.Println(test)
+
+	// Create User
+	err := auth0m.User.Create(&management.User{
+		Name:       auth0.String("hello3"),
+		Username:   auth0.String("hello3"),
+		Email:      auth0.String("test@testuser3.com"),
+		Connection: auth0.String("ctfuser"),
+		Password:   auth0.String("ajfslkjlkj112$$$$212312lkjflaksjflkajflakjflkajflakjflaskf"),
+		AppMetadata: map[string]interface{}{
+			"Name": "Wednesday",
+		},
+	})
+
+	// Update user
+	// err := auth0m.User.Update(&management.User{
+	// 	Email:
+	// 	Password: auth0.String("iamctfadmin1!"),
+	// })
+
+	if err != nil {
+		fmt.Println("error ")
+		fmt.Println(err)
+	}
+}
+
+func RegisterContestant(w http.ResponseWriter, r *http.Request) {
 
 	var body RegisterBody
 	err := json.NewDecoder(r.Body).Decode(&body)
@@ -81,18 +164,52 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	/*
-		var user User
-		sqlStmt := `SELECT * FROM user WHERE email=$1 OR username=$2`
-		row := db.QueryRow(sqlStmt, body.Email, body.Username)
-		err := row.Scan(&user.ID, &user.Age, &user.FirstName, &user.LastName, &user.Email)
-	*/
-	//issue a token to the registered user
+
+	users, err := dbGetUsers(body.Email, body.Username)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if len(users) != 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	hashedPassword, err := HashPassword(body.Password)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = dbInsertUser(body.Email, body.Username, hashedPassword)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var user = User{
+		email:    body.Email,
+		username: body.Username,
+		role:     "CONTESTANT",
+	}
+	token, claims, err := createToken(user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   token,
+		Expires: time.Unix(claims.ExpiresAt, 0),
+	})
 }
 
 // /signin
 type SignInBody struct {
 	Username string
+	Email    string
 	Password string
 }
 
@@ -100,34 +217,41 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 	var body SignInBody
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
-		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	pw := ""
+
 	var user User
-	for _, u := range testusers {
-		if body.Username == u.name {
-			pw = u.password
+	users, err := dbGetUsers(body.Email, body.Username)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var matched bool = false
+	for _, u := range users {
+		if ComparePasswords(body.Password, u.password) {
+			matched = true
 			user = u
 		}
 	}
-	if body.Password != pw {
+
+	if !matched {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+
 	token, claims, err := createToken(user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "token",
 		Value:   token,
 		Expires: time.Unix(claims.ExpiresAt, 0),
 	})
-	//Debugging
-	fmt.Println(claims.Name + " " + claims.Nickname + " " + claims.Picture + " " + claims.Email + " " + strconv.FormatBool(claims.Email_Verified))
 }
 
 func Refresh(w http.ResponseWriter, r *http.Request) {
@@ -144,11 +268,13 @@ func TokenTest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	tokenStr := cookie.Value
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecretKey, nil
 	})
+
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -157,10 +283,12 @@ func TokenTest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	if !token.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+
 	//check if the token needs to be refreshed
 	rToken, err := refreshToken(claims)
 	if err == nil {
@@ -176,13 +304,14 @@ func TokenTest(w http.ResponseWriter, r *http.Request) {
 
 //Private functions
 func createToken(user User) (string, *Claims, error) {
+	fmt.Println("USER " + user.role)
 	expirationTime := time.Now().Add(2 * time.Hour)
 	claims := &Claims{
-		Name:           user.name,
-		Nickname:       user.nickname,
-		Picture:        user.picture,
-		Email:          user.email,
-		Email_Verified: user.email_verified,
+		Name:     user.username,
+		Nickname: user.nickname,
+		Picture:  user.avatar,
+		Email:    user.email,
+		Role:     user.role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

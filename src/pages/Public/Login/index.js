@@ -11,7 +11,20 @@ const LoginPage = () => {
         return email.length > 0 && password.length > 0
     }
 
-    const handleSubmit = (event) => event.preventDefault()
+    // const handleSubmit = (event) => event.preventDefault()
+    const handleLogin = () => {
+        console.log("WUT")
+        fetch('http://localhost:8080/signin', {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accepts': 'application/json',
+            },
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => console.log(response.status))
+    }
 
     return (
         <div
@@ -66,7 +79,7 @@ const LoginPage = () => {
                                 type="password"
                             />
                         </FormGroup>
-                        <Button fill large disabled={!validate()}>Login</Button>
+                        <Button fill large disabled={!validate()} onClick={handleLogin}>Login</Button>
                     </div>
                     <div style={{
                         borderTop: '1px solid #ece7e7',
