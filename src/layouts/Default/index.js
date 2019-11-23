@@ -29,7 +29,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           </li>
         </UL>
         <Can
-          allowedRole={'ctf_admin' || 'judge'}
+          allowedRole={'ctf_admin' || 'super_admin' || 'judge'}
           yes={() => (
             <UL>
               <NavLink to="home" activeClassName="active">
@@ -57,7 +57,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           )}
         />
         <Can
-          allowedRole="ctf_admin"
+          allowedRole={"super_admin" || "ctf_admin"}
           yes={() => (
             <UL>
               <NavLink to="create">

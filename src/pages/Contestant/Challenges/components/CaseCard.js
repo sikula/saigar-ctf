@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { differenceInDays } from 'date-fns'
+import { differenceInDays, parseISO } from 'date-fns'
 
 // Styles
 import { Card, Button, Icon, Tag, H5, Divider } from '@blueprintjs/core'
@@ -83,7 +83,7 @@ const CaseCard = ({ caseData }) => {
             </Tag>
             <Tag intent="danger" round>{`${differenceInDays(
               new Date(),
-              rest.missing_since,
+              parseISO(rest.missing_since),
             )} Days`}</Tag>
           </span>
         </div>

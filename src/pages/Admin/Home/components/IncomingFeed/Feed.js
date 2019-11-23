@@ -17,7 +17,7 @@ import SafeURL from '@shared/components/SafeUrl'
 import Can from '@shared/components/AuthContext/Can'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_FILTERED, LIVE_FEED_SA, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 
 import './Feed.scss'
@@ -32,6 +32,7 @@ const SUBMISSION_TYPES = {
   FAMILY: 'Family',
   FRIENDS: 'Friends',
   EMPLOYMENT: 'Employment',
+  CLOSED: 'Closed Source'
 }
 
 const animation = {
@@ -231,10 +232,13 @@ const JudgeFeed = () => {
   )
 }
 
+const SuperAdminFeed = () => <SubscriptionData subscription={LIVE_FEED_SA} />
+
 const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
 
 const SubmissionList = () => (
   <React.Fragment>
+    <Can allowedRole="super_admin" yes={() => <SuperAdminFeed />} />
     <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
     <Can allowedRole="judge" yes={() => <JudgeFeed />} />
   </React.Fragment>
