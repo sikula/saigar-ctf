@@ -1,7 +1,8 @@
 import React from 'react'
+import gql  from   'graphql-tag'
 
 // Styles
-import { Tabs, Tab } from '@blueprintjs/core'
+import { Tabs, Tab, Toaster, Position } from '@blueprintjs/core'
 
 // Custom Components
 import EventsPanel from './EventsPanel'
@@ -236,12 +237,6 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipe
   </div>
 )
 
-EventCard.propTypes = {
-  eventID: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  startTime: PropTypes.string.isRequired,
-  endTime: PropTypes.string.isRequired,
-}
 
 const DELETE_CASE_MUTATION = gql`
   mutation DELETE_CASE($caseId: uuid!) {
@@ -291,12 +286,6 @@ const CaseCard = ({ id, name, missingSince }) => {
       </div>
     </div>
   )
-}
-
-CaseCard.propTypes = {
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  missingSince: PropTypes.string.isRequired,
 }
 
 // const EventsPanel = () => {

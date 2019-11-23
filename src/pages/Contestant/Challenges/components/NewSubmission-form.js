@@ -206,6 +206,14 @@ const SUBMISSION_INFO = {
       </div>
     ),
   },
+  CLOSED: {
+    name: 'Closed',
+    text: (
+      <div>
+        
+      </div>
+    ),
+  },
 }
 
 const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched }) => {
@@ -227,8 +235,10 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
 
   const canCreateSubmission = isWithinInterval(
     new Date(),
-    new Date(data.event[0].start_time),
-    new Date(data.event[0].end_time),
+    {
+      start: new Date(data.event[0].start_time),
+      end: new Date(data.event[0].end_time)
+    }
   )
 
   return canCreateSubmission ? (
