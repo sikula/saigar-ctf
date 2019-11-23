@@ -299,150 +299,150 @@ CaseCard.propTypes = {
   missingSince: PropTypes.string.isRequired,
 }
 
-const EventsPanel = () => {
-  // Internal State Layer
-  const [wipeDialogOpen, setWipeDialogOpen] = useState(false)
-  const [currentEvent, setCurrentEvent] = useState()
+// const EventsPanel = () => {
+//   // Internal State Layer
+//   const [wipeDialogOpen, setWipeDialogOpen] = useState(false)
+//   const [currentEvent, setCurrentEvent] = useState()
 
-  //  GraphQL Layer
+//   //  GraphQL Layer
 
-  // Handlers
-  const handleWipeClick = eventID => {
-    setWipeDialogOpen(true)
-    setCurrentEvent(eventID)
-  }
+//   // Handlers
+//   const handleWipeClick = eventID => {
+//     setWipeDialogOpen(true)
+//     setCurrentEvent(eventID)
+//   }
 
-  const handleWipeApproveClick = () => {
-    console.log('WIPING')
-    setWipeDialogOpen(false)
-  }
+//   const handleWipeApproveClick = () => {
+//     console.log('WIPING')
+//     setWipeDialogOpen(false)
+//   }
 
-  const handleCancelClick = () => {
-    setWipeDialogOpen(false)
-  }
+//   const handleCancelClick = () => {
+//     setWipeDialogOpen(false)
+//   }
 
-  return (
-    <div>
-      <div style={{ paddingBottom: 10 }}>
-        <SlidingPanelConsumer>
-          {({ openSlider }) => (
-            <Button
-              id="createbutton"
-              style={{
-                width: '148px',
-                height: '40px',
-                background: '#1F4B99',
-                color: '#FFFFFF',
-                display: 'flex',
-              }}
-              onClick={() => openSlider(CreateEvent, { agency_id: 1 })}
-              icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
-            >
-              Add Event
-            </Button>
-          )}
-        </SlidingPanelConsumer>
-        {/* <Button large intent="primary" text="Add Event" icon={IconNames.ADD} /> */}
-      </div>
-      <div className="case-card__grid" style={{ padding: 0 }}>
-        <Query query={EVENTS_QUERY}>
-          {({ data, loading, error }) => {
-            if (loading) return <div>Loading....</div>
-            if (error) return <div>`${error.message}`</div>
+//   return (
+//     <div>
+//       <div style={{ paddingBottom: 10 }}>
+//         <SlidingPanelConsumer>
+//           {({ openSlider }) => (
+//             <Button
+//               id="createbutton"
+//               style={{
+//                 width: '148px',
+//                 height: '40px',
+//                 background: '#1F4B99',
+//                 color: '#FFFFFF',
+//                 display: 'flex',
+//               }}
+//               onClick={() => openSlider(CreateEvent, { agency_id: 1 })}
+//               icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
+//             >
+//               Add Event
+//             </Button>
+//           )}
+//         </SlidingPanelConsumer>
+//         {/* <Button large intent="primary" text="Add Event" icon={IconNames.ADD} /> */}
+//       </div>
+//       <div className="case-card__grid" style={{ padding: 0 }}>
+//         <Query query={EVENTS_QUERY}>
+//           {({ data, loading, error }) => {
+//             if (loading) return <div>Loading....</div>
+//             if (error) return <div>`${error.message}`</div>
 
-            if (!Array.isArray(data.event) || !data.event.length) {
-              return <H5>No events currently. Click the 'Add Event' button to create an event</H5>
-            }
+//             if (!Array.isArray(data.event) || !data.event.length) {
+//               return <H5>No events currently. Click the 'Add Event' button to create an event</H5>
+//             }
 
-            return (
-              <div className="case-card__row">
-                {data.event.map(event => (
-                  <EventCard
-                    key={event.uuid}
-                    eventID={event.uuid}
-                    name={event.name}
-                    startTime={event.start_time}
-                    endTime={event.end_time}
-                    totalSubmissions={event.totalSubmissions}
-                    onWipeClick={handleWipeClick}
-                  />
-                ))}
-              </div>
-            )
-          }}
-        </Query>
-      </div>
-      <WipeEventDialog
-        isOpen={wipeDialogOpen}
-        onWipeClick={handleWipeApproveClick}
-        onCancelClick={handleCancelClick}
-      />
-    </div>
-  )
-}
+//             return (
+//               <div className="case-card__row">
+//                 {data.event.map(event => (
+//                   <EventCard
+//                     key={event.uuid}
+//                     eventID={event.uuid}
+//                     name={event.name}
+//                     startTime={event.start_time}
+//                     endTime={event.end_time}
+//                     totalSubmissions={event.totalSubmissions}
+//                     onWipeClick={handleWipeClick}
+//                   />
+//                 ))}
+//               </div>
+//             )
+//           }}
+//         </Query>
+//       </div>
+//       <WipeEventDialog
+//         isOpen={wipeDialogOpen}
+//         onWipeClick={handleWipeApproveClick}
+//         onCancelClick={handleCancelClick}
+//       />
+//     </div>
+//   )
+// }
 
-const CasesPanel = () => (
-  <React.Fragment>
-    <div style={{ paddingBottom: 10 }}>
-      <SlidingPanelConsumer>
-        {({ openSlider }) => (
-          <Button
-            id="createbutton"
-            style={{
-              width: '148px',
-              height: '40px',
-              background: '#1F4B99',
-              color: '#FFFFFF',
-              display: 'flex',
-            }}
-            onClick={() => openSlider(CreateCase)}
-            icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
-          >
-            Create Case
-          </Button>
-        )}
-      </SlidingPanelConsumer>
-    </div>
-    <Query query={CASES_QUERY}>
-      {({ data, loading, error }) => {
-        if (loading) return <div>Loading....</div>
-        if (error) return <div>`${error.message}`</div>
+// const CasesPanel = () => (
+//   <React.Fragment>
+//     <div style={{ paddingBottom: 10 }}>
+//       <SlidingPanelConsumer>
+//         {({ openSlider }) => (
+//           <Button
+//             id="createbutton"
+//             style={{
+//               width: '148px',
+//               height: '40px',
+//               background: '#1F4B99',
+//               color: '#FFFFFF',
+//               display: 'flex',
+//             }}
+//             onClick={() => openSlider(CreateCase)}
+//             icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
+//           >
+//             Create Case
+//           </Button>
+//         )}
+//       </SlidingPanelConsumer>
+//     </div>
+//     <Query query={CASES_QUERY}>
+//       {({ data, loading, error }) => {
+//         if (loading) return <div>Loading....</div>
+//         if (error) return <div>`${error.message}`</div>
 
-        if (!Array.isArray(data.event) || !data.event.length) {
-          return (
-            <H5>
-              No events currently. Click on the 'Add Event' button in the 'Events' tab to create one
-            </H5>
-          )
-        }
+//         if (!Array.isArray(data.event) || !data.event.length) {
+//           return (
+//             <H5>
+//               No events currently. Click on the 'Add Event' button in the 'Events' tab to create one
+//             </H5>
+//           )
+//         }
 
-        return data.event.map(event => (
-          <div>
-            <h2 style={{ textAlign: 'center' }}>{event.name}</h2>
-            <div className="case-card__grid" style={{ padding: 0 }}>
-              {!Array.isArray(event.eventCasesByeventId) || !event.eventCasesByeventId.length ? (
-                <div>
-                  <H5>No cases currently. Click on the 'Create Case' button to create one.</H5>
-                </div>
-              ) : (
-                <div className="case-card__row">
-                  {event.eventCasesByeventId.map(_case => (
-                    <CaseCard
-                      key={_case.case.uuid}
-                      id={_case.case.uuid}
-                      name={_case.case.name}
-                      missingSince={_case.case.missing_since}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))
-      }}
-    </Query>
-  </React.Fragment>
-)
+//         return data.event.map(event => (
+//           <div>
+//             <h2 style={{ textAlign: 'center' }}>{event.name}</h2>
+//             <div className="case-card__grid" style={{ padding: 0 }}>
+//               {!Array.isArray(event.eventCasesByeventId) || !event.eventCasesByeventId.length ? (
+//                 <div>
+//                   <H5>No cases currently. Click on the 'Create Case' button to create one.</H5>
+//                 </div>
+//               ) : (
+//                 <div className="case-card__row">
+//                   {event.eventCasesByeventId.map(_case => (
+//                     <CaseCard
+//                       key={_case.case.uuid}
+//                       id={_case.case.uuid}
+//                       name={_case.case.name}
+//                       missingSince={_case.case.missing_since}
+//                     />
+//                   ))}
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         ))
+//       }}
+//     </Query>
+//   </React.Fragment>
+// )
 
 const ADMIN_USERS_QUERY = gql`
   query {
@@ -455,61 +455,61 @@ const ADMIN_USERS_QUERY = gql`
   }
 `
 
-const UsersPanel = () => (
-  <div>
-    <div style={{ paddingBottom: 30 }}>
-      <SlidingPanelConsumer>
-        {({ openSlider }) => (
-          <Button
-            id="createbutton"
-            style={{
-              width: '148px',
-              height: '40px',
-              background: '#1F4B99',
-              color: '#FFFFFF',
-              display: 'flex',
-            }}
-            onClick={() => openSlider(AddAdmin)}
-            icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
-          >
-            Create User
-          </Button>
-        )}
-      </SlidingPanelConsumer>
-    </div>
-    <Query query={ADMIN_USERS_QUERY}>
-      {({ data, loading, error }) => {
-        if (loading) return <div>Loading....</div>
-        if (error) return <div>`${error.message}`</div>
+// const UsersPanel = () => (
+//   <div>
+//     <div style={{ paddingBottom: 30 }}>
+//       <SlidingPanelConsumer>
+//         {({ openSlider }) => (
+//           <Button
+//             id="createbutton"
+//             style={{
+//               width: '148px',
+//               height: '40px',
+//               background: '#1F4B99',
+//               color: '#FFFFFF',
+//               display: 'flex',
+//             }}
+//             onClick={() => openSlider(AddAdmin)}
+//             icon={<Icon icon={IconNames.ADD} style={{ color: '#F5F8FA' }} iconSize={18} />}
+//           >
+//             Create User
+//           </Button>
+//         )}
+//       </SlidingPanelConsumer>
+//     </div>
+//     <Query query={ADMIN_USERS_QUERY}>
+//       {({ data, loading, error }) => {
+//         if (loading) return <div>Loading....</div>
+//         if (error) return <div>`${error.message}`</div>
 
-        if (!Array.isArray(data.user) || !data.user.length) {
-          return <H5>No Admin/Judge users. Click "Create User" to create one.</H5>
-        }
+//         if (!Array.isArray(data.user) || !data.user.length) {
+//           return <H5>No Admin/Judge users. Click "Create User" to create one.</H5>
+//         }
 
-        return (
-          <table style={{ width: '85%', margin: '0 auto' }}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.user.map(user => (
-                <tr key={user.uuid}>
-                  <td>{user.nickname}</td>
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )
-      }}
-    </Query>
-  </div>
-)
+//         return (
+//           <table style={{ width: '85%', margin: '0 auto' }}>
+//             <thead>
+//               <tr>
+//                 <th>Name</th>
+//                 <th>Email</th>
+//                 <th>Role</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {data.user.map(user => (
+//                 <tr key={user.uuid}>
+//                   <td>{user.nickname}</td>
+//                   <td>{user.email}</td>
+//                   <td>{user.role}</td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         )
+//       }}
+//     </Query>
+//   </div>
+// )
 
 const CreatePage = () => (
   <Can
