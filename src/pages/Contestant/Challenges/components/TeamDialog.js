@@ -1,13 +1,126 @@
-import React, { useState } from 'react'
-import { Mutation } from 'react-apollo'
-
-import { AuthConsumer } from '@shared/components/AuthContext/context'
+import React, { useState, useContext } from 'react'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
 // Styles
 import { Button, Dialog, FormGroup, InputGroup, Classes, H3 } from '@blueprintjs/core'
 
 // Data Stuffz
-import { ACCEPT_TERMS } from '../graphql/queries'
+import { AuthContext } from '@shared/components/AuthContext/context'
+
+
+const EVENT_ID = gql`
+  query eventInfo {
+    event(order_by: { start_time: desc }, limit: 1) {
+        uuid
+    }
+  }
+`
+
+const GET_USER = gql`
+  query getUser($auth0id: String!) {
+      user(where: {
+          auth0id: { _eq: $auth0id }
+      }) {
+          uuid
+      }
+  }
+`
+
+const CREATE_TEAM = gql`
+    mutation createTeam($name: String!) {
+        insert_team(objects: {
+            name: $name
+        }) {
+            returning {
+                uuid
+            }
+        }
+    }
+`
+
+const ADD_USER_TO_TEAM = gql`
+    mutation insertUserTeam($team: uuid!, $user: uuid!) {
+        insert_user_team(objects: {
+            user_id: $user,
+            team_id: $team
+        }) {
+            returning {
+                team_id
+                user_id
+            }
+        }
+    }
+`
+
+const ADD_TEAM_TO_EVENT = gql`
+    mutation insertTeamEvent($team: uuid!, $event: uuid!) {
+        insert_team_event(objects: {
+            team_id: $team,
+            event_id: $event
+        }) {
+            returning {
+                team_id,
+                event_id
+            }
+        }
+    }
+`
+
+
+// @NOTE(Peter): this is a duplicate of what's in ../index.js
+
+const CASE_LIST = gql`
+  query eventCases($auth0id: String!) {
+    user(where: { auth0id: { _eq: $auth0id } }) {
+      acceptedTos
+    }
+    team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
+      name
+    }
+    event(order_by: { start_time: desc }, limit: 1) {
+      eventCasesByeventId {
+        case {
+          uuid
+          name
+          missing_since
+          missing_from
+          pendingSubmissions: submissions_aggregate(
+            where: {
+              processed: { _eq: "PENDING" }
+              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          acceptedSubmissions: submissions_aggregate(
+            where: {
+              processed: { _in: ["ACCEPTED", "STARRED"] }
+              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+          rejectedSubmissions: submissions_aggregate(
+            where: {
+              processed: { _eq: "REJECTED" }
+              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
+            }
+          ) {
+            aggregate {
+              count
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
 
 // @NOTE(Peter): this is a very quick hack for conditionally
 // rendering the proper dialog.  We could try using the
@@ -19,15 +132,83 @@ const TeamDialog = () => {
     const [teamCode, setTeamCode] = useState()
     const [teamName, setTeamName] = useState()
 
+    const { user } = useContext(AuthContext)
+
+    const { data: eventData } = useQuery(EVENT_ID)
+    const { data: userData } = useQuery(GET_USER, {
+        variables: {
+            auth0id: user.id
+        }
+    })
+
+    const [createTeam, { error, loading, data }] = useMutation(CREATE_TEAM, {
+        variables: {
+            name: teamName
+        }
+    })
+
+    const [addUserToTeam] = useMutation(ADD_USER_TO_TEAM)
+    const [addTeamToEvent] = useMutation(ADD_TEAM_TO_EVENT, {
+        refetchQueries: [{ query: CASE_LIST, variables: {
+            auth0id: user.id
+        } }]
+    })
+
+    if (eventData) {
+        console.log("EVENT DATA ", eventData)
+    }
+
+    if (userData) {
+        console.log("USER DATA ", userData)
+    }
+
     // ======================================================
     // Handlers
     // ======================================================
 
+    // @NOTE(peter): This is so ugly... but it works....
     const handleClose = () => {
-        setIsOpen(prevState => ({
-            isOpen: !prevState.isOpen,
-        }))
+        if (buttonPressed === "JOIN") {
+            // do stuff here to join team
+        }
+
+        // addTeamToEvent({
+        //     variables: {
+        //         team: data.insert_user_team.returning.team_id,
+        //         event: eventData.event[0].uuid // get event ID from someplace
+        //     }
+        // }
+
+
+        // console.log("CREATE_TEAM_DATA ", data)
+        //             addUserToTeam({
+        //                 variables: {
+        //                     team: data.insert_user_team.returning.uuid,
+        //                     user: userData.user[0].uuid // query user
+        //                 }
+        //             }
+
+        if (buttonPressed === "CREATE") {
+            createTeam()
+                .then(({ data }) => {
+                    addUserToTeam({
+                        variables: {
+                            team: data.insert_team.returning[0].uuid,
+                            user: userData.user[0].uuid,
+                        }
+                    }).then(({ data }) => {
+                        addTeamToEvent({
+                            variables: {
+                                team: data.insert_user_team.returning[0].team_id,
+                                event: eventData.event[0].uuid
+                            }
+                        })
+                    })
+                })
+            setIsOpen(!isOpen)
+        }
     }
+
 
     return (
         <Dialog
@@ -44,7 +225,7 @@ const TeamDialog = () => {
                     <Button large fill intent="primary" onClick={() => setButtonPressed("CREATE")}>Create a Team</Button>
                 </span>
                 {buttonPressed && buttonPressed === "JOIN" && (
-                    <div style={{ margin: 20 }}>
+                    <div style={{ margin: "20px 0px" }}>
                         <FormGroup label="Team Code (required)" labelFor="text-input">
                             <InputGroup
                                 id="text-input"
@@ -58,7 +239,7 @@ const TeamDialog = () => {
                     </div>
                 )}
                 {buttonPressed && buttonPressed === "CREATE" && (
-                    <div style={{ margin: 20 }}>
+                    <div style={{ margin: "20px 0px" }}>
                         <FormGroup label="Team Name (required)" labelFor="text-input">
                             <InputGroup
                                 id="text-input"
@@ -74,22 +255,14 @@ const TeamDialog = () => {
             </div>
             <div className={Classes.DIALOG_FOOTER}>
                 <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-                    <AuthConsumer>
-                        {({ user }) => (
-                            <Mutation mutation={ACCEPT_TERMS} variables={{ auth0id: user.id }}>
-                                {acceptTerms => (
-                                    <Button
-                                        // disabled={!(checkedItems.get('disclaimer') && checkedItems.get('tos'))}
-                                        large
-                                        intent="primary"
-                                        onClick={() => acceptTerms().then(handleClose)}
-                                    >
-                                        Confirm
-                  </Button>
-                                )}
-                            </Mutation>
-                        )}
-                    </AuthConsumer>
+                    <Button
+                        disabled={!teamName}
+                        large
+                        intent="primary"
+                        onClick={handleClose}
+                    >
+                        Confirm
+                    </Button>
                 </div>
             </div>
         </Dialog>
