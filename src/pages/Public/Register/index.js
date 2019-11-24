@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import useAxios from 'axios-hooks'
 import gql from 'graphql-tag'
 
 
@@ -70,11 +71,27 @@ const UserCreationStep = ({ onNextClick }) => {
     const [username, setUsername] = useState()
     const [password, setPassword] = useState()
 
-    const [addUser] = useMutation()
-
-    const handleClick = () => (
-        console.log("stuff")
+    const [{ data, loading, error }, executePost] = useAxios(
+        {
+            url: 'http://localhost:8080/register',
+            method: 'POST',
+        },
+        { manual: true }
     )
+
+
+    const handleClick = () => {
+        executePost({
+            data: {
+                username,
+                email,
+                password
+            }
+        })
+    }
+
+    if (loading) return "loading"
+    if (error) return <div>Error!</div>
 
     return (
         <>
@@ -109,7 +126,7 @@ const UserCreationStep = ({ onNextClick }) => {
                     onChange={e => setPassword(e.target.value)}
                 />
             </FormGroup>
-            <Button fill large onClick={onNextClick}>Confirm</Button>
+            <Button fill large onClick={handleClick}>Confirm</Button>
         </>
     )
 }
