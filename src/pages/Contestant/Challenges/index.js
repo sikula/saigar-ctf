@@ -99,8 +99,10 @@ const CasesList = () => {
   if(data.team.length === 0) {
     return <TeamDialog />
   }
-  // const team = data.team[0]
 
+  const team = data.team[0]
+
+  // @TODO(peter): Ensure that the event registration is done, then show the "event hasn't started message"
   return (
     <React.Fragment>
       <nav className="challenges" style={{ background: '#fff' }}>
