@@ -29,7 +29,7 @@ class Auth extends React.Component {
   }
 
   logout = () => {
-    cookie.remove('saigar:id_token', { path: '/', httpOnly: true, secure: true })
+    cookie.remove('saigar:id_token')
     localStorage.removeItem('expires_at')
     sessionStorage.removeItem('redirectBackTo')
 

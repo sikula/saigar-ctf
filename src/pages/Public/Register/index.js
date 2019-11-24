@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useLazyQuery, useMutation } from '@apollo/react-hooks'
+import { Link } from 'react-router-dom'
+import { useLazyQuery } from '@apollo/react-hooks'
 import useAxios from 'axios-hooks'
 import gql from 'graphql-tag'
 
@@ -29,10 +30,12 @@ const EventOrderStep = ({ onNextClick }) => {
 
     const [fetchOrder, { called, loading, data }] = useLazyQuery(FETCH_ORDER, {
         onCompleted: (data) => {
+            console.log("COMPLETED")
             if (!data.eventrbite && data.eventbrite.length == 0) {
                 setMessage("Invalid Eventbrite Order Number")
             } else {
                 setMessage()
+                onNextClick()
             }
         },
     })
@@ -132,32 +135,62 @@ const UserCreationStep = ({ onNextClick }) => {
 }
 
 
-const TeamCreationStep = () => {
+// const TeamCreationStep = () => {
 
-    const [orderNumber, setOrderNumber] = useState()
+//     // State Layer
+//     const [teamCode, setTeamCode] = useState()
+//     const [teamName, setTeamName] = useState()
+//     const [buttonPressed, setButtonPressed] = useState(null)
 
-    return (
-        <>
-            <span style={{ display: 'flex', flexDirection: 'row' }}>
-                {/* <Button fill large onClick={handleConfirmClick} style={{ marginRight: 10 }}>Join a Team</Button> */}
-                {/* <Button fill large onClick={handleConfirmClick}>Create a Team</Button> */}
-            </span>
+//     // GraphQL Layer
+   
+//     /*
+//         1) If joining team, enter code (team UUID, add to table)
+//         2) If creating team, enter team name, return team code (UUID); add user to that team
+//         3) IMPLEMENT: eventbrite CSV import into eventbrite table
+//     */
 
-            <FormGroup label="Team Name" labelFor="text-input">
-                <InputGroup
-                    id="text-input"
-                    name="teamName"
-                    placeholder="Enter your team name"
-                    large
-                    values={orderNumber}
-                    onChange={e => setOrderNumber(e.target.value)}
-                />
-            </FormGroup>
-            {/* <Button fill large onClick={handleConfirmClick}>Confirm</Button> */}
-        </>
-    )
+//     return (
+//         <>
+//             <span style={{ display: 'flex', flexDirection: 'row' }}>
+//                 <Button fill large onClick={() => setButtonPressed("JOIN")} style={{ marginRight: 10 }}>Join a Team</Button>
+//                 <Button fill large onClick={() => setButtonPressed("CREATE")}>Create a Team</Button>
+//             </span>
 
-}
+//             {buttonPressed && buttonPressed == "JOIN" && (
+//                 <>
+//                     <FormGroup label="Team Code" labelFor="text-input">
+//                         <InputGroup
+//                             id="text-input"
+//                             name="teamName"
+//                             placeholder="e.g. - 67812-12839182-1231-123123312"
+//                             large
+//                             values={teamCode}
+//                             onChange={e => setTeamCode(e.target.value)}
+//                         />
+//                     </FormGroup>
+//                     <Button fill large onClick={() => 10}>Confirm</Button>
+//                 </>
+//             )}
+//             {buttonPressed && buttonPressed === "CREATE" && (
+//                 <>
+//                     <FormGroup label="Team Name" labelFor="text-input">
+//                         <InputGroup
+//                             id="text-input"
+//                             name="teamName"
+//                             placeholder="e.g. Epic Doxxers"
+//                             large
+//                             values={teamName}
+//                             onChange={e => setTeamName(e.target.value)}
+//                         />
+//                     </FormGroup>
+//                     <Button fill large onClick={() => 10}>Confirm</Button>
+//                 </>
+//             )}
+//         </>
+//     )
+
+// }
 
 
 const RegisterPage = () => {
@@ -182,8 +215,13 @@ const RegisterPage = () => {
                         <Line percent={(steps.indexOf(step) + 1) / steps.length * 100} style={{ marginBottom: 10 }} />
                         <Steps key={step.id} step={step}>
                             {/* <Step id="order" render={({ next }) => <EventOrderStep onNextClick={next} />} /> */}
-                            <Step id="user" render={({ next }) => <UserCreationStep onNextClick={next} />} />
-                            <Step id="team" render={({ next }) => <TeamCreationStep />} />
+                            {/* <Step id="user" render={({ next }) => <UserCreationStep onNextClick={next} />} /> */}
+                            <Step id="login" render={({ next }) => (
+                                <div>
+                                    Registration finished! Proceed to <Link to="/login">Login</Link>
+                                </div>
+                            )}
+                            />
                         </Steps>
                     </>
                 )}
