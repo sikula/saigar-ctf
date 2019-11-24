@@ -16,6 +16,7 @@ import Can from '../../../shared/components/AuthContext/Can'
 
 import CaseGrid from './components/CaseGrid'
 import TosDialog from './components/TosDialog'
+import TeamDialog from './components/TeamDialog'
 
 const EVENT_START_TIME = gql`
   query eventInfo {
@@ -94,7 +95,11 @@ const CasesList = () => {
 
   const cases = data.event[0].eventCasesByeventId
   const duser = data.user[0]
-  const team = data.team[0]
+
+  if(data.team.length === 0) {
+    return <TeamDialog />
+  }
+  // const team = data.team[0]
 
   return (
     <React.Fragment>

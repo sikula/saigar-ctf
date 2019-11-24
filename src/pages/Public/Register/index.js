@@ -7,7 +7,6 @@ import gql from 'graphql-tag'
 
 // Styles
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core'
-import { IconName } from '@blueprintjs/icons'
 import { Wizard, Steps, Step } from 'react-albus'
 import { Line } from 'rc-progress'
 
@@ -17,7 +16,6 @@ const FETCH_ORDER = gql`
             order_number: { _eq: $orderNumber }
         }) {
             order_number
-            used
         }
     }
 `
@@ -91,10 +89,10 @@ const UserCreationStep = ({ onNextClick }) => {
                 password
             }
         })
+        .then(() => onNextClick())
     }
 
     if (loading) return "loading"
-    if (error) return <div>Error!</div>
 
     return (
         <>
@@ -143,7 +141,7 @@ const UserCreationStep = ({ onNextClick }) => {
 //     const [buttonPressed, setButtonPressed] = useState(null)
 
 //     // GraphQL Layer
-   
+
 //     /*
 //         1) If joining team, enter code (team UUID, add to table)
 //         2) If creating team, enter team name, return team code (UUID); add user to that team
@@ -195,8 +193,6 @@ const UserCreationStep = ({ onNextClick }) => {
 
 const RegisterPage = () => {
 
-    const [orderNumber, setOrderNumber] = useState()
-
     return (
 
         <div
@@ -214,8 +210,8 @@ const RegisterPage = () => {
                     <>
                         <Line percent={(steps.indexOf(step) + 1) / steps.length * 100} style={{ marginBottom: 10 }} />
                         <Steps key={step.id} step={step}>
-                            {/* <Step id="order" render={({ next }) => <EventOrderStep onNextClick={next} />} /> */}
-                            {/* <Step id="user" render={({ next }) => <UserCreationStep onNextClick={next} />} /> */}
+                            <Step id="order" render={({ next }) => <EventOrderStep onNextClick={next} />} />
+                            <Step id="user" render={({ next }) => <UserCreationStep onNextClick={next} />} />
                             <Step id="login" render={({ next }) => (
                                 <div>
                                     Registration finished! Proceed to <Link to="/login">Login</Link>
