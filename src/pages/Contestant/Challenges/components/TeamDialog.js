@@ -72,12 +72,6 @@ const ADD_TEAM_TO_EVENT = gql`
 
 const CASE_LIST = gql`
   query eventCases($auth0id: String!) {
-    user(where: { auth0id: { _eq: $auth0id } }) {
-      acceptedTos
-    }
-    team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
-      name
-    }
     event(order_by: { start_time: desc }, limit: 1) {
       eventCasesByeventId {
         case {
@@ -154,14 +148,6 @@ const TeamDialog = () => {
         } }]
     })
 
-    if (eventData) {
-        console.log("EVENT DATA ", eventData)
-    }
-
-    if (userData) {
-        console.log("USER DATA ", userData)
-    }
-
     // ======================================================
     // Handlers
     // ======================================================
@@ -170,7 +156,14 @@ const TeamDialog = () => {
     const handleClose = () => {
         if (buttonPressed === "JOIN") {
             // do stuff here to join team
+            addUserToTeam({
+                variables: {
+                    team: teamCode,
+                    user: userData.user[0].uuid,
+                }
+            })
         }
+
         if (buttonPressed === "CREATE") {
             createTeam()
                 .then(({ data }) => {
