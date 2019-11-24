@@ -133,24 +133,29 @@ func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// // check if that user already exists
-	// user, err := dbGetUsers(body.Email, body.Username)
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// hashedPassword, err := HashPassword(body.Password)
+	// check if that user already exists
+	users, err := dbGetUsers(body.Email, body.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	// err = dbInsertUser(body.Email, body.Username, hashedPassword)
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
+	if len(users) != 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	hashedPassword, err := HashPassword(body.Password)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = dbInsertUser(body.Email, body.Username, hashedPassword)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	// {
 	// 	"authorization": {
@@ -162,6 +167,7 @@ func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
 	// 	  "permissions": []
 	// 	}
 	//   }
+
 	// Create User
 	err = auth0m.User.Create(&management.User{
 		Username:   auth0.String(body.Username),
@@ -175,16 +181,34 @@ func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
+	// var user = User{
+	// 	email:    body.Email,
+	// 	username: body.Username,
+	// 	role:     "contestant",
+	// }
+
+	// token, claims, err := createToken(user)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// http.SetCookie(w, &http.Cookie{
+	// 	Name:    "token",
+	// 	Value:   token,
+	// 	Expires: time.Unix(claims.ExpiresAt, 0),
+	// })
+
 	// Update user
 	// err := auth0m.User.Update(&management.User{
 	// 	Email:
 	// 	Password: auth0.String("iamctfadmin1!"),
 	// })
 
-	if err != nil {
-		fmt.Println("error ")
-		fmt.Println(err)
-	}
+	// if err != nil {
+	// 	fmt.Println("error ")
+	// 	fmt.Println(err)
+	// }
 }
 
 func RegisterContestant(w http.ResponseWriter, r *http.Request) {
