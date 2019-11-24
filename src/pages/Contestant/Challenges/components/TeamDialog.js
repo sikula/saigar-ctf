@@ -171,23 +171,6 @@ const TeamDialog = () => {
         if (buttonPressed === "JOIN") {
             // do stuff here to join team
         }
-
-        // addTeamToEvent({
-        //     variables: {
-        //         team: data.insert_user_team.returning.team_id,
-        //         event: eventData.event[0].uuid // get event ID from someplace
-        //     }
-        // }
-
-
-        // console.log("CREATE_TEAM_DATA ", data)
-        //             addUserToTeam({
-        //                 variables: {
-        //                     team: data.insert_user_team.returning.uuid,
-        //                     user: userData.user[0].uuid // query user
-        //                 }
-        //             }
-
         if (buttonPressed === "CREATE") {
             createTeam()
                 .then(({ data }) => {
