@@ -126,21 +126,52 @@ func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
 
 	// fmt.Printf("%+v\n", *user[0].Email)
 
-	// test := map[string]interface{}{
-	// 	"Name": "Derp",
+	var body RegisterBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// // check if that user already exists
+	// user, err := dbGetUsers(body.Email, body.Username)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	return
 	// }
 
-	// fmt.Println(test)
+	// hashedPassword, err := HashPassword(body.Password)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
+	// err = dbInsertUser(body.Email, body.Username, hashedPassword)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// {
+	// 	"authorization": {
+	// 	  "groups": [
+	// 		"super_admin",
+	// 		"ctf_admin"
+	// 	  ],
+	// 	  "roles": [],
+	// 	  "permissions": []
+	// 	}
+	//   }
 	// Create User
-	err := auth0m.User.Create(&management.User{
-		Name:       auth0.String("hello3"),
-		Username:   auth0.String("hello3"),
-		Email:      auth0.String("test@testuser3.com"),
+	err = auth0m.User.Create(&management.User{
+		Username:   auth0.String(body.Username),
+		Email:      auth0.String(body.Email),
 		Connection: auth0.String("ctfuser"),
-		Password:   auth0.String("ajfslkjlkj112$$$$212312lkjflaksjflkajflakjflkajflakjflaskf"),
+		Password:   auth0.String(body.Password),
 		AppMetadata: map[string]interface{}{
-			"Name": "Wednesday",
+			"authorization": map[string]interface{}{
+				"groups": []string{"contestant"},
+			},
 		},
 	})
 
