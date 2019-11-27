@@ -74,7 +74,7 @@ const UserCreationStep = ({ onNextClick }) => {
 
     const [{ data, loading, error }, executePost] = useAxios(
         {
-            url: 'http://localhost:8080/register',
+            url: `${process.env.AUTH_API_ENDPOINT}/register`,
             method: 'POST',
         },
         { manual: true }
