@@ -180,6 +180,7 @@ func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 	})
+	fmt.Println(err)
 
 	// var user = User{
 	// 	email:    body.Email,

@@ -115,6 +115,17 @@ const CASE_LIST = gql`
   }
 `
 
+const USER_INFO = gql`
+  query userInfo($auth0id: String!) {
+    user(where: { auth0id: { _eq: $auth0id } }) {
+      acceptedTos
+    }
+    team(where: { user_team: { user: { auth0id: { _eq: $auth0id } } } }) {
+      name
+      uuid
+    }
+  }
+`
 
 // @NOTE(Peter): this is a very quick hack for conditionally
 // rendering the proper dialog.  We could try using the
@@ -143,9 +154,10 @@ const TeamDialog = () => {
 
     const [addUserToTeam] = useMutation(ADD_USER_TO_TEAM)
     const [addTeamToEvent] = useMutation(ADD_TEAM_TO_EVENT, {
-        refetchQueries: [{ query: CASE_LIST, variables: {
-            auth0id: user.id
-        } }]
+        refetchQueries: [
+            { query: CASE_LIST, variables: { auth0id: user.id }},
+            { query: USER_INFO, variables: { auth0id: user.id }}
+        ]
     })
 
     // ======================================================
@@ -162,6 +174,7 @@ const TeamDialog = () => {
                     user: userData.user[0].uuid,
                 }
             })
+            setIsOpen(!isOpen)
         }
 
         if (buttonPressed === "CREATE") {
@@ -232,7 +245,7 @@ const TeamDialog = () => {
             <div className={Classes.DIALOG_FOOTER}>
                 <div className={Classes.DIALOG_FOOTER_ACTIONS}>
                     <Button
-                        disabled={!teamName}
+                        disabled={!(teamName || teamCode)}
                         large
                         intent="primary"
                         onClick={handleClose}

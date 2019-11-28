@@ -74,7 +74,8 @@ const UserCreationStep = ({ onNextClick }) => {
 
     const [{ data, loading, error }, executePost] = useAxios(
         {
-            url: `${process.env.AUTH_API_ENDPOINT}/register`,
+            url: 'http://localhost:8080/register',
+            // url: process.env.NODE_ENV === 'production' ? `${process.env.AUTH_API_ENDPOINT}/register` : `http://localhost:8080/register` ,
             method: 'POST',
         },
         { manual: true }
@@ -127,6 +128,13 @@ const UserCreationStep = ({ onNextClick }) => {
                     onChange={e => setPassword(e.target.value)}
                 />
             </FormGroup>
+            <div style={{ margin: '0.3rem 0rem' }}>
+                <ul>
+                    <li>Must be at least 8 characters</li>
+                    <li>Must have a mix of uppercase and lowercase letters</li>
+                    <li>Must container special characters</li>
+                </ul>
+            </div>
             <Button fill large onClick={handleClick}>Confirm</Button>
         </>
     )

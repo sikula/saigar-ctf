@@ -7,7 +7,7 @@ import { isWithinInterval } from 'date-fns'
 import gql from 'graphql-tag'
 
 // Styles
-import { H2, H4 } from '@blueprintjs/core'
+import { H2, H4, H5 } from '@blueprintjs/core'
 
 // Custom Components
 import { AuthContext } from '@shared/components/AuthContext/context'
@@ -124,7 +124,7 @@ const ChallengesPage = () => {
       auth0id: user.id
     }
   })
-  
+
   if (loading || userLoading) return null
   if (error || userError) return <div>{error.message}{userError.message}</div>
 
@@ -168,7 +168,8 @@ const ChallengesPage = () => {
         <div className="row">
           <div className="col-xs">
             <div style={{ margin: 15 }}>
-              <H2>{team.name} / CODE: {team.uuid}</H2>
+              <H2>{team.name}</H2>
+              <H5>TEAM CODE: {team.uuid}</H5>
             </div>
           </div>
         </div>
@@ -189,6 +190,8 @@ const ChallengesPage = () => {
         ) : (
             <CasesList />
           )}
+        {userData.team.length === 0 && <TeamDialog />}
+        {userData.user[0].acceptedTos === false && <TosDialog />}
       </React.Fragment>
     )}
     />
