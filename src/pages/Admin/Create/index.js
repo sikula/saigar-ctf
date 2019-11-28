@@ -502,7 +502,7 @@ const ADMIN_USERS_QUERY = gql`
 
 const CreatePage = () => (
   <Can
-    allowedRole={"super_admin", "ctf_admin"}
+    allowedRole={["super_admin", "ctf_admin"]}
     yes={() => (
       <div className="row">
         <div className="col-xs-12">
