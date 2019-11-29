@@ -3,12 +3,35 @@ import { Link } from 'react-router-dom'
 import { useLazyQuery } from '@apollo/react-hooks'
 import useAxios from 'axios-hooks'
 import gql from 'graphql-tag'
+import * as Yup from 'yup'
+import { Formik } from 'formik'
 
 
 // Styles
 import { Button, FormGroup, InputGroup } from '@blueprintjs/core'
 import { Wizard, Steps, Step } from 'react-albus'
 import { Line } from 'rc-progress'
+
+
+const FormValidationSchema = Yup.object().shape({
+    email: Yup
+        .string()
+        .email('Invalid email address')
+        .required('Required!'),
+    username: Yup
+        .string()
+        .required('Required!'),
+    password: Yup
+        .string()
+        .matches(
+            /(?=^.{8,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+            "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+        )
+        .min(8, 'Password too short, needs to be 8 characters minimum')
+        .max(30, 'Password too long, needs to be less than 30 characters')
+        .required('Required!')
+})
+
 
 const FETCH_ORDER = gql`
     query fetchOrder($orderNumber: String!) {
@@ -68,75 +91,89 @@ const EventOrderStep = ({ onNextClick }) => {
 
 const UserCreationStep = ({ onNextClick }) => {
 
-    const [email, setEmail] = useState()
-    const [username, setUsername] = useState()
-    const [password, setPassword] = useState()
-
     const [{ data, loading, error }, executePost] = useAxios(
         {
             // url: 'http://localhost:8080/register',
-            url: process.env.NODE_ENV === 'production' ? `${process.env.AUTH_API_ENDPOINT}/register` : `http://localhost:8080/register` ,
+            url: process.env.NODE_ENV === 'production' ? `${process.env.AUTH_API_ENDPOINT}/register` : `http://localhost:8080/register`,
             method: 'POST',
         },
         { manual: true }
     )
 
 
-    const handleClick = () => {
+    const handleFormSubmit = values => {
         executePost({
             data: {
-                username,
-                email,
-                password
+                ...values
             }
         })
-        .then(() => onNextClick())
+            .then(() => onNextClick())
     }
 
     if (loading) return "loading"
 
     return (
-        <>
-            <FormGroup label="Email (required)" labelFor="text-input">
-                <InputGroup
-                    id="text-input"
-                    name="email"
-                    placeholder="Enter your email"
-                    large
-                    values={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
-            </FormGroup>
-            <FormGroup label="Username (required)" labelFor="text-input">
-                <InputGroup
-                    id="text-input"
-                    name="username"
-                    placeholder="Enter your username"
-                    large
-                    values={username}
-                    onChange={e => setUsername(e.target.value)}
-                />
-            </FormGroup>
-            <FormGroup label="Password (required)" labelFor="text-input">
-                <InputGroup
-                    id="text-input"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    large
-                    values={password}
-                    onChange={e => setPassword(e.target.value)}
-                />
-            </FormGroup>
-            <div style={{ margin: '0.3rem 0rem' }}>
-                <ul>
-                    <li>Must be at least 8 characters</li>
-                    <li>Must have a mix of uppercase and lowercase letters</li>
-                    <li>Must container special characters</li>
-                </ul>
-            </div>
-            <Button fill large onClick={handleClick}>Confirm</Button>
-        </>
+        <Formik
+            initialValues={{
+                email: '',
+                username: '',
+                password: '',
+            }}
+            validationSchema={FormValidationSchema}
+            onSubmit={handleFormSubmit}
+            render={({ values, errors, handleSubmit, handleChange }) => (
+                <form id="addUserForm" onSubmit={handleSubmit}>
+                    <FormGroup label="Email (required)" labelFor="text-input">
+                        <InputGroup
+                            id="text-input"
+                            name="email"
+                            placeholder="Enter your email"
+                            large
+                            values={values.email}
+                            // onChange={e => setEmail(e.target.value)}
+                            onChange={handleChange}
+                        />
+                        {errors.email && <span>{errors.email}</span>}
+                    </FormGroup>
+                    <FormGroup label="Username (required)" labelFor="text-input">
+                        <InputGroup
+                            id="text-input"
+                            name="username"
+                            placeholder="Enter your username"
+                            large
+                            values={values.username}
+                            // onChange={e => setUsername(e.target.value)}
+                            onChange={handleChange}
+                        />
+                        {errors.username && <span>{errors.username}</span>}
+                    </FormGroup>
+                    <FormGroup label="Password (required)" labelFor="text-input">
+                        <InputGroup
+                            id="text-input"
+                            name="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            large
+                            values={values.password}
+                            // onChange={e => setPassword(e.target.value)}
+                            onChange={handleChange}
+                        />
+                    </FormGroup>
+                    {errors.password && (
+                        <div style={{ margin: '0.3rem 0rem' }}>
+                            <ul>
+                                <li>Must be between 8 and 30 characters</li>
+                                <li>Must contain one or more uppercase letters</li>
+                                <li>Must contain one or more lowercase letters</li>
+                                <li>Must contain one or more numbers</li>
+                                <li>Must contain one or more special characters</li>
+                            </ul>
+                        </div>
+                    )}
+                    <Button fill large type="submit">Confirm</Button>
+                </form>
+            )}
+        />
     )
 }
 
