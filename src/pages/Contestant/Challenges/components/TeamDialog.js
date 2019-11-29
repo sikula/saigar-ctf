@@ -152,7 +152,12 @@ const TeamDialog = () => {
         }
     })
 
-    const [addUserToTeam] = useMutation(ADD_USER_TO_TEAM)
+    const [addUserToTeam] = useMutation(ADD_USER_TO_TEAM, {
+        refetchQueries: [
+            { query: CASE_LIST, variables: { auth0id: user.id }},
+            { query: USER_INFO, variables: { auth0id: user.id }}
+        ]
+    })
     const [addTeamToEvent] = useMutation(ADD_TEAM_TO_EVENT, {
         refetchQueries: [
             { query: CASE_LIST, variables: { auth0id: user.id }},
