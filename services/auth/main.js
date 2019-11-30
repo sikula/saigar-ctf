@@ -77,28 +77,30 @@ const handler = async event => {
       },
     }
 
-    await auth0
-      .createUser(createUserOpts)
-      .then(async () => {
-        // Send off a password change email
-        await auth0A
-          .requestChangePasswordEmail({
-            email: event.data.new.email,
-            connection: `${process.env.AUTH0_CONNECTION}`,
-          })
-          .catch(err => console.log(err))
-      })
-      .catch(async err => {
-        // If the user already exists (409), then just resent the password change email
-        if (err.statusCode === 409) {
+    if (event.data.new.role === "JUDGE") {
+      await auth0
+        .createUser(createUserOpts)
+        .then(async () => {
+          // Send off a password change email
           await auth0A
             .requestChangePasswordEmail({
               email: event.data.new.email,
               connection: `${process.env.AUTH0_CONNECTION}`,
             })
             .catch(err => console.log(err))
-        }
-      })
+        })
+        .catch(async err => {
+          // If the user already exists (409), then just resent the password change email
+          if (err.statusCode === 409) {
+            await auth0A
+              .requestChangePasswordEmail({
+                email: event.data.new.email,
+                connection: `${process.env.AUTH0_CONNECTION}`,
+              })
+              .catch(err => console.log(err))
+          }
+        })
+    }
   }
 }
 

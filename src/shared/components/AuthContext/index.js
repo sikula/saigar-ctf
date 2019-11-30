@@ -32,6 +32,8 @@ class Auth extends React.Component {
     cookie.remove('saigar:id_token')
     localStorage.removeItem('expires_at')
     sessionStorage.removeItem('redirectBackTo')
+  
+    localStorage.removeItem('historyFilter')
 
     auth.logout({
       returnTo:

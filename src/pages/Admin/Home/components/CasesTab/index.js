@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Query } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import { differenceInDays } from 'date-fns'
+import { differenceInDays, parseISO } from 'date-fns'
 
 // Styles
 import { Card, Button, Icon, H5, Tag } from '@blueprintjs/core'
@@ -72,7 +72,9 @@ const CaseCard = ({ caseData }) => (
         <H5 className="case-card__header">{caseData.name}</H5>
         <Tag round>{caseData.missing_from}</Tag>
       </div>
-      <p>{`missing for: ${differenceInDays(new Date(), caseData.missing_since)} days`}</p>
+      <p>{`missing for: ${differenceInDays(
+        new Date(), parseISO(caseData.missing_since)
+      )} days`}</p>
     </Card>
     <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <CaseInfoButton id={caseData.uuid} />

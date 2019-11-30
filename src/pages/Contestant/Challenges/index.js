@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { Query } from 'react-apollo'
 import { useQuery } from '@apollo/react-hooks'
 import { isWithinInterval } from 'date-fns'
 

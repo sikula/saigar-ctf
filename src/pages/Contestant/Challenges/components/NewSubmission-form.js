@@ -210,7 +210,8 @@ const SUBMISSION_INFO = {
     name: 'Closed',
     text: (
       <div>
-        
+        <strong>CLOSED SOURCE</strong>
+        <p>Any closed source intelligence obtained from special access tools from your day job or research. Because it's closed source, we will not be able to verify it so please be sure about the intel you submit.</p>
       </div>
     ),
   },
