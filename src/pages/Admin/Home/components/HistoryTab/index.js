@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation } from '@apollo/react-hooks'
 import { Query, Mutation, Subscription } from 'react-apollo'
@@ -28,10 +28,11 @@ import { IconNames } from '@blueprintjs/icons'
 import ReactPaginate from 'react-paginate'
 
 // Custom Components
-import { AuthConsumer } from '@shared/components/AuthContext/context'
+import { AuthConsumer, AuthContext } from '@shared/components/AuthContext/context'
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import {
   SUBMISSION_HISTORY,
+  SUBMISSION_HISTORY_SA,
   SUBMISSION_FILTERS,
   INSERT_SUBMISSION_HISTORY,
   PROCESS_SUBMISSION,
@@ -124,7 +125,7 @@ const CategoryList = ({ currentCategory, handleChange }) => (
           {data.submission_configuration.map(config => (
             <option key={config.uuid} id={config.category} value={config.uuid}>{`${
               config.category
-            } (${config.points} pts.)`}</option>
+              } (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       )
@@ -406,6 +407,8 @@ SubmissionItem.propTypes = {
 const useHistoryFilterState = createPersistedState('historyFilter')
 
 const HistoryTab = () => {
+  const { user } = useContext(AuthContext)
+
   const [historyFilter, setHistoryFilter] = useHistoryFilterState({
     teams: null,
     cases: null,
@@ -449,6 +452,9 @@ const HistoryTab = () => {
   const calculatePageCount = count => {
     return Math.ceil(count / 100) // 100 submissions per page
   }
+
+
+  const SUBMISSION_GQL = user.authorization.groups.includes('super_admin') ? SUBMISSION_HISTORY_SA : SUBMISSION_HISTORY
 
   return (
     <React.Fragment>
@@ -515,7 +521,7 @@ const HistoryTab = () => {
                         {data.submission_configuration.map(config => (
                           <option key={config.uuid} id={config.category} value={config.uuid}>{`${
                             config.category
-                          } (${config.points} pts.)`}</option>
+                            } (${config.points} pts.)`}</option>
                         ))}
                       </HTMLSelect>
                     )
@@ -542,7 +548,7 @@ const HistoryTab = () => {
         }}
       </Query>
       <Subscription
-        subscription={SUBMISSION_HISTORY}
+        subscription={SUBMISSION_GQL}
         variables={{
           team: historyFilter.teams,
           case: historyFilter.cases,

@@ -77,7 +77,7 @@ const handler = async event => {
       },
     }
 
-    if (event.data.new.role === "JUDGE") {
+    if (event.data.new.role === "JUDGE" || event.data.new.role === "ADMIN") {
       await auth0
         .createUser(createUserOpts)
         .then(async () => {
