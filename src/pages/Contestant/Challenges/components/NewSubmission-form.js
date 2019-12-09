@@ -265,7 +265,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
         />
         {errors.proof && touched.proof ? <div style={{ color: 'red' }}>{errors.proof}</div> : null}
       </FormGroup>
-      <FormGroup label="Relavance" labelInfo="(required)" labelFor="text-input">
+      <FormGroup label="Relevance" labelInfo="(required)" labelFor="text-input">
         <TextArea
           name="explanation"
           placeholder="Reasons why this intelligence is relevant to the case."

@@ -71,11 +71,11 @@ const EventOrderStep = ({ onNextClick }) => {
 
     return (
         <>
-            <FormGroup label="Order #" labelFor="text-input">
+            <FormGroup label="Registration Code" labelFor="text-input">
                 <InputGroup
                     id="text-input"
                     name="orderNumber"
-                    placeholder="Enter your Eventbrite order number"
+                    placeholder="Enter your Registration Code"
                     large
                     values={orderNumber}
                     onChange={e => setOrderNumber(e.target.value)}
