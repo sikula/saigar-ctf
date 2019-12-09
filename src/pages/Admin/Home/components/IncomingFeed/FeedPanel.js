@@ -292,7 +292,7 @@ const SubmissionDetailsPanel = ({
             <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
           </div>
           <div style={{ paddingTop: 10 }}>
-            <H5>Relvance</H5>
+            <H5>Relevance</H5>
             <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
           </div>
           <div style={{ paddingTop: 10 }}>
