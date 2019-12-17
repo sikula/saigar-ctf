@@ -83,9 +83,29 @@ const NEW_SUBMISSION_MUTATION = gql`
       }
     ) {
       affected_rows
+      returning {
+        uuid
+      }
     }
   }
 `
+
+const NEW_SUBMISSIONFILE_MUTATION = gql`
+  mutation insertSubmissionFile(
+    $submission_id: uuid!
+  ) {
+    insert_submission_file(
+      objects: {
+        submission_id: $submission_id
+      }
+    ) {
+      returning {
+        uuid
+      }
+    }
+  }
+`
+
 // TODO(peter): need to fix this, make sure you are querying by the current user
 const SUBMISION_INFO = gql`
   query submissionConfig($auth0id: String!) {
@@ -107,4 +127,4 @@ const SUBMISION_INFO = gql`
   }
 `
 
-export { CASE_LIST, ACCEPT_TERMS, NEW_SUBMISSION_MUTATION, SUBMISION_INFO }
+export { CASE_LIST, ACCEPT_TERMS, NEW_SUBMISSION_MUTATION, NEW_SUBMISSIONFILE_MUTATION, SUBMISION_INFO }

@@ -289,6 +289,18 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
           <div style={{ color: 'red' }}>{errors.supporting_evidence}</div>
         ) : null}
       </FormGroup>
+      <FormGroup label="Supporting File" labelInfo="(images files only)">
+        <input 
+          name="supporting_file"
+          type="file"
+          accept="image/*"
+          ref={values.supporting_fileRef}
+          onChange={handleChange}
+        />
+        {errors.supporting_file && touched.supporting_file ? (
+          <div style={{ color: 'red' }}>{errors.supporting_file}</div>
+        ) : null}
+      </FormGroup>
       <div>
         {
           SUBMISSION_INFO[
