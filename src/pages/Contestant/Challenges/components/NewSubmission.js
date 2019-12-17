@@ -1,6 +1,7 @@
 /* eslint-disable react/require-default-props, react/forbid-prop-types */
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
+import useAxios from 'axios-hooks'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 
 import { Formik } from 'formik'
@@ -16,7 +17,7 @@ import { AuthContext } from '@shared/components/AuthContext/context'
 import { SlidingPane, SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
 
 import NewSubmissionForm from './NewSubmission-form'
-import { NEW_SUBMISSION_MUTATION, SUBMISION_INFO, CASE_LIST } from '../graphql/queries'
+import { NEW_SUBMISSION_MUTATION, NEW_SUBMISSIONFILE_MUTATION, SUBMISION_INFO, CASE_LIST } from '../graphql/queries'
 
 const NewSubmissionSchema = Yup.object().shape({
   proof: Yup.string()
@@ -24,6 +25,7 @@ const NewSubmissionSchema = Yup.object().shape({
     .required('required'),
   explanation: Yup.string().required('required'),
   supporting_evidence: Yup.string().required('required'),
+  supporting_file: Yup.string().matches(/.+((.png)|(.jpg)|(.svg)|(.gif))/, { message: 'images files only', excludeEmptyString: true }),
 })
 
 const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
@@ -38,6 +40,17 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
   })
 
   const [newSubmission, newSubmissionResult] = useMutation(NEW_SUBMISSION_MUTATION)
+  const [newSubmissionFile, newSubmissionFileResult] = useMutation(NEW_SUBMISSIONFILE_MUTATION)
+  const [{ fileData, fileLoading, fileError }, newSubmissionFileUpload] = useAxios(
+    {
+      url: 'http://localhost:8081/upload',
+      //url: process.env.NODE_ENV === 'production' ? `${process.env.AUTH_API_ENDPOINT}/register` : `http://localhost:8080/register`,
+      method: 'POST',
+      headers: { 'Content-Type': 'multipart/form-data' },
+    },
+    { manual: true }
+  )
+  const fileRef = React.createRef()
 
   // =======================================================
   //  RENDER
@@ -71,6 +84,8 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                   proof: '', // source url
                   explanation: '', // relevance
                   supporting_evidence: '',
+                  supporting_file: '',
+                  supporting_fileRef: fileRef
                 }}
                 validationSchema={NewSubmissionSchema}
                 onSubmit={values =>
@@ -90,9 +105,26 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                         variables: { auth0id: user.id },
                       },
                     ],
-                  }).then(() => closeSlider())
+                  }).then(result => {
+                    if (values.supporting_file) {
+                      newSubmissionFile({
+                        variables: {
+                          submission_id: result.data.insert_submission.returning[0].uuid,
+                        }
+                      }).then(result => {
+                        let formData = new FormData()
+                        formData.append('uuid', result.data.insert_submission_file.returning[0].uuid)
+                        formData.append('file', values.supporting_fileRef.current.files[0])
+                        newSubmissionFileUpload({
+                          data: formData,
+                        }).then(() => closeSlider())
+                      })
+                    } else {
+                      closeSlider()
+                    }
+                  })
                 }
-                render={formikProps => <NewSubmissionForm {...formikProps} />}
+                render= {formikProps => <NewSubmissionForm {...formikProps} />}
               />
             )
           }}
