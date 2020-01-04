@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -22,6 +23,7 @@ const (
 	MINIO_USESSL                   = false
 	MINIO_SUBMISSIONBUCKET         = "submissions"
 	MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
+	URL_EXPIRY                     = time.Hour * 24 * 7
 )
 
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
@@ -38,6 +40,7 @@ func main() {
 	//Setup server
 	router := http.NewServeMux()
 	router.HandleFunc("/upload", UploadFile)
+	//router.HandleFunc("/getUrl", GetFileUrl)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8084", "https://ctf.tracelabs.org"},
@@ -75,6 +78,11 @@ func waitForShutdown(server *http.Server) {
 	os.Exit(0)
 }
 
+type UploadReturn struct {
+	Url    string
+	Expiry string
+}
+
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 20)
 	file, header, err := r.FormFile("file")
@@ -94,30 +102,63 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err = uploadFileByReader(r.FormValue("uuid"), header.Size, contentType, file)
+	presignedUrl, err := uploadFileByReader(r.FormValue("uuid"), header.Size, contentType, file)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	ret := UploadReturn{
+		Url:    presignedUrl,
+		Expiry: time.Now().Add(URL_EXPIRY).Format("2006-01-02T15:04:05"),
+	}
+	json.NewEncoder(w).Encode(ret)
 }
 
-func uploadFileByReader(name string, size int64, contentType string, reader io.Reader) error {
+type GetFileUrlBody struct {
+	Name string
+}
+
+func GetFileUrl(w http.ResponseWriter, r *http.Request) {
+	var body GetFileUrlBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	presignedUrl, err := minioClient.PresignedGetObject(MINIO_SUBMISSIONBUCKET, body.Name, URL_EXPIRY, nil)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	ret := UploadReturn{
+		Url:    presignedUrl.String(),
+		Expiry: time.Now().Add(URL_EXPIRY).Format("2006-01-02T15:04:05"),
+	}
+	json.NewEncoder(w).Encode(ret)
+}
+
+func uploadFileByReader(name string, size int64, contentType string, reader io.Reader) (string, error) {
 	bktExists, err := minioClient.BucketExists(MINIO_SUBMISSIONBUCKET)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if !bktExists {
-		fmt.Println("making bucket")
 		err := minioClient.MakeBucket(MINIO_SUBMISSIONBUCKET, MINIO_SUBMISSIONBUCKETLOCATION)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
 	n, err := minioClient.PutObject(MINIO_SUBMISSIONBUCKET, name, reader, size, minio.PutObjectOptions{ContentType: contentType})
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Printf("Successfully uploaded %s of size %d\n", name, n)
-	return nil
+	presignedUrl, err := minioClient.PresignedGetObject(MINIO_SUBMISSIONBUCKET, name, URL_EXPIRY, nil)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("Successfully uploaded %s of size %d with url %s\n", name, n, presignedUrl.String())
+	return presignedUrl.String(), nil
 }

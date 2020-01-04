@@ -88,6 +88,16 @@ const SubmissionItem = ({ data, openSubmissionHistory, submissionType }) => (
             <SafeURL dangerousURL={data.content} text={data.content} />
           </span>
           <span className="long-text">{data.explanation}</span>
+          {data.submission_files.length > 0 && (
+            <div>
+            {
+              data.submission_files.map(function(file, i) {
+                return <SafeURL style={{paddingRight: "5px"}} dangerousURL={file.url} text={"File " + (i + 1)} />
+              })
+            }
+            </div>
+          )}
+          
           <div
             style={{
               textAlign: 'right',
@@ -141,6 +151,9 @@ const SUBMISSION_LIST = gql`
         explanation
         submissionConfigurationByconfigId {
           category
+        }
+        submission_files {
+          url
         }
       }
     }
