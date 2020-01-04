@@ -117,7 +117,7 @@ const AcceptSubmissionControls = ({ uuid, category, hidePanel }) => {
     <React.Fragment>
       <TextArea
         fill
-        placeHolder="(Optional) reason why the submission was accepted"
+        placeholder="(Optional) reason why the submission was accepted"
         value={acceptedReason}
         onChange={handleChange}
       />
@@ -179,7 +179,7 @@ const RejectSubmissionControls = ({ uuid, category, hidePanel }) => {
     <React.Fragment>
       <TextArea
         fill
-        placeHolder="Reason for rejecting the submission"
+        placeholder="Reason for rejecting the submission"
         value={rejectedReason}
         onChange={handleChange}
       />
@@ -226,6 +226,7 @@ const SubmissionDetailsPanel = ({
   explanation,
   content,
   supportingEvidence,
+  submission_files,
   hidePanel,
   category,
   handleChange,
@@ -299,6 +300,16 @@ const SubmissionDetailsPanel = ({
             <H5>Supporting Evidence</H5>
             <p style={{ wordWrap: 'break-word' }}>{supportingEvidence}</p>
           </div>
+            {submission_files.length > 0 && (
+              <div style={{ paddingTop: 10 }}>
+                <H5>Supporting Files</H5>
+                {
+                  submission_files.map(function (file, i) {
+                    return <SafeURL style={{ paddingRight: "5px" }} key={i} dangerousURL={file.url} text={"File " + (i + 1)} />
+                  })
+                }
+              </div>
+            )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
           <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
@@ -460,6 +471,7 @@ const PanelContent = ({
   explanation,
   content,
   supportingEvidence,
+  submission_files,
   hidePanel,
   submissionConfiguration,
 }) => {
@@ -482,6 +494,7 @@ const PanelContent = ({
               explanation={explanation}
               content={content}
               supportingEvidence={supportingEvidence}
+              submission_files={submission_files}
               hidePanel={hidePanel}
               category={category}
               handleChange={handleChange}
@@ -517,6 +530,7 @@ const FeedPanel = ({
   explanation,
   content,
   supporting_evidence,
+  submission_files,
   submissionConfigurationByconfigId,
   case: { uuid: caseID },
 }) => (
@@ -544,6 +558,7 @@ const FeedPanel = ({
           explanation={explanation}
           content={content}
           supportingEvidence={supporting_evidence}
+          submission_files={submission_files}
           submissionConfiguration={submissionConfigurationByconfigId}
           hidePanel={hidePanel}
           caseID={caseID}

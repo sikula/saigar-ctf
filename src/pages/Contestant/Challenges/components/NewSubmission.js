@@ -17,7 +17,7 @@ import { AuthContext } from '@shared/components/AuthContext/context'
 import { SlidingPane, SlidingPanelConsumer } from '../../../../shared/components/SlidingPane'
 
 import NewSubmissionForm from './NewSubmission-form'
-import { NEW_SUBMISSION_MUTATION, NEW_SUBMISSIONFILE_MUTATION, SUBMISION_INFO, CASE_LIST } from '../graphql/queries'
+import { NEW_SUBMISSION_MUTATION, NEW_SUBMISSIONFILE_MUTATION, UPDATE_SUBMISSIONFILE_MUTATION, SUBMISION_INFO, CASE_LIST } from '../graphql/queries'
 
 const NewSubmissionSchema = Yup.object().shape({
   proof: Yup.string()
@@ -41,6 +41,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
 
   const [newSubmission, newSubmissionResult] = useMutation(NEW_SUBMISSION_MUTATION)
   const [newSubmissionFile, newSubmissionFileResult] = useMutation(NEW_SUBMISSIONFILE_MUTATION)
+  const [updateSubmissionFile, updateSubmissionFileResult] = useMutation(UPDATE_SUBMISSIONFILE_MUTATION)
   const [{ fileData, fileLoading, fileError }, newSubmissionFileUpload] = useAxios(
     {
       url: 'http://localhost:8081/upload',
@@ -76,7 +77,6 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
           {({ closeSlider }) => {
             if (loading) return null
             if (error) return null
-
             return (
               <Formik
                 initialValues={{
@@ -111,13 +111,21 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                         variables: {
                           submission_id: result.data.insert_submission.returning[0].uuid,
                         }
-                      }).then(result => {
+                      }).then(addFileResult => {
                         let formData = new FormData()
-                        formData.append('uuid', result.data.insert_submission_file.returning[0].uuid)
+                        formData.append('uuid', addFileResult.data.insert_submission_file.returning[0].uuid)
                         formData.append('file', values.supporting_fileRef.current.files[0])
                         newSubmissionFileUpload({
                           data: formData,
-                        }).then(() => closeSlider())
+                        }).then(fileUploadResult => {
+                          updateSubmissionFile({
+                            variables: {
+                              file_id: addFileResult.data.insert_submission_file.returning[0].uuid,
+                              url: fileUploadResult.data.Url,
+                              expiry: fileUploadResult.data.Expiry,
+                            }
+                          }).then(() => closeSlider())
+                        })
                       })
                     } else {
                       closeSlider()

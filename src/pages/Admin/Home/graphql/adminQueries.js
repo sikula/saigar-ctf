@@ -156,6 +156,9 @@ const LIVE_FEED = gql`
             }
           }
         }
+        submission_files {
+          url
+        }
       }
     }
   }
@@ -195,6 +198,9 @@ const LIVE_FEED_FILTERED = gql`
             }
           }
         }
+        submission_files {
+          url
+        }
       }
     }
   }
@@ -228,6 +234,9 @@ const LIVE_FEED_SA = gql`
               count
             }
           }
+        }
+        submission_files {
+          url
         }
       }
     }
