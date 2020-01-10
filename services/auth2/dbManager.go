@@ -25,6 +25,11 @@ type User struct {
 	password    string
 }
 
+type Eventbrite struct {
+	order_number string
+	used         bool
+}
+
 var db *sql.DB
 
 func dbSetup() error {
@@ -70,4 +75,18 @@ func dbInsertUser(email string, username string, password string) error {
 		return err
 	}
 	return nil
+}
+
+func dbGetEventbrite(order_number string) (*Eventbrite, error) {
+	var eventbrite Eventbrite
+	sqlStmt := `SELECT order_number, used FROM public.eventbrite WHERE order_number=$1`
+	row := db.QueryRow(sqlStmt, order_number)
+	err := row.Scan(&eventbrite.order_number, &eventbrite.used)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &eventbrite, nil
 }

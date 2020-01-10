@@ -52,6 +52,7 @@ func main() {
 	// Setup and configure routes
 	router := http.NewServeMux()
 	router.HandleFunc("/register", RegisterInAuth0)
+	router.HandleFunc("/verify_code", VerifyRegCode)
 	router.HandleFunc("/signin", Signin)
 	router.HandleFunc("/tokentest", TokenTest)
 	router.HandleFunc("/refresh", Refresh)
@@ -260,6 +261,32 @@ func RegisterContestant(w http.ResponseWriter, r *http.Request) {
 		Value:   token,
 		Expires: time.Unix(claims.ExpiresAt, 0),
 	})
+}
+
+type VerifyRegCodeBody struct {
+	EventCode string
+}
+
+func VerifyRegCode(w http.ResponseWriter, r *http.Request) {
+	var body VerifyRegCodeBody
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	eventbrite, err := dbGetEventbrite(body.EventCode)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if eventbrite == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if eventbrite.used {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 }
 
 // /signin
