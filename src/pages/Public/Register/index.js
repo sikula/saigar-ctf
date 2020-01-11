@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useLazyQuery } from '@apollo/react-hooks'
+import { useLazyQuery, useMutation } from '@apollo/react-hooks'
 import useAxios from 'axios-hooks'
 import gql from 'graphql-tag'
 import * as Yup from 'yup'
@@ -32,13 +32,13 @@ const FormValidationSchema = Yup.object().shape({
         .required('Required!')
 })
 
-
-const FETCH_ORDER = gql`
-    query fetchOrder($orderNumber: String!) {
-        eventbrite(where: {
-            order_number: { _eq: $orderNumber }
-        }) {
-            order_number
+const SET_USED_CODE = gql`
+    mutation setUsedCode {
+        update_eventbrite(
+            _set: { used: true }
+            where: {}
+        ) {
+            affected_rows
         }
     }
 `
@@ -49,24 +49,37 @@ const EventOrderStep = ({ onNextClick }) => {
     const [orderNumber, setOrderNumber] = useState()
     const [message, setMessage] = useState()
 
-    const [fetchOrder, { called, loading, data }] = useLazyQuery(FETCH_ORDER, {
-        onCompleted: (data) => {
-            console.log("COMPLETED")
-            if (!data.eventrbite && data.eventbrite.length == 0) {
-                setMessage("Invalid Eventbrite Order Number")
-            } else {
-                setMessage()
-                onNextClick()
+    const [{ data, loading, error }, executeFetch] = useAxios(
+        {
+            url: process.env.NODE_ENV === 'production' ? `${process.env.AUTH_API_ENDPOINT}/verify_code` : `http://localhost:8080/verify_code`,
+            method: 'POST',
+            data: {
+                "EventCode": orderNumber
             }
         },
+        { manual: true }
+    )
+
+    const [updateCode] = useMutation(SET_USED_CODE, {
+        context: {
+            headers: {
+                'X-Hasura-Register-Code': orderNumber
+            }
+        }
     })
 
     const handleConfirmClick = () => {
-        fetchOrder({
-            variables: {
-                orderNumber,
-            }
-        })
+        executeFetch()
+            .then(() => {
+                updateCode().then(onNextClick)
+            })
+            .catch(({ response }) => {
+                if (response.status === 400) {
+                    setMessage("Invalid Registration Code")
+                } else if (response.status === 403) {
+                    setMessage("Registration Code already in use")
+                }
+            })
     }
 
     return (
@@ -107,7 +120,7 @@ const UserCreationStep = ({ onNextClick }) => {
                 ...values
             }
         })
-            .then(() => onNextClick())
+            .then(onNextClick)
     }
 
     if (loading) return "loading"

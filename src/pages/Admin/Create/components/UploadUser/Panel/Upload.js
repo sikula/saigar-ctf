@@ -24,6 +24,15 @@ const NEW_UPLOAD_USERS = gql`
     }
   }
 `
+
+const NEW_UPLOAD_EVENTBRITE = gql`
+  mutation uploadEventbrite($eventData: [eventbrite_insert_input!]!) {
+    insert_eventbrite(objects: $eventData) {
+      affected_rows
+    }
+  }
+`
+
 const FileUpload = ({ onChange }) => {
   const [fileName, setFileName] = useState()
 
@@ -51,36 +60,45 @@ const groupBy = key => array =>
     return objectsByKeyValue
   }, {})
 
-const transformData = (data, eventID) => {
-  const groupByCase = groupBy('Team')
+// const transformData = (data, eventID) => {
+//   const groupByCase = groupBy('Team')
 
-  return Object.entries(groupByCase(data)).map(([key, value]) => {
-    return {
-      event_id: eventID,
-      team: {
-        data: {
-          name: key,
-          user_team: {
-            data: value.map(user => ({
-              user: {
-                data: {
-                  nickname: `${user.Username}}`,
-                  username: `${user.Username}`,
-                  avatar: '',
-                  email: user.Email,
-                  role: 'CONTESTANT',
-                },
-              },
-            })),
-          },
-        },
-      },
-    }
-  })
+//   return Object.entries(groupByCase(data)).map(([key, value]) => {
+//     return {
+//       event_id: eventID,
+//       team: {
+//         data: {
+//           name: key,
+//           user_team: {
+//             data: value.map(user => ({
+//               user: {
+//                 data: {
+//                   nickname: `${user.Username}}`,
+//                   username: `${user.Username}`,
+//                   avatar: '',
+//                   email: user.Email,
+//                   role: 'CONTESTANT',
+//                 },
+//               },
+//             })),
+//           },
+//         },
+//       },
+//     }
+//   })
+// }
+
+const transformEventData = (eventData) => {
+  return eventData.map(eventData => ({
+    order_number: eventData.OrderNumber
+  }))
 }
 
 const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
   const [data, setData] = useState()
+  const [eventData, setEventData] = useState()
+
+  console.log(eventData)
 
   return (
     <SlidingPane
@@ -113,6 +131,48 @@ const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
               style={{ width: '100%' }}
             />
             <Tab
+              id="eventbriteImport"
+              title={<div style={{ fontSize: '1rem' }}>Import EventBrite</div>}
+              panel={
+                <React.Fragment>
+                  <CsvParse
+                    keys={['OrderNumber']}
+                    onDataUploaded={data => setEventData(data)}
+                    onError={error => console.log(error)}
+                    render={onChange => <FileUpload onChange={onChange} />}
+                  />
+                  <Mutation mutation={NEW_UPLOAD_EVENTBRITE}>
+                    {insert_eventrbite => (
+                      <SlidingPanelConsumer>
+                        {({ closeSlider }) => (
+                          <Button
+                            intent="primary"
+                            large
+                            // eslint-disable-next-line no-console
+                            onClick={() =>
+                              insert_eventrbite({
+                                variables: {
+                                  eventData: transformEventData(eventData),
+                                },
+                                // refetchQueries: [{
+                                //   query: TEAMS_QUERY,
+                                //   variables: {
+                                //     eventId:  eventID
+                                //   }
+                                // }]
+                              }).then(closeSlider)
+                            }
+                          >
+                            UPLOAD
+                        </Button>
+                        )}
+                      </SlidingPanelConsumer>
+                    )}
+                  </Mutation>
+                </React.Fragment>
+              }
+            />
+            {/* <Tab
               id="bulkImport"
               title={<div style={{ fontSize: '1em' }}>Import Users</div>}
               panel={
@@ -154,7 +214,7 @@ const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
                   </Mutation>
                 </React.Fragment>
               }
-            />
+            /> */}
           </Tabs>
         </div>
       </SlidingPane.Content>
