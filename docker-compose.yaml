@@ -1,14 +1,49 @@
 version: '3.6'
 services:
+  # The frontend for the CTF Platform
   saigar-ui:
-    image: saigar-ctf:1.09-26.1
+    image: saigar-ctf:SOME_TAG
     ports:
     - "127.0.0.1:5000:5000"
     restart: always
     build: .
+  # The authentication service to add judges
+  # TODO(Peter): FIX THIS, this should really be renamed or maybe combine auth + auth2
   saigar-auth:
-    image: saigar-auth:1.09-26.1
+    image: saigar-auth:SOME_TAG
     ports:
     - "127.0.0.1:3000:3000"
     restart: always
     build: services/auth
+  # The authentication service to register for an event
+  saigar-auth2:
+      image: saigar-auth2:SOME_TAG
+      ports:
+      - "127.0.0.1:SOME_PORT:SOME_PORT"
+      restart: always
+      build: services/auth2
+  # File Upload service
+  saigar-fileupload:
+    image: saigar-fileupload:SOME_TAG
+    ports:
+    - "127.0.0.1:SOME_PORT:SOME_PORT"
+    restart: always
+    build: services/fileupload
+  # MINIO Setup
+  minio:
+    image: minio/minio:RELEASE.2020-01-03T19-12-21Z
+    volumes:
+      - data1-1:/data1
+    ports:
+    - "127.0.0.1:SOME_PORT:SOME_PORT"
+    environment:
+      MINIO_ACCESS_KEY: XXXXX
+      MINIO_SECRET_KEY: XXXXX
+    command: server http://minio1/data1
+    restart: always
+    build: services/fileupload
+
+
+
+volumes:
+  data1-1:

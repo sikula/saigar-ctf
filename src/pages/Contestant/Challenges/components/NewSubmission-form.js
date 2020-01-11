@@ -4,10 +4,12 @@ import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/react-hooks'
 
 import { isWithinInterval } from 'date-fns'
-import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
+import { FormGroup, HTMLSelect, TextArea, Icon } from '@blueprintjs/core'
 
 import { AuthContext } from '@shared/components/AuthContext/context'
 import { SUBMISION_INFO } from '../graphql/queries'
+
+import './NewSubmission.scss'
 
 const SUBMISSION_INFO = {
   LOCATION: {
@@ -30,7 +32,7 @@ const SUBMISSION_INFO = {
       <div>
         <strong>DARK WEB</strong>
         <p>
-          Relevant information found on the dark web about the subject. 
+          Relevant information found on the dark web about the subject.
         </p>
         <strong style={{ color: "red" }}>
           Your submission must originate from a .onion URL to be considered Dark Web - Eg. https://dsfjldsjflj.onion
@@ -217,7 +219,7 @@ const SUBMISSION_INFO = {
   },
 }
 
-const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched }) => {
+const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => {
   // State Layer
   const { user } = useContext(AuthContext)
 
@@ -227,6 +229,11 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
       auth0id: user.id,
     },
   })
+
+  const handleUploadChange = e => {
+    const file = e.target.files[0]
+    setFieldValue('supporting_file', file)
+  }
 
   // ============================================================
   //  RENDER
@@ -290,16 +297,24 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
         ) : null}
       </FormGroup>
       <FormGroup label="Supporting File" labelInfo="(images files only)">
-        <input 
-          name="supporting_file"
-          type="file"
-          accept="image/*"
-          ref={values.supporting_fileRef}
-          onChange={handleChange}
-        />
-        {errors.supporting_file && touched.supporting_file ? (
-          <div style={{ color: 'red' }}>{errors.supporting_file}</div>
-        ) : null}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <input
+            type="file"
+            name="supporting_file"
+            accept="image/*"
+            id="supporting_file"
+            className="uploadFileInput"
+            ref={values.supporting_fileRef}
+            onChange={handleUploadChange}
+          />
+          {console.log("VALUES: ", values)}
+          <label htmlFor="supporting_file">
+            <Icon icon="upload" /> {values.supporting_file ? values.supporting_file.name : "Upload File"}
+          </label>
+          {errors.supporting_file && touched.supporting_file ? (
+            <div style={{ color: 'red' }}>{errors.supporting_file}</div>
+          ) : null}
+        </div>
       </FormGroup>
       <div>
         {
@@ -310,8 +325,8 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
       </div>
     </form>
   ) : (
-    <div>Competition is over</div>
-  )
+      <div>Competition is over</div>
+    )
 }
 
 NewSubmissionForm.propTypes = {
