@@ -14,7 +14,7 @@ services:
     ports:
     - "127.0.0.1:3000:3000"
     restart: always
-    build: services/auth
+    build: services/auth      
   # The authentication service to register for an event
   saigar-auth2:
       image: "saigar-auth2:${TAG}"
@@ -64,7 +64,7 @@ volumes:
   minio_data:
 
 
-networks:
-  default:
-    external:
-      name: nginx-proxy
+# networks:
+#   default:
+#     external:
+#       name: nginx-proxy
