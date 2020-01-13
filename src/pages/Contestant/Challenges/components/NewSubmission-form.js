@@ -232,7 +232,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, 
 
   const handleUploadChange = e => {
     const file = e.target.files[0]
-    setFieldValue('supporting_file', file)
+    setFieldValue('supporting_file', file.name)
   }
 
   // ============================================================
@@ -296,7 +296,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, 
           <div style={{ color: 'red' }}>{errors.supporting_evidence}</div>
         ) : null}
       </FormGroup>
-      <FormGroup label="Supporting File" labelInfo="(images files only)">
+      <FormGroup label="Supporting File" labelInfo="(image files only)">
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <input
             type="file"
@@ -309,7 +309,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, 
           />
           {console.log("VALUES: ", values)}
           <label htmlFor="supporting_file">
-            <Icon icon="upload" /> {values.supporting_file ? values.supporting_file.name : "Upload File"}
+            <Icon icon="upload" /> {values.supporting_file ? values.supporting_file : "Upload File"}
           </label>
           {errors.supporting_file && touched.supporting_file ? (
             <div style={{ color: 'red' }}>{errors.supporting_file}</div>

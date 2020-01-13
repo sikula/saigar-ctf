@@ -17,13 +17,16 @@ import (
 )
 
 const (
-	MINIO_URL                      = "play.min.io"
-	MINIO_ACCESSKEY                = "Q3AM3UQ867SPQQA43P2F"
-	MINIO_ACCESSSECRET             = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
 	MINIO_USESSL                   = false
 	MINIO_SUBMISSIONBUCKET         = "submissions"
 	MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
 	URL_EXPIRY                     = time.Hour * 24 * 7
+)
+
+var (
+	MINIO_URL                      = os.Getenv("MINIO_URL")
+	MINIO_ACCESSKEY                = os.Getenv("MINIO_ACCESSKEY")
+	MINIO_ACCESSSECRET             = os.Getenv("MINIO_ACCESSSECRET")
 )
 
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
@@ -104,6 +107,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 	presignedUrl, err := uploadFileByReader(r.FormValue("uuid"), header.Size, contentType, file)
 	if err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

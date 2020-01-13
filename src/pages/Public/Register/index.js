@@ -43,7 +43,6 @@ const SET_USED_CODE = gql`
     }
 `
 
-
 const EventOrderStep = ({ onNextClick }) => {
 
     const [orderNumber, setOrderNumber] = useState()
@@ -190,69 +189,9 @@ const UserCreationStep = ({ onNextClick }) => {
     )
 }
 
-
-// const TeamCreationStep = () => {
-
-//     // State Layer
-//     const [teamCode, setTeamCode] = useState()
-//     const [teamName, setTeamName] = useState()
-//     const [buttonPressed, setButtonPressed] = useState(null)
-
-//     // GraphQL Layer
-
-//     /*
-//         1) If joining team, enter code (team UUID, add to table)
-//         2) If creating team, enter team name, return team code (UUID); add user to that team
-//         3) IMPLEMENT: eventbrite CSV import into eventbrite table
-//     */
-
-//     return (
-//         <>
-//             <span style={{ display: 'flex', flexDirection: 'row' }}>
-//                 <Button fill large onClick={() => setButtonPressed("JOIN")} style={{ marginRight: 10 }}>Join a Team</Button>
-//                 <Button fill large onClick={() => setButtonPressed("CREATE")}>Create a Team</Button>
-//             </span>
-
-//             {buttonPressed && buttonPressed == "JOIN" && (
-//                 <>
-//                     <FormGroup label="Team Code" labelFor="text-input">
-//                         <InputGroup
-//                             id="text-input"
-//                             name="teamName"
-//                             placeholder="e.g. - 67812-12839182-1231-123123312"
-//                             large
-//                             values={teamCode}
-//                             onChange={e => setTeamCode(e.target.value)}
-//                         />
-//                     </FormGroup>
-//                     <Button fill large onClick={() => 10}>Confirm</Button>
-//                 </>
-//             )}
-//             {buttonPressed && buttonPressed === "CREATE" && (
-//                 <>
-//                     <FormGroup label="Team Name" labelFor="text-input">
-//                         <InputGroup
-//                             id="text-input"
-//                             name="teamName"
-//                             placeholder="e.g. Epic Doxxers"
-//                             large
-//                             values={teamName}
-//                             onChange={e => setTeamName(e.target.value)}
-//                         />
-//                     </FormGroup>
-//                     <Button fill large onClick={() => 10}>Confirm</Button>
-//                 </>
-//             )}
-//         </>
-//     )
-
-// }
-
-
 const RegisterPage = () => {
 
     return (
-
         <div
             style={{
                 width: '100%',
@@ -294,95 +233,6 @@ const RegisterPage = () => {
         </div>
     )
 }
-
-/*
-<div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'center' }}>
-                <div
-                    style={{
-                        margin: '0 auto',
-                        width: '480px',
-                        background: '#FFF',
-                        boxShadow: 'rgba(12, 52, 75, 0.05) 0px 3px 3px',
-                        borderRadius: '8px'
-                    }}
-                >
-                    <div
-                        style={{
-                            width: '100%',
-                            borderBottom: '1px solid #ece7e7',
-                            textAlign: 'center',
-                            paddingTop: 10,
-                            paddingBottom: 10,
-                        }}
-                    >
-                        <h2 style={{ fontWeight: 500 }}>Register</h2>
-                    </div>
-                    <div style={{ margin: 30 }}>
-                        <FormGroup label="Order #" labelFor="text-input">
-                            <InputGroup
-                                id="text-input"
-                                name="orderNumber"
-                                placeholder="Enter your Eventbrite order number"
-                                large
-                                values={orderNumber}
-                                onChange={e => setOrderNumber(e.target.value)}
-                            />
-                        </FormGroup>
-                        <Button fill large onClick={handleConfirmClick}>Confirm</Button>
-                    </div>
-                    {/* {(called && !loading && data) && (
-                        <div style={{ margin: 30, borderTop: '1px solid #ece7e7' }}>
-                            Hello There World
-                        </div>
-                    )} 
-            //         <div style={{ borderTop: '1px solid #ece7e7' }}>
-            //             <div style={{ margin: 30 }}>
-                            // <FormGroup label="Email (required)" labelFor="text-input">
-                            //     <InputGroup
-                            //         id="text-input"
-                            //         name="orderNumber"
-                            //         placeholder="Enter your email"
-                            //         large
-                            //         values={orderNumber}
-                            //         onChange={e => setOrderNumber(e.target.value)}
-                            //     />
-                            // </FormGroup>
-                            // <FormGroup label="Username (required)" labelFor="text-input">
-                            //     <InputGroup
-                            //         id="text-input"
-                            //         name="orderNumber"
-                            //         placeholder="Enter your username"
-                            //         large
-                            //         values={orderNumber}
-                            //         onChange={e => setOrderNumber(e.target.value)}
-                            //     />
-                            // </FormGroup>
-                            // <FormGroup label="Password (required)" labelFor="text-input">
-                            //     <InputGroup
-                            //         id="text-input"
-                            //         name="orderNumber"
-                            //         type="password"
-                            //         placeholder="Enter your password"
-                            //         large
-                            //         values={orderNumber}
-                            //         onChange={e => setOrderNumber(e.target.value)}
-                            //     />
-                            // </FormGroup>
-            //             </div>
-            //         </div>
-            //     </div>
-                // <div style={{ color: "#000", padding: 10 }}>
-                //     Powered by <span style={{ fontWeight: 600 }}>Saigar Technologies</span> |{' '}
-                //     <a href="https://saigar.io" target="_blank">
-                //         saigar.io
-                // </a>{' '}
-                //     |{' '}
-                //     <a href="https://twitter.com/@saigar_to" target="_blank">
-                //         @saigar_to
-                // </a>{' '}
-                // </div>
-            // </div>
-*/
 
 
 export default RegisterPage
