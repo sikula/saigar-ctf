@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import React, { useState, useEffect, useContext } from 'react'
+import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
 // Styles
@@ -23,6 +23,28 @@ const GET_USER = gql`
           auth0id: { _eq: $auth0id }
       }) {
           uuid
+      }
+  }
+`
+
+const GET_TEAM_COUNT = gql`
+  query teamCount($teamId: uuid!) {
+      user_team_aggregate(where: {
+        team_id: { _eq: $teamId }
+      }) {
+        aggregate {
+            count
+        }
+      }
+  }
+`
+
+const FIND_TEAM_BY_CODE = gql`
+  query findTeamByCode($code: String!) {
+      team_codes(where: {
+          code: { _eq: $code }
+      }) {
+          team_id
       }
   }
 `
@@ -67,54 +89,6 @@ const ADD_TEAM_TO_EVENT = gql`
     }
 `
 
-
-// @NOTE(Peter): this is a duplicate of what's in ../index.js
-
-const CASE_LIST = gql`
-  query eventCases($auth0id: String!) {
-    event(order_by: { start_time: desc }, limit: 1) {
-      eventCasesByeventId {
-        case {
-          uuid
-          name
-          missing_since
-          missing_from
-          pendingSubmissions: submissions_aggregate(
-            where: {
-              processed: { _eq: "PENDING" }
-              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
-            }
-          ) {
-            aggregate {
-              count
-            }
-          }
-          acceptedSubmissions: submissions_aggregate(
-            where: {
-              processed: { _in: ["ACCEPTED", "STARRED"] }
-              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
-            }
-          ) {
-            aggregate {
-              count
-            }
-          }
-          rejectedSubmissions: submissions_aggregate(
-            where: {
-              processed: { _eq: "REJECTED" }
-              teamByteamId: { user_team: { user: { auth0id: { _eq: $auth0id } } } }
-            }
-          ) {
-            aggregate {
-              count
-            }
-          }
-        }
-      }
-    }
-  }
-`
-
 const USER_INFO = gql`
   query userInfo($auth0id: String!) {
     user(where: { auth0id: { _eq: $auth0id } }) {
@@ -136,6 +110,7 @@ const TeamDialog = () => {
     const [buttonPressed, setButtonPressed] = useState(null)
     const [teamCode, setTeamCode] = useState()
     const [teamName, setTeamName] = useState()
+    const [message, setMessage] = useState()
 
     const { user } = useContext(AuthContext)
 
@@ -152,18 +127,21 @@ const TeamDialog = () => {
         }
     })
 
+    const client = useApolloClient()
+
     const [addUserToTeam] = useMutation(ADD_USER_TO_TEAM, {
         refetchQueries: [
-            { query: CASE_LIST, variables: { auth0id: user.id }},
-            { query: USER_INFO, variables: { auth0id: user.id }}
+            { query: USER_INFO, variables: { auth0id: user.id } }
         ]
     })
+
     const [addTeamToEvent] = useMutation(ADD_TEAM_TO_EVENT, {
         refetchQueries: [
-            { query: CASE_LIST, variables: { auth0id: user.id }},
-            { query: USER_INFO, variables: { auth0id: user.id }}
+            { query: USER_INFO, variables: { auth0id: user.id } }
         ]
     })
+
+ 
 
     // ======================================================
     // Handlers
@@ -173,13 +151,33 @@ const TeamDialog = () => {
     const handleClose = () => {
         if (buttonPressed === "JOIN") {
             // do stuff here to join team
-            addUserToTeam({
+            client.query({
+                query: FIND_TEAM_BY_CODE,
                 variables: {
-                    team: teamCode,
-                    user: userData.user[0].uuid,
+                    code: teamCode
                 }
+            }).then(({ data }) => {
+                const { team_id } = data.team_codes[0]
+                client.query({
+                    query: GET_TEAM_COUNT,
+                    variables: {
+                        teamId: team_id
+                    }
+                }).then(({ data }) => {
+                    const count = data.user_team_aggregate.aggregate.count
+                    if (count <= 4) {
+                        addUserToTeam({
+                            variables: {
+                                team: team_id,
+                                user: userData.user[0].uuid,
+                            }
+                        })
+                    } else {
+                        setMessage("Max team size of 4 reached")
+                    }
+                })
             })
-            setIsOpen(!isOpen)
+
         }
 
         if (buttonPressed === "CREATE") {
@@ -215,7 +213,12 @@ const TeamDialog = () => {
             <div className={Classes.DIALOG_BODY}>
                 <H3>Team Creation</H3>
                 <span style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Button large fill intent="primary" onClick={() => setButtonPressed("JOIN")} style={{ marginRight: 10 }}>Join a Team</Button>
+                    <Button large fill intent="primary"
+                        onClick={() => setButtonPressed("JOIN")}
+                        style={{ marginRight: 10 }}
+                    >
+                        Join a Team
+                    </Button>
                     <Button large fill intent="primary" onClick={() => setButtonPressed("CREATE")}>Create a Team</Button>
                 </span>
                 {buttonPressed && buttonPressed === "JOIN" && (
@@ -230,6 +233,7 @@ const TeamDialog = () => {
                                 onChange={e => setTeamCode(e.target.value)}
                             />
                         </FormGroup>
+                        <div>{message}</div>
                     </div>
                 )}
                 {buttonPressed && buttonPressed === "CREATE" && (
