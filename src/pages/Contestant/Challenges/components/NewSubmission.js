@@ -44,8 +44,8 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
   const [updateSubmissionFile, updateSubmissionFileResult] = useMutation(UPDATE_SUBMISSIONFILE_MUTATION)
   const [{ fileData, fileLoading, fileError }, newSubmissionFileUpload] = useAxios(
     {
-      url: 'http://localhost:8081/upload',
-      //url: process.env.NODE_ENV === 'production' ? `${process.env.AUTH_API_ENDPOINT}/register` : `http://localhost:8080/register`,
+      // url: 'http://localhost:8081/upload',
+      url: process.env.NODE_ENV === 'production' ? `${process.env.FILE_API_ENDPOINT}/upload` : `http://localhost:8080/upload`,
       method: 'POST',
       headers: { 'Content-Type': 'multipart/form-data' },
     },
