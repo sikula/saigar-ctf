@@ -334,7 +334,6 @@ const EventsPanel = () => {
   }
 
   const handleWipeApproveClick = () => {
-    console.log('WIPING')
     setWipeDialogOpen(false)
   }
 

@@ -31,17 +31,18 @@ const SUBMISSION_INFO = {
     text: (
       <div>
         <strong>DARK WEB</strong>
-        <p>
-          Relevant information found on the dark web about the subject.
-        </p>
-        <strong style={{ color: "red" }}>
-          Your submission must originate from a .onion URL to be considered Dark Web - Eg. https://dsfjldsjflj.onion
+        <p>Relevant information found on the dark web about the subject.</p>
+        <strong style={{ color: 'red' }}>
+          Your submission must originate from a .onion URL to be considered Dark Web - Eg.
+          https://dsfjldsjflj.onion
         </strong>
         <ul>
           <li>pictures or details of subject on human trafficking related dark we sites</li>
           <li>the sales of goods by the subject on the dark web</li>
           <li>any activity or post by the subject on the dark web</li>
-          <li>data breaches posted on the dark web that include the subject's personal information</li>
+          <li>
+            data breaches posted on the dark web that include the subject's personal information
+          </li>
         </ul>
         <strong style={{ color: 'red' }}>
           Please use caution when exploring the dark web as you are likely see graphic pictures.
@@ -213,13 +214,24 @@ const SUBMISSION_INFO = {
     text: (
       <div>
         <strong>CLOSED SOURCE</strong>
-        <p>Any closed source intelligence obtained from special access tools from your day job or research. Because it's closed source, we will not be able to verify it so please be sure about the intel you submit.</p>
+        <p>
+          Any closed source intelligence obtained from special access tools from your day job or
+          research. Because it's closed source, we will not be able to verify it so please be sure
+          about the intel you submit.
+        </p>
       </div>
     ),
   },
 }
 
-const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => {
+const NewSubmissionForm = ({
+  handleSubmit,
+  handleChange,
+  setFieldValue,
+  values,
+  errors,
+  touched,
+}) => {
   // State Layer
   const { user } = useContext(AuthContext)
 
@@ -241,13 +253,10 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, 
   if (loading) return null
   if (error) return null
 
-  const canCreateSubmission = isWithinInterval(
-    new Date(),
-    {
-      start: new Date(data.event[0].start_time),
-      end: new Date(data.event[0].end_time)
-    }
-  )
+  const canCreateSubmission = isWithinInterval(new Date(), {
+    start: new Date(data.event[0].start_time),
+    end: new Date(data.event[0].end_time),
+  })
 
   return canCreateSubmission ? (
     <form id="newSubmissionForm" onSubmit={handleSubmit}>
@@ -307,9 +316,8 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, 
             ref={values.supporting_fileRef}
             onChange={handleUploadChange}
           />
-          {console.log("VALUES: ", values)}
           <label htmlFor="supporting_file">
-            <Icon icon="upload" /> {values.supporting_file ? values.supporting_file : "Upload File"}
+            <Icon icon="upload" /> {values.supporting_file ? values.supporting_file : 'Upload File'}
           </label>
           {errors.supporting_file && touched.supporting_file ? (
             <div style={{ color: 'red' }}>{errors.supporting_file}</div>
@@ -325,8 +333,8 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, setFieldValue, values, 
       </div>
     </form>
   ) : (
-      <div>Competition is over</div>
-    )
+    <div>Competition is over</div>
+  )
 }
 
 NewSubmissionForm.propTypes = {

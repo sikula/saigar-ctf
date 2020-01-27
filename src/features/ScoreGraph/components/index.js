@@ -111,7 +111,6 @@ const ScoreGraph = ({ dark }) => (
           variables={{ eventID: eventData.event[0].uuid }}
         >
           {({ data, loading, error }) => {
-            console.log(error)
             if (!data) return null
             if (loading) {
               return <div>Loading...</div>
