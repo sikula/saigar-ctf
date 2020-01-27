@@ -88,17 +88,15 @@ const groupBy = key => array =>
 //   })
 // }
 
-const transformEventData = (eventData) => {
+const transformEventData = eventData => {
   return eventData.map(eventData => ({
-    order_number: eventData.OrderNumber
+    order_number: eventData.OrderNumber,
   }))
 }
 
 const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
   const [data, setData] = useState()
   const [eventData, setEventData] = useState()
-
-  console.log(eventData)
 
   return (
     <SlidingPane
@@ -164,7 +162,7 @@ const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
                             }
                           >
                             UPLOAD
-                        </Button>
+                          </Button>
                         )}
                       </SlidingPanelConsumer>
                     )}
