@@ -8,12 +8,18 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"errors"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/minio/minio-go"
 	"github.com/rs/cors"
+
+	// "github.com/auth0-community/go-auth0"
+	"github.com/auth0/go-jwt-middleware"
+	"github.com/dgrijalva/jwt-go"
+	// jose "gopkg.in/square/go-jose.v2"
 )
 
 const (
@@ -31,6 +37,7 @@ var (
 
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
 var minioClient *minio.Client
+var jwtMiddleware *jwtmiddleware.JWTMiddleware
 
 func main() {
 	// Initialize minio client object.
@@ -40,9 +47,29 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
+		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+			// aud := "https://tracelabs.auth0.com/api/v2/"
+			// checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
+			// if !checkAud {
+			// 	return token, errors.New("Invalid audience")
+			// }
+
+			cert, err := getPemCert(token)
+			if err != nil {
+				panic(err.Error())
+			}
+
+			result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+			return result, nil
+		},
+		SigningMethod: jwt.SigningMethodRS256,
+	})
+
 	//Setup server
 	router := http.NewServeMux()
-	router.HandleFunc("/upload", UploadFile)
+	finalHandler := http.HandlerFunc(UploadFile)
+	router.Handle("/upload", authMiddleware(finalHandler))
 	//router.HandleFunc("/getUrl", GetFileUrl)
 
 	c := cors.New(cors.Options{
@@ -67,6 +94,83 @@ func main() {
 
 	waitForShutdown(httpServer)
 }
+
+
+type Jwks struct {
+	Keys []JSONWebKeys `json:"keys"`
+}
+
+type JSONWebKeys struct {
+	Kty string `json:"kty"`
+	Kid string `json:"kid"`
+	Use string `json:"use"`
+	N string `json:"n"`
+	E string `json:"e"`
+	X5c []string `json:"x5c"`
+}
+
+
+func getPemCert(token *jwt.Token) (string, error) {
+	cert := ""
+	resp, err := http.Get("https://tracelabs.auth0.com/.well-known/jwks.json")
+
+	if err != nil {
+		return cert, err
+	}
+	defer resp.Body.Close()
+
+	var jwks = Jwks{}
+	err = json.NewDecoder(resp.Body).Decode(&jwks)
+
+	if err != nil {
+		return cert, err
+	}
+
+	for k, _ := range jwks.Keys {
+		if token.Header["kid"] == jwks.Keys[k].Kid {
+			cert = "-----BEGIN CERTIFICATE-----\n" + jwks.Keys[k].X5c[0] + "\n-----END CERTIFICATE-----"
+		}
+	}
+
+	if cert == "" {
+		err := errors.New("Unable to find appropriate key.")
+		return cert, err
+	}
+
+	return cert, nil
+}
+
+func authMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		err := jwtMiddleware.CheckJWT(w, r)
+
+		if err == nil && next != nil {
+			next.ServeHTTP(w, r)
+		}
+	})
+}
+
+// func authMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		secret := []byte("-FlY26qCmKLI_T53Fxv5gSz-ofV8wUcEHOu9ua_Wf8siQPimO5NuMLfNNB9VbBw5")
+// 		secretProvider := auth0.NewKeyProvider(secret)
+// 		audience := []string{"https://tracelabs.auth0.com/api/v2/"}
+
+// 		configuration := auth0.NewConfiguration(secretProvider, audience, "https://tracelabs.auth0.com", jose.HS256)
+// 		validator := auth0.NewValidator(configuration, nil)
+
+// 		token, err := validator.ValidateRequest(r)
+
+// 		if err != nil {
+// 			fmt.Println(err)
+// 			fmt.Println("Token is not valid: ", token)
+// 			w.WriteHeader(http.StatusUnauthorized)
+// 			w.Write([]byte("Unauthorized"))
+// 		} else {
+// 			next.ServeHTTP(w, r)
+// 		}
+// 	})
+// }
 
 func waitForShutdown(server *http.Server) {
 	interruptChan := make(chan os.Signal, 1)
