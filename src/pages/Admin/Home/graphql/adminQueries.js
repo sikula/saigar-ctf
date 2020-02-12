@@ -35,6 +35,7 @@ const SUBMISSION_HISTORY = gql`
     $case: uuid
     $category: uuid
     $status: [String!]
+    $url: String
     $offset: Int
   ) {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -49,6 +50,7 @@ const SUBMISSION_HISTORY = gql`
           case_id: { _eq: $case }
           team_id: { _eq: $team }
           config_id: { _eq: $category }
+          content: { _eq: $url }
           submissionConfigurationByconfigId: { category: { _neq: "CLOSED" }}
         }
         order_by: { processed_at: desc }
@@ -83,6 +85,7 @@ const SUBMISSION_HISTORY_SA = gql`
     $case: uuid
     $category: uuid
     $status: [String!]
+    $url: String
     $offset: Int
   ) {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -97,6 +100,7 @@ const SUBMISSION_HISTORY_SA = gql`
           case_id: { _eq: $case }
           team_id: { _eq: $team }
           config_id: { _eq: $category }
+          content: { _eq: $url }
         }
         order_by: { processed_at: desc }
         limit: 100
