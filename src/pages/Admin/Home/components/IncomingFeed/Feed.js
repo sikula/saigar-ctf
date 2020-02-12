@@ -118,7 +118,7 @@ const SubmissionItem = ({ data }) => (
           </div>
         </div>
         <div style={{ textAlign: 'center', ...animation.render(value) }}>
-          <Query query={URL_SEEN_COUNT} variables={{ url: data.content }}>
+          <Query query={URL_SEEN_COUNT} variables={{ url: data.content, teamID: data.teamByteamId.uuid }}>
             {({ data: urlData, loading }) =>
               !loading ? (
                 <div
@@ -139,6 +139,9 @@ const SubmissionItem = ({ data }) => (
                   }
                 >
                   <Icon icon={IconNames.EMPLOYMENT} />
+                  {urlData.teamUrlCount.aggregate.count > 1
+                    ? `(${urlData.teamUrlCount.aggregate.count} TEAM URL HITS) `
+                    : null }
                   {urlData.urlCount.aggregate.count === 1
                     ? `${urlData.urlCount.aggregate.count} URL HIT`
                     : `${urlData.urlCount.aggregate.count} URL HITS`}
@@ -245,12 +248,14 @@ const SuperAdminFeed = () => <SubscriptionData subscription={LIVE_FEED_SA} />
 
 const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
 
-const SubmissionList = () => (
-  <React.Fragment>
-    <Can allowedRole="super_admin" yes={() => <SuperAdminFeed />} />
-    <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
-    <Can allowedRole="judge" yes={() => <JudgeFeed />} />
-  </React.Fragment>
-)
+const SubmissionList = () => {
+  return (
+    <React.Fragment>
+      <Can allowedRole="super_admin" yes={() => <SuperAdminFeed />} />
+      <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
+      <Can allowedRole="judge" yes={() => < JudgeFeed />} />
+    </React.Fragment>
+  )
+}
 
 export default SubmissionList

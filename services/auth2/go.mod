@@ -7,3 +7,5 @@ require (
 	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c
 	gopkg.in/auth0.v1 v1.3.0
 )
+
+go 1.13
