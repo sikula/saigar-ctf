@@ -414,6 +414,7 @@ const HistoryTab = () => {
     cases: null,
     category: null,
     status: ['ACCEPTED', 'REJECTED', 'STARRED'],
+    url: null
   })
   // loadCount tracks how many times the 'Load More' button
   // has been clicked to calculate the offset of data to fetch
@@ -528,7 +529,7 @@ const HistoryTab = () => {
                   }}
                 </Query>
               </div>
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '100%', marginRight: '20px' }}>
                 <HTMLSelect
                   name="status"
                   onChange={handleStatusSelect}
@@ -543,6 +544,15 @@ const HistoryTab = () => {
                   <option value="REJECTED">Rejected</option>
                 </HTMLSelect>
               </div>
+              <div style={{ width: '100%' }}>
+                <input type="text" style={{height: '100%' }}
+                  name="url"
+                  onChange={handleSelect}
+                  placeHolder="Search URL"
+                  value={historyFilter.url}
+                  label="Filter Url"
+                />
+              </div>
             </div>
           )
         }}
@@ -554,6 +564,7 @@ const HistoryTab = () => {
           case: historyFilter.cases,
           category: historyFilter.category,
           status: historyFilter.status,
+          url: historyFilter.url,
           offset: pageOffset,
         }}
       >

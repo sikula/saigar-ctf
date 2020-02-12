@@ -20,7 +20,13 @@ const FormValidationSchema = Yup.object().shape({
         .required('Required!'),
     username: Yup
         .string()
-        .required('Required!'),
+        .required('Required!')
+        .notOneOf([Yup.ref('email'), null],'Username cannot be the same as email')
+        .matches(
+            /^((?! ).)*$/,
+            'Username cannot contain any spaces'
+        )
+        .max(15, 'Username too long, needs to be less than 16 characters'),
     password: Yup
         .string()
         .matches(
@@ -166,7 +172,7 @@ const UserCreationStep = ({ onNextClick }) => {
                                 <li>Must contain one or more uppercase letters</li>
                                 <li>Must contain one or more lowercase letters</li>
                                 <li>Must contain one or more numbers</li>
-                                <li>Must contain one or more special characters</li>
+                                <li>Must contain one or more of the following special characters (!@#$%^&amp;*)</li>
                             </ul>
                         </div>
                     )}
