@@ -17,7 +17,7 @@ import SafeURL from '@shared/components/SafeUrl'
 import Can from '@shared/components/AuthContext/Can'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-import { LIVE_FEED, LIVE_FEED_FILTERED, LIVE_FEED_SA, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 
 import './Feed.scss'
@@ -93,7 +93,7 @@ const SubmissionItem = ({ data }) => (
               <div>
                 {
                   data.submission_files.map(function (file, i) {
-                    return <SafeURL style={{ paddingRight: "5px" }} dangerousURL={file.url} text={"File " + (i + 1)} />
+                    return <SafeURL key={i} style={{ paddingRight: "5px" }} dangerousURL={file.url} text={"File " + (i + 1)} />
                   })
                 }
               </div>
@@ -201,7 +201,7 @@ const SubscriptionData = ({ subscription, teams }) => (
 SubscriptionData.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   subscription: PropTypes.any.isRequired,
-  teams: PropTypes.arrayOf(PropTypes.array).isRequired,
+  //teams: PropTypes.arrayOf(PropTypes.array).isRequired,
 }
 
 const JUDGES_FEED = gql`
@@ -244,14 +244,11 @@ const JudgeFeed = () => {
   )
 }
 
-const SuperAdminFeed = () => <SubscriptionData subscription={LIVE_FEED_SA} />
-
 const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
 
 const SubmissionList = () => {
   return (
     <React.Fragment>
-      <Can allowedRole="super_admin" yes={() => <SuperAdminFeed />} />
       <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
       <Can allowedRole="judge" yes={() => < JudgeFeed />} />
     </React.Fragment>

@@ -79,55 +79,6 @@ const SUBMISSION_HISTORY = gql`
   }
 `
 
-const SUBMISSION_HISTORY_SA = gql`
-  subscription submissionHistory(
-    $team: uuid
-    $case: uuid
-    $category: uuid
-    $status: [String!]
-    $url: String
-    $offset: Int
-  ) {
-    event(order_by: { start_time: desc }, limit: 1) {
-      submissions_aggregate(where: { processed: { _neq: "PENDING" } }) {
-        aggregate {
-          count
-        }
-      }
-      submissions(
-        where: {
-          processed: { _in: $status }
-          case_id: { _eq: $case }
-          team_id: { _eq: $team }
-          config_id: { _eq: $category }
-          content: { _eq: $url }
-        }
-        order_by: { processed_at: desc }
-        limit: 100
-        offset: $offset
-      ) {
-        uuid
-        submitted_at
-        processed_at
-        processed
-        content
-        explanation
-        supporting_evidence
-        case {
-          name
-        }
-        submissionConfigurationByconfigId {
-          uuid
-          category
-        }
-        teamByteamId {
-          name
-        }
-      }
-    }
-  }
-`
-
 const LIVE_FEED = gql`
   subscription liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -337,7 +288,6 @@ export {
   HOME_QUERY,
   SUBMISSION_FILTERS,
   SUBMISSION_HISTORY,
-  SUBMISSION_HISTORY_SA,
   INSERT_SUBMISSION_HISTORY,
   LIVE_FEED,
   LIVE_FEED_FILTERED,

@@ -32,7 +32,6 @@ import { AuthConsumer, AuthContext } from '@shared/components/AuthContext/contex
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import {
   SUBMISSION_HISTORY,
-  SUBMISSION_HISTORY_SA,
   SUBMISSION_FILTERS,
   INSERT_SUBMISSION_HISTORY,
   PROCESS_SUBMISSION,
@@ -454,9 +453,6 @@ const HistoryTab = () => {
     return Math.ceil(count / 100) // 100 submissions per page
   }
 
-
-  const SUBMISSION_GQL = user.authorization.groups.includes('super_admin') ? SUBMISSION_HISTORY_SA : SUBMISSION_HISTORY
-
   return (
     <React.Fragment>
       <Query query={SUBMISSION_FILTERS}>
@@ -558,7 +554,7 @@ const HistoryTab = () => {
         }}
       </Query>
       <Subscription
-        subscription={SUBMISSION_GQL}
+        subscription={SUBMISSION_HISTORY}
         variables={{
           team: historyFilter.teams,
           case: historyFilter.cases,
