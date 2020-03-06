@@ -30,17 +30,11 @@ const JUDGES_QUERY = gql`
     user(where: { role: { _in: ["JUDGE"] } }, order_by: { nickname: asc }) {
       uuid
       nickname
+      judge_teams_aggregate {
+        aggregate {
+          count
+        }
     }
-  }
-`
-
-const ASSIGNED_JUDGED_QUERY = gql`
-  query assignedJudges($judgeID: uuid!) {
-    judge_team(where: { judge_id: { _eq: $judgeID } }, order_by: { team: { name: asc } }) {
-      team {
-        name
-        uuid
-      }
     }
   }
 `
@@ -51,22 +45,6 @@ const TEAM_COUNT_QUERY = gql`
       aggregate {
         count
       }
-    }
-  }
-`
-
-const EVENT_ID = gql`
-  query eventId {
-    event(order_by: { start_time: desc }, limit: 1) {
-      uuid
-    }
-  }
-`
-
-const TOGGLE_FFA = gql`
-  mutation toggleFfa($ffa: Boolean!, $event: uuid!) {
-    update_event(where: { uuid: { _eq: $event } }, _set: { free_for_all: $ffa }) {
-      affected_rows
     }
   }
 `
@@ -83,8 +61,7 @@ const JudgesList = ({ team }) => {
         teamID: team,
       },
       refetchQueries: [
-        { query: TEAM_COUNT_QUERY, variables: { judgeID: uuid } },
-        { query: ASSIGNED_JUDGED_QUERY, variables: { judgeID: uuid } },
+        { query: JUDGES_QUERY },
       ],
     })
   }
@@ -94,7 +71,7 @@ const JudgesList = ({ team }) => {
   // =================================================================
   return (
     <Query query={JUDGES_QUERY}>
-      {({ data, loading }) =>
+      {({ data, loading }) => 
         !loading && [
           <div
             style={{
@@ -112,7 +89,7 @@ const JudgesList = ({ team }) => {
             <span>Action</span>
           </div>,
           data.user.map(usr => (
-            <div
+            <div key={usr.uuid}
               style={{
                 display: 'inline-flex',
                 width: '100%',
@@ -120,18 +97,11 @@ const JudgesList = ({ team }) => {
                 justifyContent: 'space-between',
                 borderBottom: '1px solid #e8e1e1',
               }}
-              key={usr.uuid}
             >
               <span style={{ flexBasis: '33.33%' }}>{usr.nickname}</span>
-              <Query query={TEAM_COUNT_QUERY} variables={{ judgeID: usr.uuid }}>
-                {({ data, loading }) =>
-                  !loading && (
-                    <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>
-                      {data.judge_team_aggregate.aggregate.count}
-                    </span>
-                  )
-                }
-              </Query>
+              <span style={{ flexBasis: '33.33%', textAlign: 'center' }}>
+                {usr.judge_teams_aggregate.aggregate.count}
+              </span>
               <span styled={{ flexBasis: '33.33%', textAlign: 'right' }}>
                 <a href="#" onClick={() => handleAssignJudge(usr.uuid)}>
                   Assign

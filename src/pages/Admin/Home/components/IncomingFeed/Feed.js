@@ -17,7 +17,7 @@ import SafeURL from '@shared/components/SafeUrl'
 import Can from '@shared/components/AuthContext/Can'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-import { LIVE_FEED, LIVE_FEED_FILTERED, LIVE_FEED_SA, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 
 import './Feed.scss'
@@ -93,7 +93,7 @@ const SubmissionItem = ({ data }) => (
               <div>
                 {
                   data.submission_files.map(function (file, i) {
-                    return <SafeURL style={{ paddingRight: "5px" }} dangerousURL={file.url} text={"File " + (i + 1)} />
+                    return <SafeURL key={i} style={{ paddingRight: "5px" }} dangerousURL={file.url} text={"File " + (i + 1)} />
                   })
                 }
               </div>
@@ -118,7 +118,7 @@ const SubmissionItem = ({ data }) => (
           </div>
         </div>
         <div style={{ textAlign: 'center', ...animation.render(value) }}>
-          <Query query={URL_SEEN_COUNT} variables={{ url: data.content }}>
+          <Query query={URL_SEEN_COUNT} variables={{ url: data.content, teamID: data.teamByteamId.uuid }}>
             {({ data: urlData, loading }) =>
               !loading ? (
                 <div
@@ -139,6 +139,9 @@ const SubmissionItem = ({ data }) => (
                   }
                 >
                   <Icon icon={IconNames.EMPLOYMENT} />
+                  {urlData.teamUrlCount.aggregate.count > 1
+                    ? `(${urlData.teamUrlCount.aggregate.count} TEAM URL HITS) `
+                    : null }
                   {urlData.urlCount.aggregate.count === 1
                     ? `${urlData.urlCount.aggregate.count} URL HIT`
                     : `${urlData.urlCount.aggregate.count} URL HITS`}
@@ -198,7 +201,7 @@ const SubscriptionData = ({ subscription, teams }) => (
 SubscriptionData.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   subscription: PropTypes.any.isRequired,
-  teams: PropTypes.arrayOf(PropTypes.array).isRequired,
+  //teams: PropTypes.arrayOf(PropTypes.array).isRequired,
 }
 
 const JUDGES_FEED = gql`
@@ -241,16 +244,15 @@ const JudgeFeed = () => {
   )
 }
 
-const SuperAdminFeed = () => <SubscriptionData subscription={LIVE_FEED_SA} />
-
 const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
 
-const SubmissionList = () => (
-  <React.Fragment>
-    <Can allowedRole="super_admin" yes={() => <SuperAdminFeed />} />
-    <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
-    <Can allowedRole="judge" yes={() => <JudgeFeed />} />
-  </React.Fragment>
-)
+const SubmissionList = () => {
+  return (
+    <React.Fragment>
+      <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
+      <Can allowedRole="judge" yes={() => < JudgeFeed />} />
+    </React.Fragment>
+  )
+}
 
 export default SubmissionList

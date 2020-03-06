@@ -35,6 +35,7 @@ const SUBMISSION_HISTORY = gql`
     $case: uuid
     $category: uuid
     $status: [String!]
+    $url: String
     $offset: Int
   ) {
     event(order_by: { start_time: desc }, limit: 1) {
@@ -49,54 +50,8 @@ const SUBMISSION_HISTORY = gql`
           case_id: { _eq: $case }
           team_id: { _eq: $team }
           config_id: { _eq: $category }
+          content: { _eq: $url }
           submissionConfigurationByconfigId: { category: { _neq: "CLOSED" }}
-        }
-        order_by: { processed_at: desc }
-        limit: 100
-        offset: $offset
-      ) {
-        uuid
-        submitted_at
-        processed_at
-        processed
-        content
-        explanation
-        supporting_evidence
-        case {
-          name
-        }
-        submissionConfigurationByconfigId {
-          uuid
-          category
-        }
-        teamByteamId {
-          name
-        }
-      }
-    }
-  }
-`
-
-const SUBMISSION_HISTORY_SA = gql`
-  subscription submissionHistory(
-    $team: uuid
-    $case: uuid
-    $category: uuid
-    $status: [String!]
-    $offset: Int
-  ) {
-    event(order_by: { start_time: desc }, limit: 1) {
-      submissions_aggregate(where: { processed: { _neq: "PENDING" } }) {
-        aggregate {
-          count
-        }
-      }
-      submissions(
-        where: {
-          processed: { _in: $status }
-          case_id: { _eq: $case }
-          team_id: { _eq: $team }
-          config_id: { _eq: $category }
         }
         order_by: { processed_at: desc }
         limit: 100
@@ -133,6 +88,7 @@ const LIVE_FEED = gql`
           category: { _neq: "CLOSED" }
         }}
         order_by: { submitted_at: asc },
+        limit: 50
       ) {
         uuid
         submitted_at
@@ -149,6 +105,7 @@ const LIVE_FEED = gql`
           category
         }
         teamByteamId {
+          uuid
           name
           judge_teams_aggregate {
             aggregate {
@@ -191,6 +148,7 @@ const LIVE_FEED_FILTERED = gql`
           category
         }
         teamByteamId {
+          uuid
           name
           judge_teams_aggregate {
             aggregate {
@@ -211,7 +169,8 @@ const LIVE_FEED_SA = gql`
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
-        order_by: { submitted_at: asc }
+        order_by: { submitted_at: asc },
+        limit: 50
       ) {
         uuid
         submitted_at
@@ -228,6 +187,7 @@ const LIVE_FEED_SA = gql`
           category
         }
         teamByteamId {
+          uuid
           name
           judge_teams_aggregate {
             aggregate {
@@ -244,8 +204,13 @@ const LIVE_FEED_SA = gql`
 `
 
 const URL_SEEN_COUNT = gql`
-  query urlSeenCount($url: String!) {
+  query urlSeenCount($url: String!, $teamID: uuid!) {
     urlCount: submission_aggregate(where: { content: { _eq: $url } }) {
+      aggregate {
+        count
+      }
+    }
+    teamUrlCount: submission_aggregate(where: { content: { _eq: $url }, _and: {team_id: {_eq: $teamID}}}) {
       aggregate {
         count
       }
@@ -323,7 +288,6 @@ export {
   HOME_QUERY,
   SUBMISSION_FILTERS,
   SUBMISSION_HISTORY,
-  SUBMISSION_HISTORY_SA,
   INSERT_SUBMISSION_HISTORY,
   LIVE_FEED,
   LIVE_FEED_FILTERED,
