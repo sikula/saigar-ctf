@@ -15,7 +15,11 @@ const FormValidationSchema = Yup.object().shape({
   email: Yup.string()
     .email('Invalid email address')
     .required('Required!'),
-  username: Yup.string().required('Required!'),
+  username: Yup.string()
+    .required('Required!')
+    .notOneOf([Yup.ref('email'), null], 'Username cannot be the same as email')
+    .matches(/^((?! ).)*$/, 'Username cannot contain any spaces')
+    .max(15, 'Username too long, needs to be less than 16 characters'),
   password: Yup.string()
     .matches(
       /(?=^.{8,}$)(?=.*\d)(?=.*[!@#$%^&*]+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
@@ -97,8 +101,6 @@ const EventOrderStep = ({ onNextClick }) => {
 }
 
 const UserCreationStep = ({ onNextClick }) => {
-  const [message, setMessage] = useState()
-
   const [{ data, loading, error }, executePost] = useAxios(
     {
       // url: 'http://localhost:8080/register',
@@ -116,13 +118,7 @@ const UserCreationStep = ({ onNextClick }) => {
       data: {
         ...values,
       },
-    })
-      .then(onNextClick)
-      .catch(({ response }) => {
-        if (response.status === 400) {
-          setMessage('User already exists')
-        }
-      })
+    }).then(() => onNextClick())
   }
 
   if (loading) return 'loading'
@@ -174,7 +170,6 @@ const UserCreationStep = ({ onNextClick }) => {
               onChange={handleChange}
             />
           </FormGroup>
-          {message && <div style={{ fontWeight: 600, color: 'red' }}>{message}</div>}
           {errors.password && (
             <div style={{ margin: '0.3rem 0rem' }}>
               <ul>
@@ -182,7 +177,7 @@ const UserCreationStep = ({ onNextClick }) => {
                 <li>Must contain one or more uppercase letters</li>
                 <li>Must contain one or more lowercase letters</li>
                 <li>Must contain one or more numbers</li>
-                <li>Must contain one or more special characters</li>
+                <li>Must contain one or more of the following special characters (!@#$%^&amp;*)</li>
               </ul>
             </div>
           )}

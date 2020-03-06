@@ -32,7 +32,6 @@ import { AuthConsumer, AuthContext } from '@shared/components/AuthContext/contex
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import {
   SUBMISSION_HISTORY,
-  SUBMISSION_HISTORY_SA,
   SUBMISSION_FILTERS,
   INSERT_SUBMISSION_HISTORY,
   PROCESS_SUBMISSION,
@@ -414,6 +413,7 @@ const HistoryTab = () => {
     cases: null,
     category: null,
     status: ['ACCEPTED', 'REJECTED', 'STARRED'],
+    url: null
   })
   // loadCount tracks how many times the 'Load More' button
   // has been clicked to calculate the offset of data to fetch
@@ -452,9 +452,6 @@ const HistoryTab = () => {
   const calculatePageCount = count => {
     return Math.ceil(count / 100) // 100 submissions per page
   }
-
-
-  const SUBMISSION_GQL = user.authorization.groups.includes('super_admin') ? SUBMISSION_HISTORY_SA : SUBMISSION_HISTORY
 
   return (
     <React.Fragment>
@@ -528,7 +525,7 @@ const HistoryTab = () => {
                   }}
                 </Query>
               </div>
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '100%', marginRight: '20px' }}>
                 <HTMLSelect
                   name="status"
                   onChange={handleStatusSelect}
@@ -543,17 +540,27 @@ const HistoryTab = () => {
                   <option value="REJECTED">Rejected</option>
                 </HTMLSelect>
               </div>
+              <div style={{ width: '100%' }}>
+                <input type="text" style={{height: '100%' }}
+                  name="url"
+                  onChange={handleSelect}
+                  placeHolder="Search URL"
+                  value={historyFilter.url}
+                  label="Filter Url"
+                />
+              </div>
             </div>
           )
         }}
       </Query>
       <Subscription
-        subscription={SUBMISSION_GQL}
+        subscription={SUBMISSION_HISTORY}
         variables={{
           team: historyFilter.teams,
           case: historyFilter.cases,
           category: historyFilter.category,
           status: historyFilter.status,
+          url: historyFilter.url,
           offset: pageOffset,
         }}
       >
