@@ -1,14 +1,70 @@
 version: '3.6'
 services:
+  # The frontend for the CTF Platform
   saigar-ui:
-    image: saigar-ctf:1.09-26.1
+    image: "saigar-ctf:${TAG}"
     ports:
     - "127.0.0.1:5000:5000"
     restart: always
     build: .
+  # The authentication service to add judges
+  # TODO(Peter): FIX THIS, this should really be renamed or maybe combine auth + auth2
   saigar-auth:
-    image: saigar-auth:1.09-26.1
+    image: "saigar-auth:${TAG}"
     ports:
     - "127.0.0.1:3000:3000"
     restart: always
-    build: services/auth
+    build: services/auth      
+  # The authentication service to register for an event
+  saigar-auth2:
+      image: "saigar-auth2:${TAG}"
+      ports:
+      - "127.0.0.1:6000:6000"
+      restart: always
+      build: services/auth2
+  # File Upload service
+  saigar-fileupload:
+    image: "saigar-fileupload:${TAG}"
+    ports:
+    - "127.0.0.1:8081:8081"
+    restart: always
+    build: services/fileupload
+    depends_on:
+      - "minio"
+    environment:
+      # VIRTUAL_HOST: files.localhost
+      MINIO_URL: minio:9000
+      MINIO_ACCESSKEY: enEijhj7BK64v12p
+      MINIO_ACCESSSECRET: n38KtmrLT35vP6t577qESPAH9vCQXzoRUbjVgCoSgd4UmluZ+sYn2FoSHRV9LwoI3pgNcE7/N81AW8KSeuGa3A==
+  # MINIO Setup
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_data:/data
+    ports:
+    - "127.0.0.1:9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: enEijhj7BK64v12p
+      MINIO_SECRET_KEY: n38KtmrLT35vP6t577qESPAH9vCQXzoRUbjVgCoSgd4UmluZ+sYn2FoSHRV9LwoI3pgNcE7/N81AW8KSeuGa3A==
+    command: server /data
+    restart: always
+    build: services/fileupload
+  # NGINX Proxy Setup
+  # nginx-proxy:
+  #   image: jwilder/nginx-proxy
+  #   ports:
+  #     - "80:80"
+  #   environment:
+  #     VIRTUAL_HOST: localhost
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock:ro
+
+
+volumes:
+  minio_data:
+
+
+# networks:
+#   default:
+#     external:
+#       name: nginx-proxy

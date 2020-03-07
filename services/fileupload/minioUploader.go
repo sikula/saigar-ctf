@@ -14,16 +14,15 @@ import (
 
 	"github.com/minio/minio-go"
 	"github.com/rs/cors"
+
+	// "github.com/auth0-community/go-auth0"
+	jwtmiddleware "github.com/auth0/go-jwt-middleware"
+	// jose "gopkg.in/square/go-jose.v2"
 )
 
 const (
-	//MINIO_URL                      = os.Getenv()
-	//MINIO_ACCESSKEY                = "Q3AM3UQ867SPQQA43P2F"
-	//MINIO_ACCESSSECRET             = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
 	MINIO_USESSL = false
-	//MINIO_SUBMISSIONBUCKET         = "submissions"
-	//MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
-	URL_EXPIRY = time.Hour * 24 * 7
+	URL_EXPIRY   = time.Hour * 24 * 7
 )
 
 var (
@@ -35,8 +34,15 @@ var (
 	MINIO_SUBMISSIONBUCKETLOCATION = os.Getenv("MINIO_SUBMISSIONBUCKETLOCATION")
 )
 
+var (
+	MINIO_URL          = os.Getenv("MINIO_URL")
+	MINIO_ACCESSKEY    = os.Getenv("MINIO_ACCESSKEY")
+	MINIO_ACCESSSECRET = os.Getenv("MINIO_ACCESSSECRET")
+)
+
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
 var minioClient *minio.Client
+var jwtMiddleware *jwtmiddleware.JWTMiddleware
 
 func main() {
 	// Initialize minio client object.
@@ -46,15 +52,37 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	// jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
+	// 	ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+	// 		// aud := "https://tracelabs.auth0.com/api/v2/"
+	// 		// checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
+	// 		// if !checkAud {
+	// 		// 	return token, errors.New("Invalid audience")
+	// 		// }
+
+	// 		cert, err := getPemCert(token)
+	// 		if err != nil {
+	// 			panic(err.Error())
+	// 		}
+
+	// 		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+	// 		return result, nil
+	// 	},
+	// 	SigningMethod: jwt.SigningMethodRS256,
+	// })
+
 	//Setup server
 	router := http.NewServeMux()
+	//finalHandler := http.HandlerFunc(UploadFile)
+	//router.Handle("/upload", authMiddleware(finalHandler))
 	router.HandleFunc("/upload", UploadFile)
 	//router.HandleFunc("/getUrl", GetFileUrl)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8084", "https://ctf.tracelabs.org"},
-		AllowedHeaders:   []string{"Accepts", "Content-Type"},
+		AllowedHeaders:   []string{"Accepts", "Content-Type", "Authorization"},
 		AllowCredentials: true,
+		Debug:            true,
 	})
 	handler := c.Handler(router)
 
@@ -113,6 +141,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 	presignedUrl, err := uploadFileByReader(r.FormValue("uuid"), header.Size, contentType, file)
 	if err != nil {
+		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
