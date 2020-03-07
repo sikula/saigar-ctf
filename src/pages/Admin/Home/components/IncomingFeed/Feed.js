@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Query, Subscription } from 'react-apollo'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useQuery } from '@apollo/react-hooks'
 
 import gql from 'graphql-tag'
 import { formatDistanceToNow } from 'date-fns'
@@ -17,7 +17,7 @@ import SafeURL from '@shared/components/SafeUrl'
 import Can from '@shared/components/AuthContext/Can'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_SUBSCRIPTION, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 
 import './Feed.scss'
@@ -244,7 +244,68 @@ const JudgeFeed = () => {
   )
 }
 
-const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
+
+
+const SubmissionData = ({data}) => {
+  
+  if (!data) return null
+  //if (loading) {
+  //  return (
+  //    <div className="case-data__item__wrapper">
+  //      <div className="case-data__item">Loading...</div>
+  //    </div>
+  //  )
+  //}
+  //if (error) return <div>`${error.message}`</div>
+
+  if (!Array.isArray(data.event) || !data.event.length) {
+    return <div />
+  }
+
+  const { submissions } = data.event[0]
+  if (!Array.isArray(submissions) || !submissions.length) {
+    return <H3 style={{ textAlign: 'center', padding: 20 }}>No Pending Submissions</H3>
+  }
+
+  return <SubmissionListView data={submissions} />
+}
+
+const AdminFeedList = class extends React.PureComponent {
+  componentDidMount() {
+    this.props.subscribeToNewSubmissions()
+  }
+  render() {
+    const { data } = this.props
+    return <SubmissionData data={data} />
+  }
+}
+
+const AdminFeed = () => {
+
+  const { subscribeToMore, ...result } = useQuery(LIVE_FEED)
+
+  return (
+    <AdminFeedList
+      {...result}
+      subscribeToNewSubmissions={() =>
+        subscribeToMore({
+          document: LIVE_FEED_SUBSCRIPTION,
+          updateQuery: (prev, { subscriptionData }) => {
+            if (!prev) return null;
+            if (!subscriptionData.data) return prev;
+            const newFeedItem = subscriptionData.data.event[0].submissions[0];
+            if (newFeedItem.uuid == prev.event[0].submissions[prev.event[0].submissions.length-1].uuid) return prev;
+            return Object.assign({}, prev, {
+              event: [{
+                submissions: [...prev.event[0].submissions, newFeedItem]
+              }]
+            })
+          }
+        })
+      }
+    />
+  )
+}
 
 const SubmissionList = () => {
   return (

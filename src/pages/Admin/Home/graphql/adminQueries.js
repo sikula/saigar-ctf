@@ -80,7 +80,7 @@ const SUBMISSION_HISTORY = gql`
 `
 
 const LIVE_FEED = gql`
-  subscription liveFeed {
+  query liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(where: { 
         processed: { _eq: "PENDING" },
@@ -89,6 +89,48 @@ const LIVE_FEED = gql`
         }}
         order_by: { submitted_at: asc },
         limit: 50
+      ) {
+        uuid
+        submitted_at
+        processed
+        content
+        explanation
+        supporting_evidence
+        case {
+          uuid
+          name
+        }
+        submissionConfigurationByconfigId {
+          uuid
+          category
+        }
+        teamByteamId {
+          uuid
+          name
+          judge_teams_aggregate {
+            aggregate {
+              count
+            }
+          }
+        }
+        submission_files {
+          url
+        }
+      }
+    }
+  }
+`
+
+const LIVE_FEED_SUBSCRIPTION = gql`
+  subscription liveFeed {
+    event(order_by: { start_time: desc }, limit: 1) {
+      submissions(where: { 
+        processed: { _eq: "PENDING" },
+        submissionConfigurationByconfigId: {
+          category: { _neq: "CLOSED" }
+        }}
+        order_by: { submitted_at: desc },
+        limit: 1
       ) {
         uuid
         submitted_at
@@ -290,6 +332,7 @@ export {
   SUBMISSION_HISTORY,
   INSERT_SUBMISSION_HISTORY,
   LIVE_FEED,
+  LIVE_FEED_SUBSCRIPTION,
   LIVE_FEED_FILTERED,
   LIVE_FEED_SA,
   URL_SEEN_COUNT,
