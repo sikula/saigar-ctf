@@ -22,6 +22,17 @@ services:
       - "127.0.0.1:6000:6000"
       restart: always
       build: services/auth2
+      environment:
+        JWTSECRETKEY: NmR6TFIfUQHiEimUjqkYML4SVFuZsSCzAgnW7b7B0tSRTKfmcrV2oApiQjAV9L5SR0Aj2zLstgHiDyp6KFHOgCJa
+        PORT: 6000
+        AUTH0_DOMAIN: sikulatest.auth0.com
+        AUTH0_ID: uB0gs971j8jWcYicr9b5Dfy5aSN24Bss
+        AUTH0_SECRET: 7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L
+        DBHOST: ec2-54-235-68-3.compute-1.amazonaws.com
+        DBPORT: 5432
+        DBUSER: jwazffnrvcyaht
+        DBPASSWORD: 892dd71a78a36003756dd7c0862db6193176096569b3dbb8797e7365ce9d7b3f
+        DBNAME: d90qblbo4d06m
   # File Upload service
   saigar-fileupload:
     image: "saigar-fileupload:${TAG}"
@@ -33,9 +44,12 @@ services:
       - "minio"
     environment:
       # VIRTUAL_HOST: files.localhost
+      PORT: 8081
       MINIO_URL: minio:9000
       MINIO_ACCESSKEY: enEijhj7BK64v12p
       MINIO_ACCESSSECRET: n38KtmrLT35vP6t577qESPAH9vCQXzoRUbjVgCoSgd4UmluZ+sYn2FoSHRV9LwoI3pgNcE7/N81AW8KSeuGa3A==
+      MINIO_SUBMISSIONBUCKET: submissions
+      MINIO_SUBMISSIONBUCKETLOCATION: us-east-1
   # MINIO Setup
   minio:
     image: minio/minio
