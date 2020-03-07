@@ -34,9 +34,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
             <UL>
               <NavLink to="home" activeClassName="active">
                 <li className={pathname === '/home' ? 'active' : ''}>
-                  <a>
-                    <Icon icon={IconNames.HOME} iconSize={20} />
-                  </a>
+                  <Icon icon={IconNames.HOME} iconSize={20} />
                 </li>
               </NavLink>
             </UL>
@@ -62,9 +60,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
             <UL>
               <NavLink to="create">
                 <li className={pathname === '/create' ? 'active' : ''}>
-                  <a>
-                    <Icon icon={IconNames.ADD} iconSize={20} />
-                  </a>
+                  <Icon icon={IconNames.ADD} iconSize={20} />
                 </li>
               </NavLink>
             </UL>
@@ -73,9 +69,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
         <UL>
           <NavLink to="scoreboard">
             <li>
-              <a>
-                <Icon icon={IconNames.TIMELINE_LINE_CHART} iconSize={20} />
-              </a>
+              <Icon icon={IconNames.TIMELINE_LINE_CHART} iconSize={20} />
             </li>
           </NavLink>
         </UL>

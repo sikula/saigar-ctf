@@ -22,6 +22,7 @@ import (
 	"gopkg.in/auth0.v1/management"
 )
 
+/*
 var jwtSecretKey = []byte("NmR6TFIfUQHiEimUjqkYML4SVFuZsSCzAgnW7b7B0tSRTKfmcrV2oApiQjAV9L5SR0Aj2zLstgHiDyp6KFHOgCJa")
 
 var (
@@ -29,12 +30,16 @@ var (
 	AUTH0_ID     = "uB0gs971j8jWcYicr9b5Dfy5aSN24Bss"
 	AUTH0_SECRET = "7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L"
 )
+*/
+var (
+	jwtSecretKey = []byte(os.Getenv("JWTSECRETKEY"))
+	PORT         = os.Getenv("PORT")
+	AUTH0_DOMAIN = os.Getenv("AUTH0_DOMAIN")
+	AUTH0_ID     = os.Getenv("AUTH0_ID")
+	AUTH0_SECRET = os.Getenv("AUTH0_SECRET")
+)
 
 var auth0m *management.Management
-
-// var auth0m *management.Management
-
-// var auth0m management
 
 func main() {
 	// Auth0 Setup
@@ -67,7 +72,7 @@ func main() {
 
 	// Initialize the server
 	httpServer := &http.Server{
-		Addr:              ":8080",
+		Addr:              ":" + PORT,
 		Handler:           handler,
 		ReadHeaderTimeout: 20 * time.Second,
 		ReadTimeout:       20 * time.Second,

@@ -73,7 +73,7 @@ const JudgesList = ({ team }) => {
     <Query query={JUDGES_QUERY}>
       {({ data, loading }) => 
         !loading && [
-          <div
+          <div key={0}
             style={{
               display: 'inline-flex',
               width: '100%',

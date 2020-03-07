@@ -35,7 +35,7 @@
             margin-left: 8px;
             border-bottom: 1px solid $color-medium2;
             border-top: 1px solid $color-medium2;
-            a {
+            a, span {
                 color: $color-light2;
             }
         }
@@ -52,7 +52,7 @@
             margin-left: 8px;
             background: $color-white;
             color: $color-dark2;
-            a {
+            a, span {
                 margin-left: -4px;
                 color: $color-medium1;
             }

@@ -17,13 +17,22 @@ import (
 )
 
 const (
-	MINIO_URL                      = "play.min.io"
-	MINIO_ACCESSKEY                = "Q3AM3UQ867SPQQA43P2F"
-	MINIO_ACCESSSECRET             = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
-	MINIO_USESSL                   = false
-	MINIO_SUBMISSIONBUCKET         = "submissions"
-	MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
-	URL_EXPIRY                     = time.Hour * 24 * 7
+	//MINIO_URL                      = os.Getenv()
+	//MINIO_ACCESSKEY                = "Q3AM3UQ867SPQQA43P2F"
+	//MINIO_ACCESSSECRET             = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
+	MINIO_USESSL = false
+	//MINIO_SUBMISSIONBUCKET         = "submissions"
+	//MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
+	URL_EXPIRY = time.Hour * 24 * 7
+)
+
+var (
+	PORT                           = os.Getenv("PORT")
+	MINIO_URL                      = os.Getenv("MINIO_URL")
+	MINIO_ACCESSKEY                = os.Getenv("MINIO_ACCESSKEY")
+	MINIO_ACCESSSECRET             = os.Getenv("MINIO_ACCESSSECRET")
+	MINIO_SUBMISSIONBUCKET         = os.Getenv("MINIO_SUBMISSIONBUCKET")
+	MINIO_SUBMISSIONBUCKETLOCATION = os.Getenv("MINIO_SUBMISSIONBUCKETLOCATION")
 )
 
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
@@ -50,7 +59,7 @@ func main() {
 	handler := c.Handler(router)
 
 	httpServer := &http.Server{
-		Addr:              ":8081",
+		Addr:              ":" + PORT,
 		Handler:           handler,
 		ReadHeaderTimeout: 20 * time.Second,
 		ReadTimeout:       20 * time.Second,
