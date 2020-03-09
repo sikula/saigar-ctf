@@ -34,12 +34,6 @@ var (
 	MINIO_SUBMISSIONBUCKETLOCATION = os.Getenv("MINIO_SUBMISSIONBUCKETLOCATION")
 )
 
-var (
-	MINIO_URL          = os.Getenv("MINIO_URL")
-	MINIO_ACCESSKEY    = os.Getenv("MINIO_ACCESSKEY")
-	MINIO_ACCESSSECRET = os.Getenv("MINIO_ACCESSSECRET")
-)
-
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
 var minioClient *minio.Client
 var jwtMiddleware *jwtmiddleware.JWTMiddleware
