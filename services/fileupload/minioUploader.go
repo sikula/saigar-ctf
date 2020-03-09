@@ -79,7 +79,7 @@ func main() {
 	//router.HandleFunc("/getUrl", GetFileUrl)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8084", "https://ctf.tracelabs.org"},
+		AllowedOrigins:   []string{"http://localhost:8084", "https://files.tracelabs.org", "https://ctf.tracelabs.org"},
 		AllowedHeaders:   []string{"Accepts", "Content-Type", "Authorization"},
 		AllowCredentials: true,
 		Debug:            true,

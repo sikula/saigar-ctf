@@ -28,6 +28,7 @@ services:
         AUTH0_DOMAIN: sikulatest.auth0.com
         AUTH0_ID: uB0gs971j8jWcYicr9b5Dfy5aSN24Bss
         AUTH0_SECRET: 7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L
+        AUTH0_CONNECTION: ctfuser
         DBHOST: ec2-54-235-68-3.compute-1.amazonaws.com
         DBPORT: 5432
         DBUSER: jwazffnrvcyaht

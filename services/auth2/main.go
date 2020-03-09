@@ -32,11 +32,12 @@ var (
 )
 */
 var (
-	jwtSecretKey = []byte(os.Getenv("JWTSECRETKEY"))
-	PORT         = os.Getenv("PORT")
-	AUTH0_DOMAIN = os.Getenv("AUTH0_DOMAIN")
-	AUTH0_ID     = os.Getenv("AUTH0_ID")
-	AUTH0_SECRET = os.Getenv("AUTH0_SECRET")
+	jwtSecretKey     = []byte(os.Getenv("JWTSECRETKEY"))
+	PORT             = os.Getenv("PORT")
+	AUTH0_DOMAIN     = os.Getenv("AUTH0_DOMAIN")
+	AUTH0_ID         = os.Getenv("AUTH0_ID")
+	AUTH0_SECRET     = os.Getenv("AUTH0_SECRET")
+	AUTH0_CONNECTION = os.Getenv("AUTH0_CONNECTION")
 )
 
 var auth0m *management.Management
@@ -178,7 +179,7 @@ func RegisterInAuth0(w http.ResponseWriter, r *http.Request) {
 	err = auth0m.User.Create(&management.User{
 		Username:   auth0.String(body.Username),
 		Email:      auth0.String(body.Email),
-		Connection: auth0.String("ctfuser"),
+		Connection: auth0.String(AUTH0_CONNECTION),
 		Password:   auth0.String(body.Password),
 		AppMetadata: map[string]interface{}{
 			"authorization": map[string]interface{}{

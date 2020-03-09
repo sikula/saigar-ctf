@@ -42,7 +42,7 @@ func dbSetup() error {
 	dbpassword := os.Getenv("DBPASSWORD")
 	dbname := os.Getenv("DBNAME")
 	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=require",
+		"password=%s dbname=%s sslmode=disable",
 		dbhost, dbport, dbuser, dbpassword, dbname)
 	db, err = sql.Open("postgres", sqlInfo)
 	if err != nil {

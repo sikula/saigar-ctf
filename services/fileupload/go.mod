@@ -12,3 +12,5 @@ require (
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
 	gopkg.in/square/go-jose.v2 v2.4.1
 )
+
+go 1.13
