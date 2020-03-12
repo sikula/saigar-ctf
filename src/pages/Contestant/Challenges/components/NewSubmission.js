@@ -71,6 +71,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
     { manual: true },
   )
   const fileRef = React.createRef()
+  const submissionProcessing = false
 
   // =======================================================
   //  RENDER
@@ -126,6 +127,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                     ],
                   }).then(result => {
                     if (values.supporting_file) {
+                      submissionProcessing = true
                       newSubmissionFile({
                         variables: {
                           submission_id: result.data.insert_submission.returning[0].uuid,
@@ -146,7 +148,10 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                               url: fileUploadResult.data.Url,
                               expiry: fileUploadResult.data.Expiry,
                             },
-                          }).then(() => closeSlider())
+                          }).then(() => {
+                            submissionProcessing = false 
+                            closeSlider()
+                          })
                         })
                       })
                     } else {
@@ -160,8 +165,10 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
           }}
         </SlidingPanelConsumer>
       </SlidingPane.Content>
-
-      <SlidingPane.Actions form="newSubmissionForm">SUBMIT</SlidingPane.Actions>
+      { submissionProcessing ? 
+          <SlidingPane.Actions form="">PROCESSING...</SlidingPane.Actions>
+        : <SlidingPane.Actions form="newSubmissionForm">SUBMIT</SlidingPane.Actions>
+      }
     </SlidingPane>
   )
 }
