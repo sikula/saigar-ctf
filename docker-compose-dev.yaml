@@ -14,7 +14,7 @@ services:
     ports:
     - "127.0.0.1:3000:3000"
     restart: always
-    build: services/auth  
+    build: services/auth
     environment: 
       AUTH0_DOMAIN: tracelabs.auth0.com
       AUTH0_MANAGEMENT_CLIENT_ID: y6ZEdoMXImNRsNPbUsgph5kkL0IkSbDW
@@ -22,7 +22,7 @@ services:
       AUTH0_AUDIENCE: https://tracelabs.auth0.com/api/v2/
       AUTH0_AUTH_CLIENT_ID: uq9hxAC1UxjJ3rJbPnqyUoXA2Xabz0l2
       AUTH0_AUTH_CLIENT_SECRET: lgOwlzH1jvvYwSKcq51EhoLGRr97oWjyWewd44hbC7XlpqFofMCwAwn2hwE4IrKT
-      AUTH0_CONNECTION: bsides-rochester
+      AUTH0_CONNECTION: bsides-rochester  
   # The authentication service to register for an event
   saigar-auth2:
       image: "saigar-auth2:${TAG}"
