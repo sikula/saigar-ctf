@@ -14,7 +14,7 @@ services:
     ports:
     - "127.0.0.1:3000:3000"
     restart: always
-    build: services/auth  
+    build: services/auth
     environment: 
       AUTH0_DOMAIN: tracelabs.auth0.com
       AUTH0_MANAGEMENT_CLIENT_ID: y6ZEdoMXImNRsNPbUsgph5kkL0IkSbDW
@@ -22,7 +22,7 @@ services:
       AUTH0_AUDIENCE: https://tracelabs.auth0.com/api/v2/
       AUTH0_AUTH_CLIENT_ID: uq9hxAC1UxjJ3rJbPnqyUoXA2Xabz0l2
       AUTH0_AUTH_CLIENT_SECRET: lgOwlzH1jvvYwSKcq51EhoLGRr97oWjyWewd44hbC7XlpqFofMCwAwn2hwE4IrKT
-      AUTH0_CONNECTION: bsides-rochester
+      AUTH0_CONNECTION: bsides-rochester  
   # The authentication service to register for an event
   saigar-auth2:
       image: "saigar-auth2:${TAG}"
@@ -33,15 +33,15 @@ services:
       environment:
         JWTSECRETKEY: NmR6TFIfUQHiEimUjqkYML4SVFuZsSCzAgnW7b7B0tSRTKfmcrV2oApiQjAV9L5SR0Aj2zLstgHiDyp6KFHOgCJa
         PORT: 6000
-        AUTH0_DOMAIN: tracelabs.auth0.com
-        AUTH0_ID: y6ZEdoMXImNRsNPbUsgph5kkL0IkSbDW
-        AUTH0_SECRET: -FlY26qCmKLI_T53Fxv5gSz-ofV8wUcEHOu9ua_Wf8siQPimO5NuMLfNNB9VbBw5
-        AUTH0_CONNECTION: bsides-rochester
-        DBHOST: 165.227.38.66
+        AUTH0_DOMAIN: sikulatest.auth0.com
+        AUTH0_ID: uB0gs971j8jWcYicr9b5Dfy5aSN24Bss
+        AUTH0_SECRET: 7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L
+        AUTH0_CONNECTION: ctfuser
+        DBHOST: ec2-54-235-68-3.compute-1.amazonaws.com
         DBPORT: 5432
-        DBUSER: postgres
-        DBPASSWORD: example123123123
-        DBNAME: postgres
+        DBUSER: jwazffnrvcyaht
+        DBPASSWORD: 892dd71a78a36003756dd7c0862db6193176096569b3dbb8797e7365ce9d7b3f
+        DBNAME: d90qblbo4d06m
   # File Upload service
   saigar-fileupload:
     image: "saigar-fileupload:${TAG}"
@@ -54,14 +54,14 @@ services:
     environment:
       # VIRTUAL_HOST: files.localhost
       PORT: 8081
-      MINIO_URL: files.tracelabs.org
+      MINIO_URL: minio:9000
       MINIO_ACCESSKEY: enEijhj7BK64v12p
       MINIO_ACCESSSECRET: n38KtmrLT35vP6t577qESPAH9vCQXzoRUbjVgCoSgd4UmluZ+sYn2FoSHRV9LwoI3pgNcE7/N81AW8KSeuGa3A==
       MINIO_SUBMISSIONBUCKET: submissions
       MINIO_SUBMISSIONBUCKETLOCATION: us-east-1
   # MINIO Setup
   minio:
-    image: minio/minio:RELEASE.2020-01-16T22-40-29Z
+    image: minio/minio
     volumes:
       - minio_data:/data
     ports:
@@ -71,6 +71,7 @@ services:
       MINIO_SECRET_KEY: n38KtmrLT35vP6t577qESPAH9vCQXzoRUbjVgCoSgd4UmluZ+sYn2FoSHRV9LwoI3pgNcE7/N81AW8KSeuGa3A==
     command: server /data
     restart: always
+    build: services/fileupload
   # NGINX Proxy Setup
   # nginx-proxy:
   #   image: jwilder/nginx-proxy
