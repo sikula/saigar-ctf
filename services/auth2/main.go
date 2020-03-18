@@ -68,6 +68,7 @@ func main() {
 		AllowedOrigins:   []string{"http://localhost:8084", "https://ctf.tracelabs.org"},
 		AllowedHeaders:   []string{"Accepts", "Content-Type"},
 		AllowCredentials: true,
+		Debug: true,
 	})
 	handler := c.Handler(router)
 
