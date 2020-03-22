@@ -42,6 +42,20 @@ services:
         DBUSER: jwazffnrvcyaht
         DBPASSWORD: 892dd71a78a36003756dd7c0862db6193176096569b3dbb8797e7365ce9d7b3f
         DBNAME: d90qblbo4d06m
+  # Eventbrite Service
+  saigar-eventbrite:
+    image: "saigar-eventbrite:${TAG}"
+    ports:
+    - "127.0.0.1:8080:8080"  
+    restart: always
+    build: services/eventbrite
+    environment:
+      PORT: 8080
+      DBHOST: ec2-54-235-68-3.compute-1.amazonaws.com
+      DBPORT: 5432
+      DBUSER: jwazffnrvcyaht
+      DBPASSWORD: 892dd71a78a36003756dd7c0862db6193176096569b3dbb8797e7365ce9d7b3f
+      DBNAME: d90qblbo4d06m
   # File Upload service
   saigar-fileupload:
     image: "saigar-fileupload:${TAG}"

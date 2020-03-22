@@ -42,6 +42,20 @@ services:
         DBUSER: postgres
         DBPASSWORD: example123123123
         DBNAME: postgres
+  # Eventbrite Service
+  saigar-eventbrite:
+    image: "saigar-eventbrite:${TAG}"
+    ports:
+    - "127.0.0.1:8080:8080"  
+    restart: always
+    build: services/eventbrite
+    environment:
+      PORT: 8080
+      DBHOST: 165.227.38.66
+      DBPORT: 5432
+      DBUSER: postgres
+      DBPASSWORD: example123123123
+      DBNAME: postgres
   # File Upload service
   saigar-fileupload:
     image: "saigar-fileupload:${TAG}"
