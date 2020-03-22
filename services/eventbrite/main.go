@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 	//"github.com/rs/cors"
@@ -62,8 +63,7 @@ func waitForShutdown(server *http.Server) {
 }
 
 type OrderPlacedBody struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	ApiUrl string `json:"api_url"`
 }
 
 func OrderPlaced(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +73,7 @@ func OrderPlaced(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err = dbInsertEventbrite(body.Id)
+	err = dbInsertEventbrite(strings.Split(body.ApiUrl, "/")[5])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
