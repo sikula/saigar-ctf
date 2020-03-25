@@ -73,7 +73,12 @@ func OrderPlaced(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	err = dbInsertEventbrite(strings.Split(body.ApiUrl, "/")[5])
+	splitUrl := strings.Split(body.ApiUrl, "/")
+	if len(splitUrl) != 7 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = dbInsertEventbrite(splitUrl[5])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
