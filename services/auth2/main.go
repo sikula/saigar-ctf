@@ -23,14 +23,16 @@ import (
 )
 
 /*
-var jwtSecretKey = []byte("NmR6TFIfUQHiEimUjqkYML4SVFuZsSCzAgnW7b7B0tSRTKfmcrV2oApiQjAV9L5SR0Aj2zLstgHiDyp6KFHOgCJa")
-
 var (
-	AUTH0_DOMAIN = "sikulatest.auth0.com"
-	AUTH0_ID     = "uB0gs971j8jWcYicr9b5Dfy5aSN24Bss"
-	AUTH0_SECRET = "7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L"
+	jwtSecretKey     = []byte("NmR6TFIfUQHiEimUjqkYML4SVFuZsSCzAgnW7b7B0tSRTKfmcrV2oApiQjAV9L5SR0Aj2zLstgHiDyp6KFHOgCJa")
+	PORT             = "6000"
+	AUTH0_DOMAIN     = "sikulatest.auth0.com"
+	AUTH0_ID         = "uB0gs971j8jWcYicr9b5Dfy5aSN24Bss"
+	AUTH0_SECRET     = "7JzhQaxHHIv89yA7p-6Lo9xGiQJvWPQ3q4TIbAPV3S3WE8N4RbhWkinxXmnVOq1L"
+	AUTH0_CONNECTION = "ctfuser"
 )
 */
+
 var (
 	jwtSecretKey     = []byte(os.Getenv("JWTSECRETKEY"))
 	PORT             = os.Getenv("PORT")

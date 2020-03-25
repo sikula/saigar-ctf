@@ -47,7 +47,7 @@ const EventOrderStep = ({ onNextClick }) => {
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.AUTH_API_ENDPOINT}/verify_code`
-          : `http://localhost:8080/verify_code`,
+          : `http://localhost:6000/verify_code`,
       method: 'POST',
       data: {
         EventCode: orderNumber,
@@ -103,11 +103,10 @@ const EventOrderStep = ({ onNextClick }) => {
 const UserCreationStep = ({ onNextClick }) => {
   const [{ data, loading, error }, executePost] = useAxios(
     {
-      // url: 'http://localhost:8080/register',
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.AUTH_API_ENDPOINT}/register`
-          : `http://localhost:8080/register`,
+          : `http://localhost:6000/register`,
       method: 'POST',
     },
     { manual: true },

@@ -25,6 +25,7 @@ const (
 	URL_EXPIRY   = time.Hour * 24 * 7
 )
 
+/*
 var (
 	PORT                           = os.Getenv("PORT")
 	MINIO_URL                      = os.Getenv("MINIO_URL")
@@ -32,6 +33,15 @@ var (
 	MINIO_ACCESSSECRET             = os.Getenv("MINIO_ACCESSSECRET")
 	MINIO_SUBMISSIONBUCKET         = os.Getenv("MINIO_SUBMISSIONBUCKET")
 	MINIO_SUBMISSIONBUCKETLOCATION = os.Getenv("MINIO_SUBMISSIONBUCKETLOCATION")
+)
+*/
+var (
+	PORT                           = "8081"
+	MINIO_URL                      = "minio:9000"
+	MINIO_ACCESSKEY                = "enEijhj7BK64v12p"
+	MINIO_ACCESSSECRET             = "n38KtmrLT35vP6t577qESPAH9vCQXzoRUbjVgCoSgd4UmluZ"
+	MINIO_SUBMISSIONBUCKET         = "submissions"
+	MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
 )
 
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
