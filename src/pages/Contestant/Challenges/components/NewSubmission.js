@@ -1,5 +1,5 @@
 /* eslint-disable react/require-default-props, react/forbid-prop-types */
-import React, { useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import PropTypes from 'prop-types'
 import cookie from 'react-cookies'
 
@@ -57,11 +57,10 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
   )
   const [{ fileData, fileLoading, fileError }, newSubmissionFileUpload] = useAxios(
     {
-      // url: 'http://localhost:8081/upload',
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.FILE_API_ENDPOINT}/upload`
-          : `http://localhost:8080/upload`,
+          : `http://localhost:8081/upload`,
       method: 'POST',
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -71,7 +70,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
     { manual: true },
   )
   const fileRef = React.createRef()
-  const submissionProcessing = false
+  const [submissionProcessing, setSubmissionProcessing] = useState(false)
 
   // =======================================================
   //  RENDER
@@ -127,7 +126,7 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                     ],
                   }).then(result => {
                     if (values.supporting_file) {
-                      submissionProcessing = true
+                      setSubmissionProcessing(true)
                       newSubmissionFile({
                         variables: {
                           submission_id: result.data.insert_submission.returning[0].uuid,
@@ -148,10 +147,13 @@ const NewSubmission = ({ isOpen, onRequestClose, ...otherProps }) => {
                               url: fileUploadResult.data.Url,
                               expiry: fileUploadResult.data.Expiry,
                             },
-                          }).then(() => {
-                            submissionProcessing = false 
+                          }).finally(() => {
+                            setSubmissionProcessing(false) 
                             closeSlider()
                           })
+                        }).finally(() => {
+                          setSubmissionProcessing(false)
+                          closeSlider()
                         })
                       })
                     } else {
