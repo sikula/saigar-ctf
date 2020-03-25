@@ -10,14 +10,23 @@ import (
 )
 
 /*
-const (
+var (
 	dbhost     = "ec2-54-235-68-3.compute-1.amazonaws.com"
-	dbport     = 5432
+	dbport     = "5432"
 	dbuser     = "jwazffnrvcyaht"
 	dbpassword = "892dd71a78a36003756dd7c0862db6193176096569b3dbb8797e7365ce9d7b3f"
 	dbname     = "d90qblbo4d06m"
 )
 */
+
+var (
+	dbhost     = os.Getenv("DBHOST")
+	dbport     = os.Getenv("DBPORT")
+	dbuser     = os.Getenv("DBUSER")
+	dbpassword = os.Getenv("DBPASSWORD")
+	dbname     = os.Getenv("DBNAME")
+)
+
 type User struct {
 	email       string
 	nickname    string
@@ -36,14 +45,14 @@ type Eventbrite struct {
 var db *sql.DB
 
 func dbSetup() error {
-	dbhost := os.Getenv("DBHOST")
-	dbport, err := strconv.Atoi(os.Getenv("DBPORT"))
-	dbuser := os.Getenv("DBUSER")
-	dbpassword := os.Getenv("DBPASSWORD")
-	dbname := os.Getenv("DBNAME")
+
+	convDbPort, err := strconv.Atoi(dbport)
+	if err != nil {
+		return err
+	}
 	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		dbhost, dbport, dbuser, dbpassword, dbname)
+		dbhost, convDbPort, dbuser, dbpassword, dbname)
 	db, err = sql.Open("postgres", sqlInfo)
 	if err != nil {
 		return err

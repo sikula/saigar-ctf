@@ -234,7 +234,7 @@ const JudgeFeed = () => {
             if (!prev) return null;
             if (!subscriptionData.data) return prev;
             const newFeedItem = subscriptionData.data.event[0].submissions[0];
-            if (newFeedItem.uuid == prev.event[0].submissions[prev.event[0].submissions.length - 1].uuid) return prev;
+            if (prev.event[0].submissions.length >=1 && newFeedItem.uuid == prev.event[0].submissions[prev.event[0].submissions.length - 1].uuid) return prev;
             return Object.assign({}, prev, {
               event: [{
                 submissions: [...prev.event[0].submissions, newFeedItem]
