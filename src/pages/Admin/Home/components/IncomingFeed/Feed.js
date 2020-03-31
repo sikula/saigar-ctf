@@ -17,7 +17,7 @@ import SafeURL from '@shared/components/SafeUrl'
 import Can from '@shared/components/AuthContext/Can'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-import { LIVE_FEED, LIVE_FEED_SUBSCRIPTION, LIVE_FEED_FILTERED, LIVE_FEED_FILTERED_SUB, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_SUBSCRIPTION, LIVE_FEED_FILTERED, LIVE_FEED_FFA, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 
 import './Feed.scss'
@@ -199,52 +199,34 @@ const SubmissionData = ({data}) => {
   return <SubmissionListView data={submissions} />
 }
 
-const JudgeFeedList = class extends React.PureComponent {
-  componentDidMount() {
-    this.props.subscribeToNewSubmissions()
-  }
-  render() {
-    const { data } = this.props
-    return <SubmissionData data={data} />
-  }
-}
-
 const JudgeFeed = () => {
-
   const { user } = useContext(AuthContext)
+  //Check if free for all enabled
+  const { loading: eventConfigLoading, data: eventConfigData } = useSubscription(EVENT_CONFIG)
+  const freeForAll = eventConfigLoading ? null : eventConfigData.event[0].free_for_all
+  //if ffa 
+  const { loading: ffaLoading, data: ffaData } = useSubscription(LIVE_FEED_FFA, { skip: eventConfigLoading })
+  //if not ff, get judge data and filter the feed
   const { loading: judgeDataLoading, data: judgeData } = useSubscription(JUDGES_FEED, {
-    variables: { auth0id: user.id },
+    variables: { auth0id: user.id }, skip: eventConfigLoading || freeForAll
+  })
+  const teamIds = judgeData ? judgeData.judge_team.map(({ team }) => team.uuid) : null
+  const { loading: filteredLoading, data: filteredData } = useSubscription(LIVE_FEED_FILTERED, {
+    variables: { teams: teamIds }, skip: judgeDataLoading || freeForAll
   })
   
-  const teamIds = judgeData ? judgeData.judge_team.map(({ team }) => team.uuid) : null
-  const { subscribeToMore, ...result } = useQuery(LIVE_FEED_FILTERED, {
-    variables: { teams: teamIds }, skip: judgeDataLoading
-  })
+  if (freeForAll === true && !ffaLoading) {
+    return (
+      <SubmissionData data={ffaData} />
+    )
+  } else if (freeForAll === false && !filteredLoading){
 
-  return (
-    <JudgeFeedList
-      {...result}
-      subscribeToNewSubmissions={() =>
-        subscribeToMore({
-          document: LIVE_FEED_FILTERED_SUB,
-          variables: {
-            teams: teamIds
-          },
-          updateQuery: (prev, { subscriptionData }) => {
-            if (!prev) return null;
-            if (!subscriptionData.data) return prev;
-            const newFeedItem = subscriptionData.data.event[0].submissions[0];
-            if (prev.event[0].submissions.length >=1 && newFeedItem.uuid == prev.event[0].submissions[prev.event[0].submissions.length - 1].uuid) return prev;
-            return Object.assign({}, prev, {
-              event: [{
-                submissions: [...prev.event[0].submissions, newFeedItem]
-              }]
-            })
-          }
-        })
-      }
-    />
-  )
+    return (
+      <SubmissionData data={filteredData} />
+    )
+  } else {
+    return null
+  }
 }
 
 
@@ -259,7 +241,6 @@ const AdminFeedList = class extends React.PureComponent {
 }
 
 const AdminFeed = () => {
-
   const { subscribeToMore, ...result } = useQuery(LIVE_FEED)
 
   return (
@@ -286,20 +267,12 @@ const AdminFeed = () => {
 }
 
 const SubmissionList = () => {
-  const { loading: eventConfigLoading, data: eventConfigData } = useSubscription(EVENT_CONFIG)
-  if (eventConfigLoading) return null
-
-  const { free_for_all: freeForAll } = eventConfigData.event[0]
-
-  return freeForAll ? 
-    <React.Fragment>
-      <AdminFeed />
-    </React.Fragment>
-    : 
+  return (
     <React.Fragment>
       <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
       <Can allowedRole="judge" yes={() => < JudgeFeed />} />
     </React.Fragment>
+  )
 }
 
 export default SubmissionList

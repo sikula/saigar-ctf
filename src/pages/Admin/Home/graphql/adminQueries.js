@@ -164,7 +164,7 @@ const LIVE_FEED_SUBSCRIPTION = gql`
 `
 
 const LIVE_FEED_FILTERED = gql`
-  query liveFeedFilter($teams: [uuid!]) {
+  subscription liveFeedFilter($teams: [uuid!]) {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { 
@@ -206,18 +206,16 @@ const LIVE_FEED_FILTERED = gql`
   }
 `
 
-const LIVE_FEED_FILTERED_SUB = gql`
-  subscription liveFeedFilter($teams: [uuid!]) {
+const LIVE_FEED_FFA = gql`
+  subscription liveFeedFfa {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(
-        where: { 
-          processed: { _eq: "PENDING" },
-          team_id: { _in: $teams },
-          submissionConfigurationByconfigId: {
-            category: { _neq: "CLOSED" }
-          }}
-        order_by: { submitted_at: desc },
-        limit: 1
+      submissions(where: { 
+        processed: { _eq: "PENDING" },
+        submissionConfigurationByconfigId: {
+          category: { _neq: "CLOSED" }
+        }}
+        order_by: { submitted_at: asc },
+        limit: 50
       ) {
         uuid
         submitted_at
@@ -378,7 +376,7 @@ export {
   LIVE_FEED,
   LIVE_FEED_SUBSCRIPTION,
   LIVE_FEED_FILTERED,
-  LIVE_FEED_FILTERED_SUB,
+  LIVE_FEED_FFA,
   LIVE_FEED_SA,
   URL_SEEN_COUNT,
   PROCESS_SUBMISSION,
