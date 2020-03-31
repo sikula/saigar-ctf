@@ -29,7 +29,7 @@ const CaseInfoData = ({ caseID }) => (
       if (loading) return <div>Loading...</div>
 
       return data.case.map(_case => (
-        <React.Fragment>
+        <React.Fragment key={_case.uuid}>
           <p>
             <strong>Source URL: </strong>
             <SafeURL dangerousURL={_case.source_url} text={_case.source_url} />
