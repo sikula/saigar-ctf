@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { NavLink, Link } from 'react-router-dom'
 import { Layout, Flex, Fixed } from 'react-layout-pane'
@@ -7,9 +7,13 @@ import { IconNames } from '@blueprintjs/icons'
 import '../../_Design/index.scss'
 import { AuthConsumer } from '../../shared/components/AuthContext/context'
 import Can from '../../shared/components/AuthContext/Can'
+import gql from 'graphql-tag'
+import { useSubscription } from '@apollo/react-hooks'
 
 import './index.scss'
 import logoWhite from './logo-white.png'
+import { AuthContext } from '@shared/components/AuthContext/context'
+
 
 /*
   For tomorrow, get the IO side up and running with Auth0 login, and figure out
@@ -51,6 +55,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
                   </a>
                 </li>
               </NavLink>
+              <BanCheck></BanCheck>
             </UL>
           )}
         />
@@ -130,6 +135,27 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
     )}
   </Layout>
 )
+
+const BanCheck = () => {
+  const GET_BANNED_STATUS = gql`
+    subscription getBannedStatus($auth0id: String!) {
+      user_team(where: {user: {auth0id: {_eq: $auth0id}}}) {
+        team {
+          banned
+        }
+      }
+    }
+  `
+  const { user, logout } = useContext(AuthContext)  
+  const { loading, data } = useSubscription(GET_BANNED_STATUS, {
+    variables: { auth0id: user.id }
+  })
+  if (!loading && data.user_team[0].team.banned) {
+    logout()
+  }
+  
+  return null
+}
 
 DefaultLayout.propTypes = {
   children: PropTypes.element.isRequired,
