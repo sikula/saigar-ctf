@@ -33,7 +33,7 @@ const NewSubmissionSchema = Yup.object().shape({
     .required('required'),
   explanation: Yup.string().required('required'),
   supporting_evidence: Yup.string().required('required'),
-  supporting_file: Yup.string().matches(/.+((.png)|(.jpg)|(.svg)|(.gif))/, {
+  supporting_file: Yup.string().matches(/.+((.png)|(.jpg)|(.svg)|(.gif))/i, {
     message: 'image files only',
     excludeEmptyString: true,
   }),

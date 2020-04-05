@@ -140,10 +140,10 @@ const UserCreationStep = ({ onNextClick }) => {
               placeholder="Enter your email"
               large
               values={values.email}
-              // onChange={e => setEmail(e.target.value)}
               onChange={handleChange}
+              style={errors.email ? { border: "solid 1px red" } : {}}
             />
-            {errors.email && <span>{errors.email}</span>}
+            {errors.email && <span style={{ color: "red"}}>{errors.email}</span>}
           </FormGroup>
           <FormGroup label="Username (required)" labelFor="text-input">
             <InputGroup
@@ -152,10 +152,10 @@ const UserCreationStep = ({ onNextClick }) => {
               placeholder="Enter your username"
               large
               values={values.username}
-              // onChange={e => setUsername(e.target.value)}
               onChange={handleChange}
+              style={errors.username ? { border: "solid 1px red" } : {}}
             />
-            {errors.username && <span>{errors.username}</span>}
+            {errors.username && <span style={{ color: "red" }}>{errors.username}</span>}
           </FormGroup>
           <FormGroup label="Password (required)" labelFor="text-input">
             <InputGroup
@@ -165,12 +165,12 @@ const UserCreationStep = ({ onNextClick }) => {
               placeholder="Enter your password"
               large
               values={values.password}
-              // onChange={e => setPassword(e.target.value)}
               onChange={handleChange}
+              style={errors.password ? { border: "solid 1px red" } : {}}
             />
           </FormGroup>
           {errors.password && (
-            <div style={{ margin: '0.3rem 0rem' }}>
+            <div style={{ margin: '0.3rem 0rem', color: "red" }}>
               <ul>
                 <li>Must be between 8 and 30 characters</li>
                 <li>Must contain one or more uppercase letters</li>
