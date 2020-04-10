@@ -150,7 +150,7 @@ const BanCheck = () => {
   const { loading, data } = useSubscription(GET_BANNED_STATUS, {
     variables: { auth0id: user.id }
   })
-  if (!loading && data.user_team[0].team.banned) {
+  if (!loading && data.user_team.length && data.user_team[0].team.banned) {
     logout()
   }
   

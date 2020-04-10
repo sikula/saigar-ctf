@@ -25,7 +25,6 @@ const (
 	URL_EXPIRY   = time.Hour * 24 * 7
 )
 
-/*
 var (
 	PORT                           = os.Getenv("PORT")
 	MINIO_URL                      = os.Getenv("MINIO_URL")
@@ -34,7 +33,7 @@ var (
 	MINIO_SUBMISSIONBUCKET         = os.Getenv("MINIO_SUBMISSIONBUCKET")
 	MINIO_SUBMISSIONBUCKETLOCATION = os.Getenv("MINIO_SUBMISSIONBUCKETLOCATION")
 )
-*/
+/*
 var (
 	PORT                           = "8081"
 	MINIO_URL                      = "minio:9000"
@@ -43,6 +42,7 @@ var (
 	MINIO_SUBMISSIONBUCKET         = "submissions"
 	MINIO_SUBMISSIONBUCKETLOCATION = "us-east-1"
 )
+*/
 
 var ALLOWED_CONTENTTYPES = [...]string{"image/jpg", "image/jpeg", "image/png", "image/gif"}
 var minioClient *minio.Client
@@ -86,7 +86,7 @@ func main() {
 		AllowedOrigins:   []string{"http://localhost:8084", "https://files.tracelabs.org", "https://ctf.tracelabs.org"},
 		AllowedHeaders:   []string{"Accepts", "Content-Type", "Authorization"},
 		AllowCredentials: true,
-		Debug:            true,
+		Debug:            false,
 	})
 	handler := c.Handler(router)
 
@@ -128,6 +128,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 20)
 	file, header, err := r.FormFile("file")
 	if err != nil {
+		fmt.Println("ERR: => ", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -140,12 +141,13 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if !allowedContentType {
+		fmt.Println("HEADER NOT ALLOWED")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	presignedUrl, err := uploadFileByReader(r.FormValue("uuid"), header.Size, contentType, file)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
