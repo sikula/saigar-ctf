@@ -47,7 +47,7 @@ const EventOrderStep = ({ onNextClick }) => {
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.AUTH_API_ENDPOINT}/verify_code`
-          : `http://localhost:6000/verify_code`,
+          : `http://localhost:8082/verify_code`,
       method: 'POST',
       data: {
         EventCode: orderNumber,
@@ -56,19 +56,19 @@ const EventOrderStep = ({ onNextClick }) => {
     { manual: true },
   )
 
-  //   const [updateCode] = useMutation(SET_USED_CODE, {
-  //     context: {
-  //       headers: {
-  //         'X-Hasura-Register-Code': orderNumber,
-  //       },
-  //     },
-  //   })
+  const [updateCode] = useMutation(SET_USED_CODE, {
+    context: {
+      headers: {
+        'X-Hasura-Register-Code': orderNumber,
+      },
+    },
+  })
 
   const handleConfirmClick = () => {
     executeFetch()
       .then(() => {
-        onNextClick()
-        // updateCode().then(onNextClick)
+        //onNextClick()
+        updateCode().then(onNextClick)
       })
       .catch(({ response }) => {
         if (response.status === 400) {
@@ -89,10 +89,10 @@ const EventOrderStep = ({ onNextClick }) => {
           large
           values={orderNumber}
           onChange={e => setOrderNumber(e.target.value)}
+          style={message ? { border: "solid 1px red" } : {}}
         />
       </FormGroup>
-      {message}
-      {/* <Button fill large onClick={handleConfirmClick}>Confirm</Button> */}
+      <span style={{ color: "red" }}>{message}</span>
       <Button fill large onClick={handleConfirmClick}>
         Confirm
       </Button>
@@ -106,7 +106,7 @@ const UserCreationStep = ({ onNextClick }) => {
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.AUTH_API_ENDPOINT}/register`
-          : `http://localhost:6000/register`,
+          : `http://localhost:8082/register`,
       method: 'POST',
     },
     { manual: true },
