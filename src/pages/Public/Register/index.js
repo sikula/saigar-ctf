@@ -47,7 +47,7 @@ const EventOrderStep = ({ onNextClick }) => {
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.AUTH_API_ENDPOINT}/verify_code`
-          : `http://localhost:8082/verify_code`,
+          : `http://localhost:8080/verify_code`,
       method: 'POST',
       data: {
         EventCode: orderNumber,
@@ -56,19 +56,10 @@ const EventOrderStep = ({ onNextClick }) => {
     { manual: true },
   )
 
-  const [updateCode] = useMutation(SET_USED_CODE, {
-    context: {
-      headers: {
-        'X-Hasura-Register-Code': orderNumber,
-      },
-    },
-  })
-
   const handleConfirmClick = () => {
     executeFetch()
       .then(() => {
-        //onNextClick()
-        updateCode().then(onNextClick)
+        onNextClick(orderNumber)
       })
       .catch(({ response }) => {
         if (response.status === 400) {
@@ -89,10 +80,10 @@ const EventOrderStep = ({ onNextClick }) => {
           large
           values={orderNumber}
           onChange={e => setOrderNumber(e.target.value)}
-          style={message ? { border: "solid 1px red" } : {}}
         />
       </FormGroup>
-      <span style={{ color: "red" }}>{message}</span>
+      {message}
+      {/* <Button fill large onClick={handleConfirmClick}>Confirm</Button> */}
       <Button fill large onClick={handleConfirmClick}>
         Confirm
       </Button>
@@ -100,13 +91,22 @@ const EventOrderStep = ({ onNextClick }) => {
   )
 }
 
-const UserCreationStep = ({ onNextClick }) => {
+const UserCreationStep = ({ onNextClick, orderNumber }) => {
+  const [updateCode] = useMutation(SET_USED_CODE, {
+    context: {
+      headers: {
+        'X-Hasura-Register-Code': orderNumber,
+      },
+    },
+  })
+
   const [{ data, loading, error }, executePost] = useAxios(
     {
+      // url: 'http://localhost:8080/register',
       url:
         process.env.NODE_ENV === 'production'
           ? `${process.env.AUTH_API_ENDPOINT}/register`
-          : `http://localhost:8082/register`,
+          : `http://localhost:8080/register`,
       method: 'POST',
     },
     { manual: true },
@@ -117,7 +117,10 @@ const UserCreationStep = ({ onNextClick }) => {
       data: {
         ...values,
       },
-    }).then(() => onNextClick())
+    }).then(() => {
+      updateCode()
+      onNextClick()
+    })
   }
 
   if (loading) return 'loading'
@@ -140,10 +143,10 @@ const UserCreationStep = ({ onNextClick }) => {
               placeholder="Enter your email"
               large
               values={values.email}
+              // onChange={e => setEmail(e.target.value)}
               onChange={handleChange}
-              style={errors.email ? { border: "solid 1px red" } : {}}
             />
-            {errors.email && <span style={{ color: "red"}}>{errors.email}</span>}
+            {errors.email && <span>{errors.email}</span>}
           </FormGroup>
           <FormGroup label="Username (required)" labelFor="text-input">
             <InputGroup
@@ -152,10 +155,10 @@ const UserCreationStep = ({ onNextClick }) => {
               placeholder="Enter your username"
               large
               values={values.username}
+              // onChange={e => setUsername(e.target.value)}
               onChange={handleChange}
-              style={errors.username ? { border: "solid 1px red" } : {}}
             />
-            {errors.username && <span style={{ color: "red" }}>{errors.username}</span>}
+            {errors.username && <span>{errors.username}</span>}
           </FormGroup>
           <FormGroup label="Password (required)" labelFor="text-input">
             <InputGroup
@@ -165,12 +168,12 @@ const UserCreationStep = ({ onNextClick }) => {
               placeholder="Enter your password"
               large
               values={values.password}
+              // onChange={e => setPassword(e.target.value)}
               onChange={handleChange}
-              style={errors.password ? { border: "solid 1px red" } : {}}
             />
           </FormGroup>
           {errors.password && (
-            <div style={{ margin: '0.3rem 0rem', color: "red" }}>
+            <div style={{ margin: '0.3rem 0rem' }}>
               <ul>
                 <li>Must be between 8 and 30 characters</li>
                 <li>Must contain one or more uppercase letters</li>
@@ -190,6 +193,14 @@ const UserCreationStep = ({ onNextClick }) => {
 }
 
 const RegisterPage = () => {
+  const [orderNumber, setOrderNumber] = useState()
+
+  const onOrderNextClick = next => on => {
+    console.log(next, on)
+    setOrderNumber(on)
+    next()
+  }
+
   return (
     <div
       style={{
@@ -210,8 +221,16 @@ const RegisterPage = () => {
                 style={{ marginBottom: 10 }}
               />
               <Steps key={step.id} step={step}>
-                <Step id="order" render={({ next }) => <EventOrderStep onNextClick={next} />} />
-                <Step id="user" render={({ next }) => <UserCreationStep onNextClick={next} />} />
+                <Step
+                  id="order"
+                  render={({ next }) => <EventOrderStep onNextClick={onOrderNextClick(next)} />}
+                />
+                <Step
+                  id="user"
+                  render={({ next }) => (
+                    <UserCreationStep orderNumber={orderNumber} onNextClick={next} />
+                  )}
+                />
                 <Step
                   id="login"
                   render={({ next }) => (
