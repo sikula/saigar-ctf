@@ -37,6 +37,7 @@ const GET_EVENT_EXPORT_DATA = gql`
       explanation
       content
       supporting_evidence
+      url
     }
   }
 `
@@ -200,6 +201,10 @@ const transformData = results => {
         label: 'Supporting Evidence',
         value: 'supporting_evidence',
       },
+      {
+        label: 'URL',
+	value: 'url',
+      }
     ]
 
     const parser = new Parser({ fields })
@@ -334,7 +339,6 @@ const EventsPanel = () => {
   }
 
   const handleWipeApproveClick = () => {
-    console.log('WIPING')
     setWipeDialogOpen(false)
   }
 

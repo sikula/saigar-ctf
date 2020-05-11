@@ -84,9 +84,11 @@ const CategoryList = ({ currentCategory, handleChange }) => (
       return (
         <HTMLSelect name="category" value={currentCategory} onChange={handleChange} fill large>
           {data.submission_configuration.map(config => (
-            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-              config.category
-            } (${config.points} pts.)`}</option>
+            <option
+              key={config.uuid}
+              id={config.category}
+              value={config.uuid}
+            >{`${config.category} (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       )
@@ -115,7 +117,7 @@ const AcceptSubmissionControls = ({ uuid, category, hidePanel }) => {
     <React.Fragment>
       <TextArea
         fill
-        placeHolder="(Optional) reason why the submission was accepted"
+        placeholder="(Optional) reason why the submission was accepted"
         value={acceptedReason}
         onChange={handleChange}
       />
@@ -177,7 +179,7 @@ const RejectSubmissionControls = ({ uuid, category, hidePanel }) => {
     <React.Fragment>
       <TextArea
         fill
-        placeHolder="Reason for rejecting the submission"
+        placeholder="Reason for rejecting the submission"
         value={rejectedReason}
         onChange={handleChange}
       />
@@ -224,6 +226,7 @@ const SubmissionDetailsPanel = ({
   explanation,
   content,
   supportingEvidence,
+  submission_files,
   hidePanel,
   category,
   handleChange,
@@ -290,13 +293,23 @@ const SubmissionDetailsPanel = ({
             <SafeURL dangerousURL={content} text={content} style={{ wordWrap: 'break-word' }} />
           </div>
           <div style={{ paddingTop: 10 }}>
-            <H5>Relvance</H5>
+            <H5>Relevance</H5>
             <p style={{ wordWrap: 'break-word' }}>{explanation}</p>
           </div>
           <div style={{ paddingTop: 10 }}>
             <H5>Supporting Evidence</H5>
             <p style={{ wordWrap: 'break-word' }}>{supportingEvidence}</p>
           </div>
+            {submission_files.length > 0 && (
+              <div style={{ paddingTop: 10 }}>
+                <H5>Supporting Files</H5>
+                {
+                  submission_files.map(function (file, i) {
+                    return <SafeURL style={{ paddingRight: "5px" }} key={i} dangerousURL={file.url} text={"File " + (i + 1)} />
+                  })
+                }
+              </div>
+            )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
           <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
@@ -307,11 +320,13 @@ const SubmissionDetailsPanel = ({
             <AuthConsumer>
               {({ user }) => (
                 <Button
-                  text="News Site"
+                  text="Non-Permitted Source"
                   intent="danger"
+                  alignText="left"
                   large
                   fill
                   icon={IconNames.CROSS}
+                  style={{ marginRight: 10 }}
                   onClick={() => {
                     processSubmission({
                       variables: {
@@ -328,13 +343,12 @@ const SubmissionDetailsPanel = ({
                             decision: 'REJECTED',
                             processedBy: user.id,
                             rejectedReason:
-                              'We do not accept sources from news sites as they are already known by law enforcement.',
+                              'This submission originated from a non-permitted source such as: news, media, law enforcement, or speculative websites.  We do not accept these as they provide minimal intelligence value to law enforcement.',
                           },
                         }),
                       )
                       .then(hidePanel)
                   }}
-                  style={{ marginRight: 10 }}
                 />
               )}
             </AuthConsumer>
@@ -343,6 +357,7 @@ const SubmissionDetailsPanel = ({
                 <Button
                   text="Duplicate Submission"
                   intent="danger"
+                  alignText="left"
                   large
                   fill
                   icon={IconNames.CROSS}
@@ -362,7 +377,7 @@ const SubmissionDetailsPanel = ({
                             decision: 'REJECTED',
                             processedBy: user.id,
                             rejectedReason:
-                              'You or one of your team members has already submitted this source, so this is a duplicate.',
+                              'You or one of your team members has already submitted this intelligence.',
                           },
                         }),
                       )
@@ -372,12 +387,48 @@ const SubmissionDetailsPanel = ({
               )}
             </AuthConsumer>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 10 }}>
             <AuthConsumer>
               {({ user }) => (
                 <Button
-                  text="Needs Context"
+                  text="Additional Context Required"
                   intent="danger"
+                  alignText="left"
+                  large
+                  fill
+                  icon={IconNames.CROSS}
+                  style={{ marginRight: 10 }}
+                  onClick={() => {
+                    processSubmission({
+                      variables: {
+                        submissionID: uuid,
+                        value: 'REJECTED',
+                        processedAt: new Date(),
+                        category,
+                      },
+                    })
+                      .then(() =>
+                        insertSubmissionHist({
+                          variables: {
+                            submissionID: uuid,
+                            decision: 'REJECTED',
+                            processedBy: user.id,
+                            rejectedReason:
+                              'To award points for this submission, we require additional context or support this intelligence',
+                          },
+                        }),
+                      )
+                      .then(hidePanel)
+                  }}
+                />
+              )}
+            </AuthConsumer>
+            <AuthConsumer>
+              {({ user }) => (
+                <Button
+                  text="Not Relevant"
+                  intent="danger"
+                  alignText="left"
                   large
                   fill
                   icon={IconNames.CROSS}
@@ -397,40 +448,7 @@ const SubmissionDetailsPanel = ({
                             decision: 'REJECTED',
                             processedBy: user.id,
                             rejectedReason:
-                              'We need more context on why this source is relevant to the case.',
-                          },
-                        }),
-                      )
-                      .then(hidePanel)
-                  }}
-                  style={{ marginRight: 10 }}
-                />
-              )}
-            </AuthConsumer>
-            <AuthConsumer>
-              {({ user }) => (
-                <Button
-                  text="Not Relevant"
-                  intent="danger"
-                  large
-                  fill
-                  icon={IconNames.CROSS}
-                  onClick={() => {
-                    processSubmission({
-                      variables: {
-                        submissionID: uuid,
-                        value: 'REJECTED',
-                        processedAt: new Date(),
-                        category,
-                      },
-                    })
-                      .then(() =>
-                        insertSubmissionHist({
-                          variables: {
-                            submissionID: uuid,
-                            decision: 'REJECTED',
-                            processedBy: user.id,
-                            rejectedReason: 'This source was deemed not relevant to this case.',
+                              'This submission has been determined as not relevant to the case.',
                           },
                         }),
                       )
@@ -453,6 +471,7 @@ const PanelContent = ({
   explanation,
   content,
   supportingEvidence,
+  submission_files,
   hidePanel,
   submissionConfiguration,
 }) => {
@@ -475,6 +494,7 @@ const PanelContent = ({
               explanation={explanation}
               content={content}
               supportingEvidence={supportingEvidence}
+              submission_files={submission_files}
               hidePanel={hidePanel}
               category={category}
               handleChange={handleChange}
@@ -510,6 +530,7 @@ const FeedPanel = ({
   explanation,
   content,
   supporting_evidence,
+  submission_files,
   submissionConfigurationByconfigId,
   case: { uuid: caseID },
 }) => (
@@ -537,6 +558,7 @@ const FeedPanel = ({
           explanation={explanation}
           content={content}
           supportingEvidence={supporting_evidence}
+          submission_files={submission_files}
           submissionConfiguration={submissionConfigurationByconfigId}
           hidePanel={hidePanel}
           caseID={caseID}

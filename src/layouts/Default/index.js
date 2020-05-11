@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { NavLink, Link } from 'react-router-dom'
 import { Layout, Flex, Fixed } from 'react-layout-pane'
@@ -7,9 +7,13 @@ import { IconNames } from '@blueprintjs/icons'
 import '../../_Design/index.scss'
 import { AuthConsumer } from '../../shared/components/AuthContext/context'
 import Can from '../../shared/components/AuthContext/Can'
+import gql from 'graphql-tag'
+import { useSubscription } from '@apollo/react-hooks'
 
 import './index.scss'
 import logoWhite from './logo-white.png'
+import { AuthContext } from '@shared/components/AuthContext/context'
+
 
 /*
   For tomorrow, get the IO side up and running with Auth0 login, and figure out
@@ -22,23 +26,19 @@ import logoWhite from './logo-white.png'
 const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
   <Layout type="row">
     <Fixed className="sidebar">
-      {/* Note from Stephanie; putting items in a div is easier to manage than FlexGrow/Shrink */}
       <div>
         <UL>
           <li id="logo">
-            {/* <Icon icon={IconNames.MENU} iconSize={20} style={{ color: "#FFF" }} /> */}
             <img src={logoWhite} width="60%" height="60%" />
           </li>
         </UL>
         <Can
-          allowedRole={'ctf_admin' || 'judge'}
+          allowedRole={['ctf_admin', 'super_admin', 'judge']}
           yes={() => (
             <UL>
               <NavLink to="home" activeClassName="active">
                 <li className={pathname === '/home' ? 'active' : ''}>
-                  <a>
-                    <Icon icon={IconNames.HOME} iconSize={20} />
-                  </a>
+                  <Icon icon={IconNames.HOME} iconSize={20} />
                 </li>
               </NavLink>
             </UL>
@@ -55,18 +55,17 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
                   </a>
                 </li>
               </NavLink>
+              <BanCheck></BanCheck>
             </UL>
           )}
         />
         <Can
-          allowedRole="ctf_admin"
+          allowedRole={["super_admin", "ctf_admin"]}
           yes={() => (
             <UL>
               <NavLink to="create">
                 <li className={pathname === '/create' ? 'active' : ''}>
-                  <a>
-                    <Icon icon={IconNames.ADD} iconSize={20} />
-                  </a>
+                  <Icon icon={IconNames.ADD} iconSize={20} />
                 </li>
               </NavLink>
             </UL>
@@ -75,21 +74,12 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
         <UL>
           <NavLink to="scoreboard">
             <li>
-              <a>
-                <Icon icon={IconNames.TIMELINE_LINE_CHART} iconSize={20} />
-              </a>
+              <Icon icon={IconNames.TIMELINE_LINE_CHART} iconSize={20} />
             </li>
           </NavLink>
         </UL>
       </div>
       <div>
-        {/* <UL>
-          <li>
-            <a href="#">
-              <Icon icon={IconNames.CHAT} iconSize={20} />
-            </a>
-          </li>
-        </UL> */}
         <UL>
           <AuthConsumer>
             {({ logout }) => (
@@ -101,13 +91,6 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
             )}
           </AuthConsumer>
         </UL>
-        {/* <UL>
-          <li>
-            <a href="#">
-              <Icon icon={IconNames.SETTINGS} iconSize={20} />
-            </a>
-          </li>
-        </UL> */}
       </div>
     </Fixed>
     <Flex>
@@ -152,6 +135,27 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
     )}
   </Layout>
 )
+
+const BanCheck = () => {
+  const GET_BANNED_STATUS = gql`
+    subscription getBannedStatus($auth0id: String!) {
+      user_team(where: {user: {auth0id: {_eq: $auth0id}}}) {
+        team {
+          banned
+        }
+      }
+    }
+  `
+  const { user, logout } = useContext(AuthContext)  
+  const { loading, data } = useSubscription(GET_BANNED_STATUS, {
+    variables: { auth0id: user.id }
+  })
+  if (!loading && data.user_team.length && data.user_team[0].team.banned) {
+    logout()
+  }
+  
+  return null
+}
 
 DefaultLayout.propTypes = {
   children: PropTypes.element.isRequired,

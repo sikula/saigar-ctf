@@ -2,13 +2,23 @@ import React from 'react'
 
 const ResourcesPage = () => (
   <div style={{ padding: 25, width: '85%', margin: '0 auto' }}>
-    <p>Register for Trace Labs Slack channel here: https://www.tracelabs.org/accounts/register/</p>
+    <p>
+      Register for Trace Labs Slack channel here:{' '}
+      <a href="https://www.tracelabs.org/accounts/register/">
+        https://www.tracelabs.org/accounts/register
+      </a>
+    </p>
 
     <p>OSINT Resources for Contestants</p>
 
     <ul>
       <li>
-        <a href="https://inteltechniques.com/menu.html">https://inteltechniques.com/menu.html</a>
+        <a href="https://osintcurio.us/2020/01/16/introduction-to-osint-video/">
+          https://osintcurio.us/2020/01/16/introduction-to-osint-video/
+        </a>
+      </li>
+      <li>
+        <a href="https://osintcurio.us/10-minute-tips/">https://osintcurio.us/10-minute-tips/</a>
       </li>
       <li>
         <a href="https://osintframework.com/">https://osintframework.com/</a>

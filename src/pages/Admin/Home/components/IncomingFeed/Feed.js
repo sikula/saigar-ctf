@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 import { Query, Subscription } from 'react-apollo'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useQuery } from '@apollo/react-hooks'
 
 import gql from 'graphql-tag'
 import { formatDistanceToNow } from 'date-fns'
@@ -17,7 +17,7 @@ import SafeURL from '@shared/components/SafeUrl'
 import Can from '@shared/components/AuthContext/Can'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-import { LIVE_FEED, LIVE_FEED_FILTERED, URL_SEEN_COUNT } from '../../graphql/adminQueries'
+import { LIVE_FEED, LIVE_FEED_SUBSCRIPTION, LIVE_FEED_FILTERED, LIVE_FEED_FFA, URL_SEEN_COUNT } from '../../graphql/adminQueries'
 import FeedPanel from './FeedPanel'
 
 import './Feed.scss'
@@ -32,6 +32,7 @@ const SUBMISSION_TYPES = {
   FAMILY: 'Family',
   FRIENDS: 'Friends',
   EMPLOYMENT: 'Employment',
+  CLOSED: 'Closed Source'
 }
 
 const animation = {
@@ -41,6 +42,27 @@ const animation = {
   // render: (value) => ({ transform: `scale3d(${value.scale},${value.scale},${value.scale})` })
   render: value => ({ transform: `translateX(${value.translateX}px)` }),
 }
+
+const JUDGES_FEED = gql`
+  subscription judgesFeed($auth0id: String!) {
+    judge_team(where: { user: { auth0id: { _eq: $auth0id } } }) {
+      team {
+        uuid
+      }
+      user {
+        uuid
+      }
+    }
+  }
+`
+
+const EVENT_CONFIG = gql`
+  subscription eventConfig {
+    event(order_by: { start_time: desc }, limit: 1) {
+      free_for_all
+    }
+  }
+`
 
 const SubmissionItem = ({ data }) => (
   <Motion defaultStyle={animation.defaultStyle} style={animation.style}>
@@ -88,6 +110,15 @@ const SubmissionItem = ({ data }) => (
               <SafeURL dangerousURL={data.content} text={data.content} />
             </span>
             <span className="long-text">{data.explanation}</span>
+            {data.submission_files.length > 0 && (
+              <div>
+                {
+                  data.submission_files.map(function (file, i) {
+                    return <SafeURL key={i} style={{ paddingRight: "5px" }} dangerousURL={file.url} text={"File " + (i + 1)} />
+                  })
+                }
+              </div>
+            )}
             <div
               style={{
                 textAlign: 'right',
@@ -108,7 +139,7 @@ const SubmissionItem = ({ data }) => (
           </div>
         </div>
         <div style={{ textAlign: 'center', ...animation.render(value) }}>
-          <Query query={URL_SEEN_COUNT} variables={{ url: data.content }}>
+          <Query query={URL_SEEN_COUNT} variables={{ url: data.content, teamID: data.teamByteamId.uuid }}>
             {({ data: urlData, loading }) =>
               !loading ? (
                 <div
@@ -129,6 +160,9 @@ const SubmissionItem = ({ data }) => (
                   }
                 >
                   <Icon icon={IconNames.EMPLOYMENT} />
+                  {urlData.teamUrlCount.aggregate.count > 1
+                    ? `(${urlData.teamUrlCount.aggregate.count} TEAM URL HITS) `
+                    : null }
                   {urlData.urlCount.aggregate.count === 1
                     ? `${urlData.urlCount.aggregate.count} URL HIT`
                     : `${urlData.urlCount.aggregate.count} URL HITS`}
@@ -147,97 +181,98 @@ SubmissionItem.propTypes = {
   data: PropTypes.any.isRequired,
 }
 
-// TODO(peter):
-//  This could probably be cleaner by just passing data
-//  as props and use the correct stuff in the component
 const SubmissionListView = ({ data }) =>
   data.map(submission => <SubmissionItem key={submission.uuid} data={submission} />)
 
-/*
-  NOTE(Peter): Dynamic Queries are weird, and I'm not 100% sure how to do it
-  any cleaner way, although this feels kinda hacky currently
-*/
-const SubscriptionData = ({ subscription, teams }) => (
-  <Subscription subscription={subscription} variables={{ teams }}>
-    {({ data, loading, error }) => {
-      if (!data) return null
-      if (loading) {
-        return (
-          <div className="case-data__item__wrapper">
-            <div className="case-data__item">Loading...</div>
-          </div>
-        )
-      }
-      if (error) return <div>`${error.message}`</div>
+const SubmissionData = ({data}) => {
+  if (!data) return null
 
-      if (!Array.isArray(data.event) || !data.event.length) {
-        return <div />
-      }
+  if (!Array.isArray(data.event) || !data.event.length) {
+    return <div />
+  }
 
-      const { submissions } = data.event[0]
+  const { submissions } = data.event[0]
+  if (!Array.isArray(submissions) || !submissions.length) {
+    return <H3 style={{ textAlign: 'center', padding: 20 }}>No Pending Submissions</H3>
+  }
 
-      if (!Array.isArray(submissions) || !submissions.length) {
-        return <H3 style={{ textAlign: 'center', padding: 20 }}>No Pending Submissions</H3>
-      }
-
-      return <SubmissionListView data={submissions} />
-    }}
-  </Subscription>
-)
-
-SubscriptionData.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  subscription: PropTypes.any.isRequired,
-  teams: PropTypes.arrayOf(PropTypes.array).isRequired,
+  return <SubmissionListView data={submissions} />
 }
-
-const JUDGES_FEED = gql`
-  subscription judgesFeed($auth0id: String!) {
-    judge_team(where: { user: { auth0id: { _eq: $auth0id } } }) {
-      team {
-        uuid
-      }
-      user {
-        uuid
-      }
-    }
-  }
-`
-
-const EVENT_CONFIG = gql`
-  subscription eventConfig {
-    event(order_by: { start_time: desc }, limit: 1) {
-      free_for_all
-    }
-  }
-`
 
 const JudgeFeed = () => {
   const { user } = useContext(AuthContext)
-  const { loading, data } = useSubscription(JUDGES_FEED, {
-    variables: { auth0id: user.id },
-  })
+  //Check if free for all enabled
   const { loading: eventConfigLoading, data: eventConfigData } = useSubscription(EVENT_CONFIG)
+  const freeForAll = eventConfigLoading ? null : eventConfigData.event[0].free_for_all
+  //if ffa 
+  const { loading: ffaLoading, data: ffaData } = useSubscription(LIVE_FEED_FFA, { skip: eventConfigLoading })
+  //if not ff, get judge data and filter the feed
+  const { loading: judgeDataLoading, data: judgeData } = useSubscription(JUDGES_FEED, {
+    variables: { auth0id: user.id }, skip: eventConfigLoading || freeForAll
+  })
+  const teamIds = judgeData ? judgeData.judge_team.map(({ team }) => team.uuid) : null
+  const { loading: filteredLoading, data: filteredData } = useSubscription(LIVE_FEED_FILTERED, {
+    variables: { teams: teamIds }, skip: judgeDataLoading || freeForAll
+  })
+  
+  if (freeForAll === true && !ffaLoading) {
+    return (
+      <SubmissionData data={ffaData} />
+    )
+  } else if (freeForAll === false && !filteredLoading){
 
-  if (loading || eventConfigLoading) return null
+    return (
+      <SubmissionData data={filteredData} />
+    )
+  } else {
+    return null
+  }
+}
 
-  const teams = data.judge_team.map(({ team }) => team.uuid)
-  const { free_for_all: freeForAll } = eventConfigData.event[0]
 
-  return freeForAll ? (
-    <SubscriptionData subscription={LIVE_FEED} />
-  ) : (
-    <SubscriptionData subscription={LIVE_FEED_FILTERED} teams={teams} />
+const AdminFeedList = class extends React.PureComponent {
+  componentDidMount() {
+    this.props.subscribeToNewSubmissions()
+  }
+  render() {
+    const { data } = this.props
+    return <SubmissionData data={data} />
+  }
+}
+
+const AdminFeed = () => {
+  const { subscribeToMore, ...result } = useQuery(LIVE_FEED)
+
+  return (
+    <AdminFeedList
+      {...result}
+      subscribeToNewSubmissions={() =>
+        subscribeToMore({
+          document: LIVE_FEED_SUBSCRIPTION,
+          updateQuery: (prev, { subscriptionData }) => {
+            if (!prev) return null;
+            if (!subscriptionData.data) return prev;
+            const newFeedItem = subscriptionData.data.event[0].submissions[0];
+            if (newFeedItem.uuid == prev.event[0].submissions[prev.event[0].submissions.length-1].uuid) return prev;
+            return Object.assign({}, prev, {
+              event: [{
+                submissions: [...prev.event[0].submissions, newFeedItem]
+              }]
+            })
+          }
+        })
+      }
+    />
   )
 }
 
-const AdminFeed = () => <SubscriptionData subscription={LIVE_FEED} />
-
-const SubmissionList = () => (
-  <React.Fragment>
-    <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
-    <Can allowedRole="judge" yes={() => <JudgeFeed />} />
-  </React.Fragment>
-)
+const SubmissionList = () => {
+  return (
+    <React.Fragment>
+      <Can allowedRole="ctf_admin" yes={() => <AdminFeed />} />
+      <Can allowedRole="judge" yes={() => < JudgeFeed />} />
+    </React.Fragment>
+  )
+}
 
 export default SubmissionList

@@ -15,4 +15,6 @@ html, body {
   line-height: 1.5rem;
   min-height: 100%;
   overflow-x:hidden; /* this is needed as a fix for flexboxgrid2 bug with full width layout */
+  margin: 0;
+  padding: 0;
 }

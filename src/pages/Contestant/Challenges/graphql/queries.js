@@ -83,9 +83,48 @@ const NEW_SUBMISSION_MUTATION = gql`
       }
     ) {
       affected_rows
+      returning {
+        uuid
+      }
     }
   }
 `
+
+const NEW_SUBMISSIONFILE_MUTATION = gql`
+  mutation insertSubmissionFile(
+    $submission_id: uuid!
+  ) {
+    insert_submission_file(
+      objects: {
+        submission_id: $submission_id
+      }
+    ) {
+      returning {
+        uuid
+      }
+    }
+  }
+`
+
+const UPDATE_SUBMISSIONFILE_MUTATION = gql`
+  mutation updateSubmissionFile(
+    $file_id: uuid!
+    $url: String!
+    $expiry: timestamptz!
+  ) {
+    update_submission_file(
+      where: {
+        uuid: {_eq: $file_id}
+      },
+      _set: {
+        url: $url, url_expiry: $expiry
+      }
+    ) {
+      affected_rows
+    }
+  }
+`
+
 // TODO(peter): need to fix this, make sure you are querying by the current user
 const SUBMISION_INFO = gql`
   query submissionConfig($auth0id: String!) {
@@ -107,4 +146,4 @@ const SUBMISION_INFO = gql`
   }
 `
 
-export { CASE_LIST, ACCEPT_TERMS, NEW_SUBMISSION_MUTATION, SUBMISION_INFO }
+export { CASE_LIST, ACCEPT_TERMS, NEW_SUBMISSION_MUTATION, NEW_SUBMISSIONFILE_MUTATION, UPDATE_SUBMISSIONFILE_MUTATION, SUBMISION_INFO }

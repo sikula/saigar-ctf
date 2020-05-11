@@ -4,10 +4,12 @@ import PropTypes from 'prop-types'
 import { useQuery } from '@apollo/react-hooks'
 
 import { isWithinInterval } from 'date-fns'
-import { FormGroup, HTMLSelect, TextArea } from '@blueprintjs/core'
+import { FormGroup, HTMLSelect, TextArea, Icon } from '@blueprintjs/core'
 
 import { AuthContext } from '@shared/components/AuthContext/context'
 import { SUBMISION_INFO } from '../graphql/queries'
+
+import './NewSubmission.scss'
 
 const SUBMISSION_INFO = {
   LOCATION: {
@@ -29,16 +31,18 @@ const SUBMISSION_INFO = {
     text: (
       <div>
         <strong>DARK WEB</strong>
-        <p>
-          Relevant information found on the dark web about the subject. This can include but not
-          limited to:
-        </p>
+        <p>Relevant information found on the dark web about the subject.</p>
+        <strong style={{ color: 'red' }}>
+          Your submission must originate from a .onion URL to be considered Dark Web - Eg.
+          https://dsfjldsjflj.onion
+        </strong>
         <ul>
-          <li>pciture or details of subject on sites such as backstage</li>
-          <li>discussion regarding subject on dark web sites</li>
+          <li>pictures or details of subject on human trafficking related dark we sites</li>
           <li>the sales of goods by the subject on the dark web</li>
           <li>any activity or post by the subject on the dark web</li>
-          <li>password breach data that includes the subject's username</li>
+          <li>
+            data breaches posted on the dark web that include the subject's personal information
+          </li>
         </ul>
         <strong style={{ color: 'red' }}>
           Please use caution when exploring the dark web as you are likely see graphic pictures.
@@ -205,9 +209,29 @@ const SUBMISSION_INFO = {
       </div>
     ),
   },
+  CLOSED: {
+    name: 'Closed',
+    text: (
+      <div>
+        <strong>CLOSED SOURCE</strong>
+        <p>
+          Any closed source intelligence obtained from special access tools from your day job or
+          research. Because it's closed source, we will not be able to verify it so please be sure
+          about the intel you submit.
+        </p>
+      </div>
+    ),
+  },
 }
 
-const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched }) => {
+const NewSubmissionForm = ({
+  handleSubmit,
+  handleChange,
+  setFieldValue,
+  values,
+  errors,
+  touched,
+}) => {
   // State Layer
   const { user } = useContext(AuthContext)
 
@@ -218,26 +242,32 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
     },
   })
 
+  const handleUploadChange = e => {
+    const file = e.target.files[0]
+    setFieldValue('supporting_file', file.name)
+  }
+
   // ============================================================
   //  RENDER
   // ============================================================
   if (loading) return null
   if (error) return null
 
-  const canCreateSubmission = isWithinInterval(
-    new Date(),
-    new Date(data.event[0].start_time),
-    new Date(data.event[0].end_time),
-  )
+  const canCreateSubmission = isWithinInterval(new Date(), {
+    start: new Date(data.event[0].start_time),
+    end: new Date(data.event[0].end_time),
+  })
 
   return canCreateSubmission ? (
     <form id="newSubmissionForm" onSubmit={handleSubmit}>
       <FormGroup label="Category" labelInfo="(required)" labelFor="text-input">
         <HTMLSelect name="category" value={values.category} onChange={handleChange} fill large>
           {data.submission_configuration.map(config => (
-            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-              config.category
-            } (${config.points} pts.)`}</option>
+            <option
+              key={config.uuid}
+              id={config.category}
+              value={config.uuid}
+            >{`${config.category} (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       </FormGroup>
@@ -251,7 +281,7 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
         />
         {errors.proof && touched.proof ? <div style={{ color: 'red' }}>{errors.proof}</div> : null}
       </FormGroup>
-      <FormGroup label="Relavance" labelInfo="(required)" labelFor="text-input">
+      <FormGroup label="Relevance" labelInfo="(required)" labelFor="text-input">
         <TextArea
           name="explanation"
           placeholder="Reasons why this intelligence is relevant to the case."
@@ -274,6 +304,25 @@ const NewSubmissionForm = ({ handleSubmit, handleChange, values, errors, touched
         {errors.supporting_evidence && touched.supporting_evidence ? (
           <div style={{ color: 'red' }}>{errors.supporting_evidence}</div>
         ) : null}
+      </FormGroup>
+      <FormGroup label="Supporting File" labelInfo="(image files only)">
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <input
+            type="file"
+            name="supporting_file"
+            accept="image/*"
+            id="supporting_file"
+            className="uploadFileInput"
+            ref={values.supporting_fileRef}
+            onChange={handleUploadChange}
+          />
+          <label htmlFor="supporting_file">
+            <Icon icon="upload" /> {values.supporting_file ? values.supporting_file : 'Upload File'}
+          </label>
+          {errors.supporting_file && touched.supporting_file ? (
+            <div style={{ color: 'red' }}>{errors.supporting_file}</div>
+          ) : null}
+        </div>
       </FormGroup>
       <div>
         {

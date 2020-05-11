@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useMutation } from '@apollo/react-hooks'
 import { Query, Mutation, Subscription } from 'react-apollo'
@@ -28,7 +28,7 @@ import { IconNames } from '@blueprintjs/icons'
 import ReactPaginate from 'react-paginate'
 
 // Custom Components
-import { AuthConsumer } from '@shared/components/AuthContext/context'
+import { AuthConsumer, AuthContext } from '@shared/components/AuthContext/context'
 import { SlidingPanelConsumer, SlidingPane } from '@shared/components/SlidingPane'
 import {
   SUBMISSION_HISTORY,
@@ -124,7 +124,7 @@ const CategoryList = ({ currentCategory, handleChange }) => (
           {data.submission_configuration.map(config => (
             <option key={config.uuid} id={config.category} value={config.uuid}>{`${
               config.category
-            } (${config.points} pts.)`}</option>
+              } (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       )
@@ -406,11 +406,14 @@ SubmissionItem.propTypes = {
 const useHistoryFilterState = createPersistedState('historyFilter')
 
 const HistoryTab = () => {
+  const { user } = useContext(AuthContext)
+
   const [historyFilter, setHistoryFilter] = useHistoryFilterState({
     teams: null,
     cases: null,
     category: null,
     status: ['ACCEPTED', 'REJECTED', 'STARRED'],
+    url: null
   })
   // loadCount tracks how many times the 'Load More' button
   // has been clicked to calculate the offset of data to fetch
@@ -515,14 +518,14 @@ const HistoryTab = () => {
                         {data.submission_configuration.map(config => (
                           <option key={config.uuid} id={config.category} value={config.uuid}>{`${
                             config.category
-                          } (${config.points} pts.)`}</option>
+                            } (${config.points} pts.)`}</option>
                         ))}
                       </HTMLSelect>
                     )
                   }}
                 </Query>
               </div>
-              <div style={{ width: '100%' }}>
+              <div style={{ width: '100%', marginRight: '20px' }}>
                 <HTMLSelect
                   name="status"
                   onChange={handleStatusSelect}
@@ -537,6 +540,15 @@ const HistoryTab = () => {
                   <option value="REJECTED">Rejected</option>
                 </HTMLSelect>
               </div>
+              <div style={{ width: '100%' }}>
+                <input type="text" style={{height: '100%' }}
+                  name="url"
+                  onChange={handleSelect}
+                  placeHolder="Search URL"
+                  value={historyFilter.url}
+                  label="Filter Url"
+                />
+              </div>
             </div>
           )
         }}
@@ -548,6 +560,7 @@ const HistoryTab = () => {
           case: historyFilter.cases,
           category: historyFilter.category,
           status: historyFilter.status,
+          url: historyFilter.url,
           offset: pageOffset,
         }}
       >
