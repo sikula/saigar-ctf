@@ -106,8 +106,9 @@ const ScoreGraph = ({ dark }) => (
   <Query query={EVENT_QUERY}>
     {({ loading, error, data: eventData }) =>
       !loading ? (
-        <Subscription
-          subscription={GET_SCOREGRAPH}
+        <Query
+          query={GET_SCOREGRAPH}
+	  pollInterval={60000}
           variables={{ eventID: eventData.event[0].uuid }}
         >
           {({ data, loading, error }) => {
@@ -138,7 +139,7 @@ const ScoreGraph = ({ dark }) => (
               </div>
             )
           }}
-        </Subscription>
+        </Query>
       ) : null
     }
   </Query>
