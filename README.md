@@ -9,3 +9,4 @@ Saigar CTF Platform
 3. `yarn run build` (for building)
 
 - create .env.dev and .env.prod files
+- edit docker-compose.yml and doker-compose-dev.yml files
