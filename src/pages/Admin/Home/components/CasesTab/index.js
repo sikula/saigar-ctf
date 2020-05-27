@@ -28,8 +28,6 @@ const CASES_QUERY = gql`
   }
 `
 
-// TODO(peter): This entire file needs to be cleaned up and split up into its own components.
-// Its fine for now, but it is getting a little bit out of control.
 const CaseInfo = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
     isOpen={isOpen}
@@ -72,9 +70,7 @@ const CaseCard = ({ caseData }) => (
         <H5 className="case-card__header">{caseData.name}</H5>
         <Tag round>{caseData.missing_from}</Tag>
       </div>
-      <p>{`missing for: ${differenceInDays(
-        new Date(), parseISO(caseData.missing_since)
-      )} days`}</p>
+      <p>{`missing for: ${differenceInDays(new Date(), parseISO(caseData.missing_since))} days`}</p>
     </Card>
     <div style={{ display: 'inline-flex', width: '100%', background: '#E1E8ED' }}>
       <CaseInfoButton id={caseData.uuid} />

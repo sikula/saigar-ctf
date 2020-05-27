@@ -41,7 +41,7 @@ import ProcessingHistory from './ProcessingHistory'
 
 import './index.scss'
 
-/* TODO(peter): This code is duplicated, should be extracted to a shared component */
+/* TODO: This code is duplicated, should be extracted to a shared component */
 const FeedToaster = Toaster.create({
   classname: 'feed-toaster',
   position: Position.TOP_LEFT,
@@ -84,7 +84,7 @@ ShareButton.propTypes = {
 }
 /* -- END -- */
 
-/* TODO(peter): This code is duplicated, can also be extracted */
+/* TODO: This code is duplicated, can also be extracted */
 const SUBMISSION_DETAILS = gql`
   query submissionConfig {
     submission_configuration {
@@ -122,9 +122,11 @@ const CategoryList = ({ currentCategory, handleChange }) => (
       return (
         <HTMLSelect name="category" value={currentCategory} onChange={handleChange} large fill>
           {data.submission_configuration.map(config => (
-            <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-              config.category
-              } (${config.points} pts.)`}</option>
+            <option
+              key={config.uuid}
+              id={config.category}
+              value={config.uuid}
+            >{`${config.category} (${config.points} pts.)`}</option>
           ))}
         </HTMLSelect>
       )
@@ -137,11 +139,6 @@ CategoryList.propTypes = {
   handleChange: PropTypes.func.isRequired,
 }
 
-/*
-  NOTE(Peter):
-    This is duplicated in ProcessHistory, should eventually extract this out to a shared folder
-    in case queires change, we have one source of truth
-*/
 const SUBMISSION_HISTORY_2 = gql`
   query submissionHistory($submissionID: uuid!) {
     submission(where: { uuid: { _eq: $submissionID } }) {
@@ -413,7 +410,7 @@ const HistoryTab = () => {
     cases: null,
     category: null,
     status: ['ACCEPTED', 'REJECTED', 'STARRED'],
-    url: null
+    url: null,
   })
   // loadCount tracks how many times the 'Load More' button
   // has been clicked to calculate the offset of data to fetch
@@ -516,9 +513,11 @@ const HistoryTab = () => {
                       >
                         <option value="">Any Category</option>
                         {data.submission_configuration.map(config => (
-                          <option key={config.uuid} id={config.category} value={config.uuid}>{`${
-                            config.category
-                            } (${config.points} pts.)`}</option>
+                          <option
+                            key={config.uuid}
+                            id={config.category}
+                            value={config.uuid}
+                          >{`${config.category} (${config.points} pts.)`}</option>
                         ))}
                       </HTMLSelect>
                     )
@@ -541,7 +540,9 @@ const HistoryTab = () => {
                 </HTMLSelect>
               </div>
               <div style={{ width: '100%' }}>
-                <input type="text" style={{height: '100%' }}
+                <input
+                  type="text"
+                  style={{ height: '100%' }}
                   name="url"
                   onChange={handleSelect}
                   placeHolder="Search URL"

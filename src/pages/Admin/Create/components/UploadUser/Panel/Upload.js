@@ -113,7 +113,6 @@ const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
       </SlidingPane.Header>
 
       <SlidingPane.Content>
-        {/* NOTE(Peter): not sure about the negative padding here, but seems ok for now, does the job */}
         <div style={{ marginTop: '-30px', width: '100%' }}>
           <Tabs large animate className="usersTabs">
             <Tab
@@ -152,12 +151,6 @@ const UploadUser = ({ isOpen, onRequestClose, eventID }) => {
                                 variables: {
                                   eventData: transformEventData(eventData),
                                 },
-                                // refetchQueries: [{
-                                //   query: TEAMS_QUERY,
-                                //   variables: {
-                                //     eventId:  eventID
-                                //   }
-                                // }]
                               }).then(closeSlider)
                             }
                           >

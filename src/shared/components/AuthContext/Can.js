@@ -2,18 +2,10 @@ import jwtDecode from 'jwt-decode'
 import cookie from 'react-cookies'
 
 const check = allowedRole => {
-  const token = cookie.load('saigar:id_token')
+  const token = cookie.load('id_token')
   const claims = jwtDecode(token)['https://ctf.saigar.io/roles']
 
   if (claims.groups.some(r => allowedRole.includes(r))) {
-    // if (!claims.permissions) {
-    //   return false
-    // }
-
-    // if (claims.permissions && claims.permissions.includes(action)) {
-    //   return true
-    // }
-
     return true
   }
 

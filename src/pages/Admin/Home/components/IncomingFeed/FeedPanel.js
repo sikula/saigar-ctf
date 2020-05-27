@@ -158,10 +158,9 @@ const AcceptSubmissionControls = ({ uuid, category, hidePanel }) => {
 }
 
 /*
-  @NOTE(Peter):
+  @NOTE:
     This is a duplicate basically of the code above, but there are quite a few
-    parameters that differ so right now I'm just duplicating, but we can look
-    back at this later to see how we can combine the two.
+    parameters that differ so right now I'm just duplicating
 */
 const RejectSubmissionControls = ({ uuid, category, hidePanel }) => {
   const [rejectedReason, setRejectedReason] = useState()
@@ -300,16 +299,21 @@ const SubmissionDetailsPanel = ({
             <H5>Supporting Evidence</H5>
             <p style={{ wordWrap: 'break-word' }}>{supportingEvidence}</p>
           </div>
-            {submission_files.length > 0 && (
-              <div style={{ paddingTop: 10 }}>
-                <H5>Supporting Files</H5>
-                {
-                  submission_files.map(function (file, i) {
-                    return <SafeURL style={{ paddingRight: "5px" }} key={i} dangerousURL={file.url} text={"File " + (i + 1)} />
-                  })
-                }
-              </div>
-            )}
+          {submission_files.length > 0 && (
+            <div style={{ paddingTop: 10 }}>
+              <H5>Supporting Files</H5>
+              {submission_files.map(function(file, i) {
+                return (
+                  <SafeURL
+                    style={{ paddingRight: '5px' }}
+                    key={i}
+                    dangerousURL={file.url}
+                    text={`File ${i + 1}`}
+                  />
+                )
+              })}
+            </div>
+          )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'end' }}>
           <AcceptSubmissionControls uuid={uuid} category={category} hidePanel={hidePanel} />
@@ -517,12 +521,6 @@ PanelContent.propTypes = {
   hidePanel: PropTypes.func.isRequired,
   caseID: PropTypes.string.isRequired,
 }
-
-/* 
-  TODO(Peter):
-    We might want to change the panels to portals so they render in a different spot, which 
-    makes it easier to work with and may negate some of the re-rendering bugs that might pop up
-*/
 
 const FeedPanel = ({
   uuid,

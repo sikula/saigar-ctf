@@ -1,9 +1,6 @@
 /*
     @NOTE:
         Heavily borrowed from (https://github.com/DimitryDushkin/sliding-pane/blob/master/src/index.js)
-    @TODO(peter):
-      This needs to seriously be cleaned up.... like, it seems really bad. Gotta look at how to compose
-      components properly
 */
 import React from 'react'
 import PropTypes from 'prop-types'

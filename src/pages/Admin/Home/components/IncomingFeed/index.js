@@ -6,11 +6,6 @@ import SubmissionList from './Feed'
 
 import './index.scss'
 
-/*
-  @NOTE(peter):
-    When the sliders are closed, the component is rerendered (this is intended functionality)
-    so we need to use skip to ensure the query is not run whent he component unmounts
-*/
 const IncomingFeed = () => (
   <PanelProvider>
     <div className="incoming_feed_outer">

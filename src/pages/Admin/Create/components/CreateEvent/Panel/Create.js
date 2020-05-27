@@ -10,17 +10,6 @@ import { SlidingPanelConsumer, SlidingPane } from '../../../../../../shared/comp
 import { EVENTS_QUERY, CREATE_EVENT_MUTATION } from '../../../graphql/graphQueries'
 import CreateEventForm from './Form'
 
-/*
-  @TODO(Peter):
-    The EditCase form and OpenCase form are essentially the same form, with very slight
-    modifications.  They can (and should) be moved into a single component and wrap
-    the proper mutation or queries surrounding the form.
-
-  @TODO(Peter):
-    Also change the form id to tomething more standard, and push it to the Slider.Actions
-    component
-*/
-
 const CreateEvent = ({ isOpen, onRequestClose }) => (
   <SlidingPane
     isOpen={isOpen}

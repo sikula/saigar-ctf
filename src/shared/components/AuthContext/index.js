@@ -32,7 +32,7 @@ class Auth extends React.Component {
     cookie.remove('saigar:id_token')
     localStorage.removeItem('expires_at')
     sessionStorage.removeItem('redirectBackTo')
-  
+
     localStorage.removeItem('historyFilter')
 
     auth.logout({
@@ -86,10 +86,10 @@ class Auth extends React.Component {
       path: '/',
       // secure: true,
     }
-    cookie.save('saigar:id_token', idToken, cookieOpts)
+    cookie.save('id_token', idToken, cookieOpts)
 
     /*
-      Note(peter): There is an issue with the way the subscriptions work that causes the websocket
+      Note: There is an issue with the way the subscriptions work that causes the websocket
       client to be initialized before the token is stored and retrieved, thus setting empty headers
       and the authentication failing (blank incoming feed).  This is a quick workaround to fixing it.
 

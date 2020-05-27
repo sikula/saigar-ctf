@@ -21,19 +21,6 @@ import {
 
 import EditCaseForm from './Form'
 
-/*
-  @TODO(Peter):
-    The EditCase form and OpenCase form are essentially the same form, with very slight
-    modifications.  They can (and should) be moved into a single component and wrap
-    the proper mutation or queries surrounding the form.
-
-  @TODO(Peter):
-    Also change the form id to tomething more standard, and push it to the Slider.Actions
-    component
-*/
-
-// @TODO(peter): Instead of using refetchQueries we should be using the update prop
-// @TODO(peter): Instead of using refetchQueries we should be using the update prop
 // eslint-disable-next-line react/prop-types
 const updateEventCase = ({ render }) => (
   <Mutation mutation={EDIT_EVENT_CASE_MUTATION} refetchQueries={[{ query: CASES_QUERY }]}>
@@ -53,12 +40,6 @@ const ComposedMutations = adopt({
   updateCase,
 })
 
-/*
-  @NOTE(Peter):
-    I wonder if there might be a way to reduce the payload when, lets say,
-    only one field is updated.  I don't really think it matters too much,
-    but would be interesting as an exercise
-*/
 const EditCase = ({ isOpen, onRequestClose, ...otherProps }) => (
   <SlidingPane
     isOpen={isOpen}

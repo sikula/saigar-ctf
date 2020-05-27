@@ -5,8 +5,6 @@ import { ConnectedRouter as Router } from 'connected-react-router'
 
 /* Features/Code Splitting */
 
-// import Auth from '@common/components/AuthContext'
-
 import AuthCallback from '@shared/routes/AuthRoute'
 import NotFound from '@shared/routes/NotFound'
 
@@ -17,19 +15,6 @@ import CtfRoutes from '@pages/routes'
 import history from './history'
 
 import { SlidingPanelRoot, SlidingPanelProvider } from '../../shared/components/SlidingPane'
-
-/*
-  @NOTE(Peter):
-    This is the syntax for defining Async Components for Code Splitting
-    per-route basis. The React Router Switch statements need to be wrapped
-    in Suspense component.
-
-    Lazy/Suspsense does not support SSR as of yet, if we decide we need SSR
-    we should use the React-Loadable library.
-
-    Check here for more details (https://blog.logrocket.com/lazy-loading-components-in-react-16-6-6cea535c0b52)
-*/
-// const TestComponent = React.lazy(() => import(/* webpackChunkName: "TestComponent */ './TestComponentt'))
 
 const LoginPage = ({ location }) => {
   const redirectTo = location.state ? location.state.from : { from: { pathname: '/' } }

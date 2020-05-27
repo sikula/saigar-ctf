@@ -10,15 +10,6 @@ import Can from '@shared/components/AuthContext/Can'
 import { SlidingPanelConsumer } from '@shared/components/SlidingPane'
 import SettingsPanel from '../IncomingFeed/SettingsPanel'
 
-/*
-    @NOTE(peter):
-        Currently in Hasura there is no way to query by aggregate count, ideally we would
-        want to filter for teams whose submission count is greater than 0.
-        For now, we just do client side logic.
-    @NOTE(peter):
-      Might be a bug with this, fetches eventID before running this, but null is being passed
-      
-*/
 const TEAMS_NEED_ASSIGNMENT = gql`
   subscription TEAM_ASSIGNMENTS($eventId: uuid) {
     team_event(
@@ -96,12 +87,6 @@ const FFAToggle = ({ ffaChecked, handleFfaClick }) => (
   </div>
 )
 
-/*
-  1) [x] Fetch free_for_all from database
-  2) set it to state
-  3) [x] handle the toggle
-*/
-
 const TeamsTab = () => {
   // State Layer
   const [ffaChecked, setFfaChecked] = useState(false)
@@ -122,17 +107,6 @@ const TeamsTab = () => {
       setFfaChecked(eventData.event[0].free_for_all)
     }
   }, [eventLoading])
-
-  // useEffect(() => {
-  //   console.log(" IS HOULD ONLY GET CALLED ONCE ", ffaChecked)
-
-  //   toggleFfa({
-  //     variables: {
-  //       ffa: ffaChecked,
-  //       event: eventData.event[0].uuid,
-  //     },
-  //   })
-  // }, [ffaChecked])
 
   // Handlers
   const handleFfaClick = () => {
@@ -198,7 +172,7 @@ const TeamsTab = () => {
                 <H4>{team.name}</H4>
                 <H4>Unassigned</H4>
                 <Can
-                  allowedRole={["super_admin", "ctf_admin"]}
+                  allowedRole={['super_admin', 'ctf_admin']}
                   yes={() => (
                     <SlidingPanelConsumer>
                       {({ openSlider }) => (
@@ -236,7 +210,7 @@ const TeamsTab = () => {
               <H4>{team.name}</H4>
               <H4>{team.judge_teams[0].user.nickname}</H4>
               <Can
-                allowedRole={["super_admin", "ctf_admin"]}
+                allowedRole={['super_admin', 'ctf_admin']}
                 yes={() => (
                   <Button
                     intent="primary"

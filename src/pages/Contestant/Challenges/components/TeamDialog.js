@@ -86,10 +86,6 @@ const USER_INFO = gql`
   }
 `
 
-// @NOTE(Peter): this is a very quick hack for conditionally
-// rendering the proper dialog.  We could try using the
-// new React hooks with thte useReducer hook or something
-// to make this cleaner.  This works for now though
 const TeamDialog = () => {
   const [isOpen, setIsOpen] = useState(true)
   const [buttonPressed, setButtonPressed] = useState(null)
@@ -126,7 +122,6 @@ const TeamDialog = () => {
   // Handlers
   // ======================================================
 
-  // @NOTE(peter): This is so ugly... but it works....
   const handleClose = () => {
     if (buttonPressed === 'JOIN') {
       // do stuff here to join team
@@ -147,7 +142,7 @@ const TeamDialog = () => {
               },
             })
             .then(({ data }) => {
-              const count = data.user_team_aggregate.aggregate.count
+              const { count } = data.user_team_aggregate.aggregate
               if (count <= 3) {
                 addUserToTeam({
                   variables: {

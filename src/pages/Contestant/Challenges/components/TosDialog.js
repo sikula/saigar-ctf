@@ -11,7 +11,6 @@ import { Button, Dialog, Classes, Checkbox, H3 } from '@blueprintjs/core'
 // Data Stuffz
 import { ACCEPT_TERMS } from '../graphql/queries'
 
-
 const USER_INFO = gql`
   query userInfo($auth0id: String!) {
     user(where: { auth0id: { _eq: $auth0id } }) {
@@ -24,11 +23,6 @@ const USER_INFO = gql`
   }
 `
 
-
-// @NOTE(Peter): this is a very quick hack for conditionally
-// rendering the proper dialog.  We could try using the
-// new React hooks with thte useReducer hook or something
-// to make this cleaner.  This works for now though
 export default class TosDialog extends React.Component {
   state = {
     isOpen: true,
@@ -94,7 +88,11 @@ export default class TosDialog extends React.Component {
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <AuthConsumer>
               {({ user }) => (
-                <Mutation mutation={ACCEPT_TERMS} variables={{ auth0id: user.id }} refetchQueries={[{ query: USER_INFO, variables: { auth0id: user.id }}]}>
+                <Mutation
+                  mutation={ACCEPT_TERMS}
+                  variables={{ auth0id: user.id }}
+                  refetchQueries={[{ query: USER_INFO, variables: { auth0id: user.id } }]}
+                >
                   {acceptTerms => (
                     <Button
                       disabled={!(checkedItems.get('disclaimer') && checkedItems.get('tos'))}

@@ -51,7 +51,7 @@ const SUBMISSION_HISTORY = gql`
           team_id: { _eq: $team }
           config_id: { _eq: $category }
           content: { _eq: $url }
-          submissionConfigurationByconfigId: { category: { _neq: "CLOSED" }}
+          submissionConfigurationByconfigId: { category: { _neq: "CLOSED" } }
         }
         order_by: { processed_at: desc }
         limit: 100
@@ -82,12 +82,12 @@ const SUBMISSION_HISTORY = gql`
 const LIVE_FEED = gql`
   query liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { 
-        processed: { _eq: "PENDING" },
-        submissionConfigurationByconfigId: {
-          category: { _neq: "CLOSED" }
-        }}
-        order_by: { submitted_at: asc },
+      submissions(
+        where: {
+          processed: { _eq: "PENDING" }
+          submissionConfigurationByconfigId: { category: { _neq: "CLOSED" } }
+        }
+        order_by: { submitted_at: asc }
         limit: 50
       ) {
         uuid
@@ -124,12 +124,12 @@ const LIVE_FEED = gql`
 const LIVE_FEED_SUBSCRIPTION = gql`
   subscription liveFeed {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { 
-        processed: { _eq: "PENDING" },
-        submissionConfigurationByconfigId: {
-          category: { _neq: "CLOSED" }
-        }}
-        order_by: { submitted_at: desc },
+      submissions(
+        where: {
+          processed: { _eq: "PENDING" }
+          submissionConfigurationByconfigId: { category: { _neq: "CLOSED" } }
+        }
+        order_by: { submitted_at: desc }
         limit: 1
       ) {
         uuid
@@ -167,12 +167,11 @@ const LIVE_FEED_FILTERED = gql`
   subscription liveFeedFilter($teams: [uuid!]) {
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
-        where: { 
-          processed: { _eq: "PENDING" },
-          team_id: { _in: $teams },
-          submissionConfigurationByconfigId: {
-            category: { _neq: "CLOSED" }
-          }}
+        where: {
+          processed: { _eq: "PENDING" }
+          team_id: { _in: $teams }
+          submissionConfigurationByconfigId: { category: { _neq: "CLOSED" } }
+        }
         order_by: { submitted_at: asc }
       ) {
         uuid
@@ -209,12 +208,12 @@ const LIVE_FEED_FILTERED = gql`
 const LIVE_FEED_FFA = gql`
   subscription liveFeedFfa {
     event(order_by: { start_time: desc }, limit: 1) {
-      submissions(where: { 
-        processed: { _eq: "PENDING" },
-        submissionConfigurationByconfigId: {
-          category: { _neq: "CLOSED" }
-        }}
-        order_by: { submitted_at: asc },
+      submissions(
+        where: {
+          processed: { _eq: "PENDING" }
+          submissionConfigurationByconfigId: { category: { _neq: "CLOSED" } }
+        }
+        order_by: { submitted_at: asc }
         limit: 50
       ) {
         uuid
@@ -253,7 +252,7 @@ const LIVE_FEED_SA = gql`
     event(order_by: { start_time: desc }, limit: 1) {
       submissions(
         where: { processed: { _eq: "PENDING" }, team_id: { _in: $teams } }
-        order_by: { submitted_at: asc },
+        order_by: { submitted_at: asc }
         limit: 50
       ) {
         uuid
@@ -294,7 +293,9 @@ const URL_SEEN_COUNT = gql`
         count
       }
     }
-    teamUrlCount: submission_aggregate(where: { content: { _eq: $url }, _and: {team_id: {_eq: $teamID}}}) {
+    teamUrlCount: submission_aggregate(
+      where: { content: { _eq: $url }, _and: { team_id: { _eq: $teamID } } }
+    ) {
       aggregate {
         count
       }
@@ -302,13 +303,6 @@ const URL_SEEN_COUNT = gql`
   }
 `
 
-/*
-  Note(peter):
-    Hasura currently doesn't allow you to insert into relations in one
-    query (e.g. update submission, insert submission history), so we 
-    need to fire off 2 hasura calls: first to update the submission; second
-    to insert into the submission_history table
-*/
 const INSERT_SUBMISSION_HISTORY = gql`
   mutation insertSubmissionHistory(
     $submissionID: uuid!

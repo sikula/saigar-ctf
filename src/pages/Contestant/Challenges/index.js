@@ -10,7 +10,6 @@ import { H2, H3, H4, H5 } from '@blueprintjs/core'
 
 // Custom Components
 import { AuthContext } from '@shared/components/AuthContext/context'
-// import { CASE_LIST } from './graphql/queries'
 import Can from '../../../shared/components/AuthContext/Can'
 
 import CaseGrid from './components/CaseGrid'
@@ -100,8 +99,6 @@ const CasesList = () => {
 
   const cases = data.event[0].eventCasesByeventId
 
-
-  // @TODO(peter): Ensure that the event registration is done, then show the "event hasn't started message"
   return (
     <React.Fragment>
       <div className="row">
@@ -120,12 +117,18 @@ const ChallengesPage = () => {
   const { error, loading, data } = useQuery(EVENT_START_TIME)
   const { error: userError, loading: userLoading, data: userData } = useQuery(USER_INFO, {
     variables: {
-      auth0id: user.id
-    }
+      auth0id: user.id,
+    },
   })
 
   if (loading || userLoading) return null
-  if (error || userError) return <div>{error.message}{userError.message}</div>
+  if (error || userError)
+    return (
+      <div>
+        {error.message}
+        {userError.message}
+      </div>
+    )
 
   if (!Array.isArray(data.event) || !data.event.length) {
     return <div>No Events Created yet</div>
@@ -135,7 +138,7 @@ const ChallengesPage = () => {
     new Date(), // current Date
     {
       start: new Date(data.event[0].start_time),
-      end: new Date(data.event[0].end_time)
+      end: new Date(data.event[0].end_time),
     },
   )
 
@@ -150,52 +153,55 @@ const ChallengesPage = () => {
   const team = userData.team[0]
 
   return (
-    <Can allowedRole="contestant" yes={() => (
-      <React.Fragment>
-        <nav className="challenges" style={{ background: '#fff' }}>
-          <div>
-            <ul>
-              <li>
-                <Link to="/rules">Rules</Link>
-              </li>
-              <li>
-                <Link to="/resources">Resources</Link>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <div className="row">
-          <div className="col-xs">
-            <div style={{ margin: 15 }}>
-              <H2>Team: {team.name} - {user.nickname}</H2>
-              <H5>Code: {`${team.uuid.split('-')[0]}`}</H5>
-            </div>  
-          </div>
-        </div>
-        {!eventStarted ? (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '80%'
-            }}
-          >
-            <div style={{ maxWidth: '50%' }}>
-              <H2 style={{ textAlign: 'center' }}>Event Hasn't Started Yet</H2>
-              <H4>Refresh the page once the event has officially begun</H4>
+    <Can
+      allowedRole="contestant"
+      yes={() => (
+        <React.Fragment>
+          <nav className="challenges" style={{ background: '#fff' }}>
+            <div>
+              <ul>
+                <li>
+                  <Link to="/rules">Rules</Link>
+                </li>
+                <li>
+                  <Link to="/resources">Resources</Link>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <div className="row">
+            <div className="col-xs">
+              <div style={{ margin: 15 }}>
+                <H2>
+                  Team: {team.name} - {user.nickname}
+                </H2>
+                <H5>Code: {`${team.uuid.split('-')[0]}`}</H5>
+              </div>
             </div>
           </div>
-        ) : (
+          {!eventStarted ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '80%',
+              }}
+            >
+              <div style={{ maxWidth: '50%' }}>
+                <H2 style={{ textAlign: 'center' }}>Event Hasn't Started Yet</H2>
+                <H4>Refresh the page once the event has officially begun</H4>
+              </div>
+            </div>
+          ) : (
             <CasesList />
           )}
-        {userData.team.length === 0 && <TeamDialog />}
-        {userData.user[0].acceptedTos === false && <TosDialog />}
-      </React.Fragment>
-    )}
+          {userData.team.length === 0 && <TeamDialog />}
+          {userData.user[0].acceptedTos === false && <TosDialog />}
+        </React.Fragment>
+      )}
     />
   )
-
 }
 
 export default ChallengesPage

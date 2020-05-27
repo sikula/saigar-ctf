@@ -42,44 +42,6 @@ const GET_EVENT_EXPORT_DATA = gql`
   }
 `
 
-/*
-  @NOTE(peter):
-    These are the steps necessary to to wipe the event (in order):
-        1) Query all the information for the event
-        2) Extract the user + teams array
-        3) delete user_team
-        4) delete user
-        5) delete team_event
-        6) delete team
-        7) delete event_case
-        8) delete submission_history
-        9) delete submission
-        10) delete case
-        11) delete event
-        12) delete judge_team
-
-      This is the query:
-        query GET_EVENT_DATA($eventID: uuid!) {
-          event(where: {
-            uuid: { _eq: $eventID }
-          }) {
-            team_events {
-              team {
-                name
-                user_team {
-                  user {
-                    nickname
-                  }
-                }
-                judge_teams {
-                  judge_id
-                }
-              }
-            }
-          }
-        }
-*/
-
 const EVENT_DATA = gql`
   query getEventData($eventId: uuid!) {
     event(where: { uuid: { _eq: $eventId } }) {
@@ -106,10 +68,6 @@ const WipeEventDialog = ({ isOpen, onWipeClick, onCancelClick }) => {
       eventId: 'f4edfe2e-0ef2-4dd4-b1aa-5dd2d17487af',
     },
   })
-
-  // if (!loading) {
-  //   const { team_events: team } = data.event[0]
-  // }
 
   return (
     <Dialog
@@ -203,8 +161,8 @@ const transformData = results => {
       },
       {
         label: 'URL',
-	value: 'url',
-      }
+        value: 'url',
+      },
     ]
 
     const parser = new Parser({ fields })
@@ -307,13 +265,6 @@ const EventCard = ({ eventID, name, startTime, endTime, totalSubmissions, onWipe
         )}
       </SlidingPanelConsumer>
       <DownloadCsvButton event={eventID} />
-      {/* <Button
-        className="case-card__actions"
-        minimal
-        icon={<Icon icon={IconNames.TRASH} style={{ color: '#CED9E0' }} iconSize={20} />}
-        onClick={() => onWipeClick(eventID)}
-        style={{ background: '#DB3737' }}
-      /> */}
     </div>
   </div>
 )
@@ -367,7 +318,6 @@ const EventsPanel = () => {
             </Button>
           )}
         </SlidingPanelConsumer>
-        {/* <Button large intent="primary" text="Add Event" icon={IconNames.ADD} /> */}
       </div>
       <div className="case-card__grid" style={{ padding: 0 }}>
         <Query query={EVENTS_QUERY}>
@@ -397,11 +347,6 @@ const EventsPanel = () => {
           }}
         </Query>
       </div>
-      {/* <WipeEventDialog
-        isOpen={wipeDialogOpen}
-        onWipeClick={handleWipeApproveClick}
-        onCancelClick={handleCancelClick}
-      /> */}
     </div>
   )
 }

@@ -7,13 +7,13 @@ const AuthCallback = ({ history }) => (
     {({ handleAuthentication }) => {
       handleAuthentication().then(res => {
         const { groups } = res.idTokenPayload['https://ctf.saigar.io/roles']
-        if (groups.includes('ctf_admin') || groups.includes('judge') || groups.includes('super_admin')) {
-          // const url = JSON.parse(sessionStorage.getItem('redirectBackTo')).pathname || '/home'
-          // history.replace(url)
+        if (
+          groups.includes('ctf_admin') ||
+          groups.includes('judge') ||
+          groups.includes('super_admin')
+        ) {
           history.replace('/home')
         } else if (groups.includes('contestant')) {
-          // const url = JSON.parse(sessionStorage.getItem('redirectBackTo')).pathname || '/challenges'
-          // history.replace(url)
           history.replace('/challenges')
         } else {
           history.replace('/404')
