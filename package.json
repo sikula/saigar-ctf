@@ -5,12 +5,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "lint": "eslint .",
+    "lint": "lint-staged",
     "test": "jest --passWithNoTests",
     "start:dev": "webpack-dev-server --config config/webpack.common.js",
     "build": "webpack --progress --verbose --colors --display-error-details --config config/webpack.common.js",
     "clean": "rm -rf dist",
-    "start": "serve -s dist",
+    "start": "serve -s dist"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.5",
@@ -117,5 +117,15 @@
     "terser-webpack-plugin": "^1.2.3",
     "url-loader": "^1.1.2",
     "webpack-dev-server": "^3.11.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "!*.js": [
+      "eslint --cache"
+    ]
   }
 }
