@@ -21,7 +21,7 @@ const LoginPage = () => {
         Accepts: 'application/json',
       },
       body: JSON.stringify({ email, password }),
-    }).then(response => console.log(response.status))
+    }).then((response) => console.log(response.status))
   }
 
   return (
@@ -66,7 +66,7 @@ const LoginPage = () => {
                 id="text-input"
                 name="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@gmail.com"
                 large
               />
@@ -76,7 +76,7 @@ const LoginPage = () => {
                 id="text-input"
                 name="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 large
                 type="password"
               />
@@ -96,13 +96,9 @@ const LoginPage = () => {
           </div>
         </div>
         <div style={{ color: '#000', padding: 10 }}>
-          Powered by <span style={{ fontWeight: 600 }}>Saigar Technologies</span> |{' '}
-          <a href="https://saigar.io" target="_blank">
-            saigar.io
-          </a>{' '}
-          |{' '}
-          <a href="https://twitter.com/@saigar_to" target="_blank">
-            @saigar_to
+          Powered by <span style={{ fontWeight: 600 }}>Saigar</span>|{' '}
+          <a href="https://github.com/sikula/saigar-ctf" target="_blank">
+            Github
           </a>{' '}
         </div>
       </div>

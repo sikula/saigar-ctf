@@ -2,6 +2,8 @@
 
 Saigar CTF Platform
 
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B18042%2Fgithub.com%2Fsikula%2Fsaigar-ctf.svg?type=large)](https://app.fossa.com/projects/custom%2B18042%2Fgithub.com%2Fsikula%2Fsaigar-ctf?ref=badge_large)
+
 ### Install/Setup
 
 1. `yarn install`

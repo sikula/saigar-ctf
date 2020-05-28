@@ -1,20 +1,22 @@
-@import "~flexboxgrid2/flexboxgrid2.css";
-@import "~@blueprintjs/core/lib/css/blueprint.css";
-@import "~@blueprintjs/datetime/lib/css/blueprint-datetime.css";
-@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
-@import "~@blueprintjs/select/lib/css/blueprint-select.css";
+@import '~flexboxgrid2/flexboxgrid2.css';
+@import '~@blueprintjs/core/lib/css/blueprint.css';
+@import '~@blueprintjs/datetime/lib/css/blueprint-datetime.css';
+@import '~@blueprintjs/icons/lib/css/blueprint-icons.css';
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   font-size: 16px;
   line-height: 1.5rem;
   min-height: 100%;
-  overflow-x:hidden; /* this is needed as a fix for flexboxgrid2 bug with full width layout */
+  overflow-x: hidden; /* this is needed as a fix for flexboxgrid2 bug with full width layout */
   margin: 0;
   padding: 0;
 }

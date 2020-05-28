@@ -2,13 +2,6 @@ import React from 'react'
 
 const ResourcesPage = () => (
   <div style={{ padding: 25, width: '85%', margin: '0 auto' }}>
-    <p>
-      Register for Trace Labs Slack channel here:{' '}
-      <a href="https://www.tracelabs.org/accounts/register/">
-        https://www.tracelabs.org/accounts/register
-      </a>
-    </p>
-
     <p>OSINT Resources for Contestants</p>
 
     <ul>

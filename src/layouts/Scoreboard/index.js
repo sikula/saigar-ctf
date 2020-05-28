@@ -57,18 +57,14 @@ const ScoreboardLayout = ({ children }) => (
     </Fixed>
     <Flex className="content">{children}</Flex>
     <Fixed className="footer">
-          Powered by Saigar Technologies |{' '}
-          <a href="https://saigar.io" target="_blank">
-            saigar.io
-          </a>{' '}
-          |{' '}
-          <a href="https://twitter.com/@saigar_to" target="_blank">
-            @saigar_to
-          </a>{' '}
-          |{' '}
-          <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
-            Terms of Service
-          </Link>
+      Powered by Saigar |{' '}
+      <a href="https://github.com/sikula/saigar-ctf" target="_blank">
+        Github
+      </a>{' '}
+      |{' '}
+      <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
+        Terms of Service
+      </Link>
     </Fixed>
   </Layout>
 )

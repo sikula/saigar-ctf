@@ -3,19 +3,8 @@ import React from 'react'
 const RulesPage = () => (
   <div style={{ padding: 25, width: '85%', margin: '0 auto' }}>
     <p>
-      Rules for this CTF Most update to date rules are here:
-      <a href="https://www.tracelabs.org/getinvolved/ctf/ctf-rules/">
-        https://www.tracelabs.org/getinvolved/ctf/ctf-rules/
-      </a>{' '}
-      Since the Trace Labs CTF involves real people, we must be very strict with our rules. Most of
-      these rules are designed to ensure there is no criminal activity by contestants but also to
-      ensure we are respectful to missing person and their family.
-    </p>
-
-    <p>
       Please follow the rules. While we know there may be misunderstandings, our CTF involves real
-      people with real families. If you have questions, please ask someone (either onsite or in the
-      Slack channels).
+      people with real families.
     </p>
 
     <ul>
@@ -76,37 +65,6 @@ const RulesPage = () => (
         will mean your team&rsquo;s progress will not be shown on the leader board.
       </li>
     </ul>
-
-    <p>
-      If in doubt, ask us. We will be happy to provide guidance. Questions, concerns and
-      recommendations can be sent to: info [at] tracelabs.org or post in our Slack channel.
-    </p>
-
-    <p>
-      Get access to our Slack channel by signing up here:
-      <a href="https://www.tracelabs.org/accounts/register/">
-        https://www.tracelabs.org/accounts/register/
-      </a>
-    </p>
-
-    <p>
-      If in doubt, ask us. We will be happy to provide guidance. Questions, concerns and
-      recommendations can be sent to: info [at] tracelabs.org or post in our Slack channel.
-    </p>
-
-    <p>
-      Trace Labs is a nonprofit organization staffed with volunteers. We currently don't have any
-      government funding and operate from individual donations. If you enjoy this CTF, please
-      consider supporting us: Support us:{' '}
-      <a href="https://PayPal.Me/tracelabs">https://PayPal.Me/tracelabs</a>
-    </p>
-
-    <p>
-      If you like the brand and want some swag:{' '}
-      <a href="https://www.tracelabs.org/shop">https://www.tracelabs.org/shop</a>
-    </p>
-
-    <p>Thank you for being part of Trace Labs </p>
   </div>
 )
 

@@ -112,7 +112,3 @@ export default class TosDialog extends React.Component {
     )
   }
 }
-
-// Welcome to the Trace Labs Missing CTF, powered by Saigar's Saigar-CTF platform.
-
-// Please review and accept the below Terms of Service to complete your account registration.

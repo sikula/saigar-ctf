@@ -14,7 +14,6 @@ import './index.scss'
 import logoWhite from './logo-white.png'
 import { AuthContext } from '@shared/components/AuthContext/context'
 
-
 /*
   For tomorrow, get the IO side up and running with Auth0 login, and figure out
   how best to subscribe to an intel agencies cases (subscribe to one agency and
@@ -60,7 +59,7 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           )}
         />
         <Can
-          allowedRole={["super_admin", "ctf_admin"]}
+          allowedRole={['super_admin', 'ctf_admin']}
           yes={() => (
             <UL>
               <NavLink to="create">
@@ -106,13 +105,9 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
           {children}
         </Flex>
         <Fixed className="footer">
-          Powered by Saigar Technologies |{' '}
-          <a href="https://saigar.io" target="_blank">
-            saigar.io
-          </a>
-          |{' '}
-          <a href="https://twitter.com/@saigar_to" target="_blank">
-            @saigar_to
+          Powered by Saigar |{' '}
+          <a href="https://github.com/sikula/saigar-ctf" target="_blank">
+            Github
           </a>{' '}
           |{' '}
           <Link to="/terms-of-service" style={{ color: '#bfbfbf' }}>
@@ -139,21 +134,21 @@ const DefaultLayout = ({ children, pathname, showFeed, feed }) => (
 const BanCheck = () => {
   const GET_BANNED_STATUS = gql`
     subscription getBannedStatus($auth0id: String!) {
-      user_team(where: {user: {auth0id: {_eq: $auth0id}}}) {
+      user_team(where: { user: { auth0id: { _eq: $auth0id } } }) {
         team {
           banned
         }
       }
     }
   `
-  const { user, logout } = useContext(AuthContext)  
+  const { user, logout } = useContext(AuthContext)
   const { loading, data } = useSubscription(GET_BANNED_STATUS, {
-    variables: { auth0id: user.id }
+    variables: { auth0id: user.id },
   })
   if (!loading && data.user_team.length && data.user_team[0].team.banned) {
     logout()
   }
-  
+
   return null
 }
 

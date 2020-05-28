@@ -12,9 +12,7 @@ import { Wizard, Steps, Step } from 'react-albus'
 import { Line } from 'rc-progress'
 
 const FormValidationSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Invalid email address')
-    .required('Required!'),
+  email: Yup.string().email('Invalid email address').required('Required!'),
   username: Yup.string()
     .required('Required!')
     .notOneOf([Yup.ref('email'), null], 'Username cannot be the same as email')
@@ -79,7 +77,7 @@ const EventOrderStep = ({ onNextClick }) => {
           placeholder="Enter your Registration Code"
           large
           values={orderNumber}
-          onChange={e => setOrderNumber(e.target.value)}
+          onChange={(e) => setOrderNumber(e.target.value)}
           style={message ? { border: 'solid 1px red' } : {}}
         />
       </FormGroup>
@@ -113,7 +111,7 @@ const UserCreationStep = ({ onNextClick, orderNumber }) => {
     { manual: true },
   )
 
-  const handleFormSubmit = values => {
+  const handleFormSubmit = (values) => {
     executePost({
       data: {
         ...values,
@@ -199,8 +197,7 @@ const UserCreationStep = ({ onNextClick, orderNumber }) => {
 const RegisterPage = () => {
   const [orderNumber, setOrderNumber] = useState()
 
-  const onOrderNextClick = next => on => {
-    console.log(next, on)
+  const onOrderNextClick = (next) => (on) => {
     setOrderNumber(on)
     next()
   }
@@ -248,13 +245,9 @@ const RegisterPage = () => {
           )}
         />
         <div style={{ color: '#000', padding: 10, marginTop: 30 }}>
-          Powered by <span style={{ fontWeight: 600 }}>Saigar Technologies</span> |{' '}
-          <a href="https://saigar.io" target="_blank">
-            saigar.io
-          </a>{' '}
-          |{' '}
-          <a href="https://twitter.com/@saigar_to" target="_blank">
-            @saigar_to
+          Powered by <span style={{ fontWeight: 600 }}>Saigar</span>|{' '}
+          <a href="https://github.com/sikula/saigar-ctf" target="_blank">
+            Github
           </a>{' '}
         </div>
       </div>
