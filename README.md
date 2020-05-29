@@ -8,7 +8,7 @@
 
 Saigar CTF is an open source CTF platform to facilitate crowdsourced investigations that can scale to hundred's of concurrent users with real time data. The largest event that the Saigar CTF platform has faciliated had **500+** users with over **8,000** submissions over a **6 hour** period.
 
-See the introductory [blog post](https://medium.com/something) for more details.
+See the introductory [blog post](https://medium.com/@peter_721/open-sourcing-the-saigar-ctf-platform-620c061f4d52) for more details.
 
 # Features
 
